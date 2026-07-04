@@ -25,7 +25,7 @@ public class BeneficioClienteEntity {
     @JoinColumn(name = "id_cliente", nullable = false)
     private ClienteEntity cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_programa_fidelizacion", nullable = false)
     private ProgramaFidelizacionEntity programaFidelizacion;
 
