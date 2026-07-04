@@ -1,3 +1,64 @@
 spring:
   application:
     name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: ms-clientes
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/v1/clientes/**, /api/v1/tipos-cliente/**, /api/v1/historial-visitas/**, /api/v1/programas-fidelizacion/**, /api/v1/beneficios-cliente/**
+            - id: ms-pedidos
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/v1/pedidos/**, /api/v1/detalle-pedidos/**, /api/v1/estados-pedido/**
+            - id: ms-produccion
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/v1/recetas/**, /api/v1/insumos/**, /api/v1/categorias-insumo/**, /api/v1/receta-insumos/**
+            - id: ms-ventas
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/v1/comprobantes/**, /api/v1/cajas/**, /api/v1/cierres-caja/**, /api/v1/metodos-pago/**, /api/v1/tipos-comprobante/**
+            - id: ms-inventario
+              uri: http://localhost:8085
+              predicates:
+                - Path=/api/v1/stock/**, /api/v1/movimientos-stock/**, /api/v1/productos/**, /api/v1/categorias-producto/**
+            - id: ms-abastecimiento
+              uri: http://localhost:8086
+              predicates:
+                - Path=/api/v1/proveedores/**, /api/v1/contratos-proveedor/**, /api/v1/ordenes-compra/**, /api/v1/detalle-ordenes-compra/**, /api/v1/recepciones-mercaderia/**
+            - id: ms-mantenimiento
+              uri: http://localhost:8087
+              predicates:
+                - Path=/api/v1/equipos/**, /api/v1/tipos-equipo/**, /api/v1/mantenimientos/**, /api/v1/tipos-mantenimiento/**
+            - id: ms-recursos-humanos
+              uri: http://localhost:8088
+              predicates:
+                - Path=/api/v1/empleados/**, /api/v1/cargos/**, /api/v1/turnos/**, /api/v1/asistencias/**, /api/v1/evaluaciones-desempeno/**, /api/v1/usuarios/**, /api/v1/roles/**, /api/v1/permisos/**
+            - id: ms-administracion
+              uri: http://localhost:8089
+              predicates:
+                - Path=/api/v1/documentos-administrativos/**, /api/v1/gastos/**, /api/v1/categorias-gasto/**
+            - id: ms-finanzas
+              uri: http://localhost:8090
+              predicates:
+                - Path=/api/v1/presupuestos/**, /api/v1/cuentas-por-pagar/**, /api/v1/reportes-financieros/**
+            - id: ms-calidad
+              uri: http://localhost:8091
+              predicates:
+                - Path=/api/v1/estandares-calidad/**, /api/v1/inspecciones/**, /api/v1/resultados-inspeccion/**, /api/v1/incidencias/**, /api/v1/tipos-incidencia/**, /api/v1/encuestas-satisfaccion/**, /api/v1/respuestas-encuesta/**
+            - id: ms-marketing
+              uri: http://localhost:8092
+              predicates:
+                - Path=/api/v1/campanas-marketing/**, /api/v1/promociones/**
+
+server:
+  port: 8080
+
+logging:
+  level:
+    pe.com.sinergiacafe: DEBUG
+    org.springframework.cloud.gateway: DEBUG
