@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pe.com.sinergiacafe</groupId>
+    <artifactId>sinergiacafe-app</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>api-gateway</module>
+        <module>ms-clientes</module>
+        <module>ms-pedidos</module>
+        <module>ms-produccion</module>
+        <module>ms-ventas</module>
+        <module>ms-inventario</module>
+        <module>ms-abastecimiento</module>
+        <module>ms-mantenimiento</module>
+        <module>ms-recursoshumanos</module>
+        <module>ms-administracion</module>
+        <module>ms-finanzas</module>
+        <module>ms-calidad</module>
+        <module>ms-marketing</module>
+    </modules>
+
+</project>
