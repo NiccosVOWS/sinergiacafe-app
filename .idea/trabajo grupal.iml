@@ -5,6 +5,10 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/ms-administracion/src/main" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ms-clientes/src/main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/api-gateway/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ms-pedidos/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ms-produccion/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ms-ventas/src/main/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
