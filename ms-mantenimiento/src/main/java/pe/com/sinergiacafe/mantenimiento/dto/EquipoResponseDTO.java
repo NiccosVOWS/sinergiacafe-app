@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class EquipoResponseDTO {
 
     private Long id;
+    private Long idTipoEquipo;
     private String nombre;
     private String modelo;
     private java.time.LocalDate fechaAdquisicion;
     private String estado;
-    private Long tipoEquipoId;
 }

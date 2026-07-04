@@ -28,22 +28,23 @@ public class MovimientoStockService {
 
     public MovimientoStockResponseDTO create(MovimientoStockRequestDTO dto) {
         MovimientoStockEntity entity = new MovimientoStockEntity();
-        entity.setStockId(dto.getStockId());
+        entity.setIdStock(dto.getIdStock());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setTipoMovimiento(dto.getTipoMovimiento());
         entity.setCantidad(dto.getCantidad());
         entity.setMotivo(dto.getMotivo());
-        entity.setFecha(dto.getFecha());
+        entity.setFechaMovimiento(java.time.LocalDateTime.now());
         return toResponse(repository.save(entity));
     }
 
     public MovimientoStockResponseDTO update(Long id, MovimientoStockRequestDTO dto) {
         MovimientoStockEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MovimientoStock no encontrado con id: " + id));
-        entity.setStockId(dto.getStockId());
+        entity.setIdStock(dto.getIdStock());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setTipoMovimiento(dto.getTipoMovimiento());
         entity.setCantidad(dto.getCantidad());
         entity.setMotivo(dto.getMotivo());
-        entity.setFecha(dto.getFecha());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +58,12 @@ public class MovimientoStockService {
     private MovimientoStockResponseDTO toResponse(MovimientoStockEntity entity) {
         return MovimientoStockResponseDTO.builder()
                 .id(entity.getId())
-                .stockId(entity.getStockId())
+                .idStock(entity.getIdStock())
+                .idEmpleado(entity.getIdEmpleado())
                 .tipoMovimiento(entity.getTipoMovimiento())
                 .cantidad(entity.getCantidad())
                 .motivo(entity.getMotivo())
-                .fecha(entity.getFecha())
+                .fechaMovimiento(entity.getFechaMovimiento())
                 .build();
     }
 }

@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class RecepcionMercaderiaResponseDTO {
 
     private Long id;
-    private Long ordenCompraId;
-    private Long proveedorId;
-    private java.time.LocalDateTime fecha;
-    private java.math.BigDecimal cantidadRecibida;
+    private Long idOrdenCompra;
+    private Long idEmpleado;
+    private java.time.LocalDateTime fechaRecepcion;
     private Boolean conforme;
+    private String observaciones;
 }

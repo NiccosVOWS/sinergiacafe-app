@@ -17,13 +17,19 @@ public class EquipoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_equipo")
     private Long id;
 
-    @NotBlank
-    private String nombre;
-    private String modelo;
-    private java.time.LocalDate fechaAdquisicion;
-    private String estado;
     @NotNull
-    private Long tipoEquipoId;
+    @Column(name = "id_tipo_equipo")
+    private Long idTipoEquipo;
+    @NotBlank
+    @Column(name = "nombre")
+    private String nombre;
+    @Column(name = "modelo")
+    private String modelo;
+    @Column(name = "fecha_adquisicion")
+    private java.time.LocalDate fechaAdquisicion;
+    @Column(name = "estado")
+    private String estado;
 }

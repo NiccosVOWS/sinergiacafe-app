@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class ProductoResponseDTO {
 
     private Long id;
+    private Long idCategoriaProducto;
     private String nombre;
     private String descripcion;
     private java.math.BigDecimal precio;
     private Boolean disponible;
-    private Long categoriaProductoId;
 }

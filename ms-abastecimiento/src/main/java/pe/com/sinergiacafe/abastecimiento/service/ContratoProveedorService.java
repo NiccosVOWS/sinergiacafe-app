@@ -28,22 +28,22 @@ public class ContratoProveedorService {
 
     public ContratoProveedorResponseDTO create(ContratoProveedorRequestDTO dto) {
         ContratoProveedorEntity entity = new ContratoProveedorEntity();
-        entity.setProveedorId(dto.getProveedorId());
+        entity.setIdProveedor(dto.getIdProveedor());
         entity.setFechaInicio(dto.getFechaInicio());
         entity.setFechaFin(dto.getFechaFin());
         entity.setCondiciones(dto.getCondiciones());
-        entity.setProductosPactados(dto.getProductosPactados());
+        entity.setActivo(dto.getActivo());
         return toResponse(repository.save(entity));
     }
 
     public ContratoProveedorResponseDTO update(Long id, ContratoProveedorRequestDTO dto) {
         ContratoProveedorEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ContratoProveedor no encontrado con id: " + id));
-        entity.setProveedorId(dto.getProveedorId());
+        entity.setIdProveedor(dto.getIdProveedor());
         entity.setFechaInicio(dto.getFechaInicio());
         entity.setFechaFin(dto.getFechaFin());
         entity.setCondiciones(dto.getCondiciones());
-        entity.setProductosPactados(dto.getProductosPactados());
+        entity.setActivo(dto.getActivo());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +57,11 @@ public class ContratoProveedorService {
     private ContratoProveedorResponseDTO toResponse(ContratoProveedorEntity entity) {
         return ContratoProveedorResponseDTO.builder()
                 .id(entity.getId())
-                .proveedorId(entity.getProveedorId())
+                .idProveedor(entity.getIdProveedor())
                 .fechaInicio(entity.getFechaInicio())
                 .fechaFin(entity.getFechaFin())
                 .condiciones(entity.getCondiciones())
-                .productosPactados(entity.getProductosPactados())
+                .activo(entity.getActivo())
                 .build();
     }
 }

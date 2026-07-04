@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 public class StockRequestDTO {
 
     @NotNull
-    private Long productoId;
+    private Long idInsumo;
     @NotNull
     private java.math.BigDecimal cantidadActual;
     @NotNull
-    private java.math.BigDecimal stockMinimo;
-    private java.time.LocalDateTime fechaActualizacion;
+    private java.math.BigDecimal cantidadMinima;
 }

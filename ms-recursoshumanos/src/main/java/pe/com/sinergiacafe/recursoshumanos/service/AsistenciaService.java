@@ -28,7 +28,7 @@ public class AsistenciaService {
 
     public AsistenciaResponseDTO create(AsistenciaRequestDTO dto) {
         AsistenciaEntity entity = new AsistenciaEntity();
-        entity.setEmpleadoId(dto.getEmpleadoId());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setFecha(dto.getFecha());
         entity.setHoraEntrada(dto.getHoraEntrada());
         entity.setHoraSalida(dto.getHoraSalida());
@@ -39,7 +39,7 @@ public class AsistenciaService {
     public AsistenciaResponseDTO update(Long id, AsistenciaRequestDTO dto) {
         AsistenciaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Asistencia no encontrado con id: " + id));
-        entity.setEmpleadoId(dto.getEmpleadoId());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setFecha(dto.getFecha());
         entity.setHoraEntrada(dto.getHoraEntrada());
         entity.setHoraSalida(dto.getHoraSalida());
@@ -57,7 +57,7 @@ public class AsistenciaService {
     private AsistenciaResponseDTO toResponse(AsistenciaEntity entity) {
         return AsistenciaResponseDTO.builder()
                 .id(entity.getId())
-                .empleadoId(entity.getEmpleadoId())
+                .idEmpleado(entity.getIdEmpleado())
                 .fecha(entity.getFecha())
                 .horaEntrada(entity.getHoraEntrada())
                 .horaSalida(entity.getHoraSalida())

@@ -28,20 +28,19 @@ public class StockService {
 
     public StockResponseDTO create(StockRequestDTO dto) {
         StockEntity entity = new StockEntity();
-        entity.setProductoId(dto.getProductoId());
+        entity.setIdInsumo(dto.getIdInsumo());
         entity.setCantidadActual(dto.getCantidadActual());
-        entity.setStockMinimo(dto.getStockMinimo());
-        entity.setFechaActualizacion(dto.getFechaActualizacion());
+        entity.setCantidadMinima(dto.getCantidadMinima());
+        entity.setUltimaActualizacion(java.time.LocalDateTime.now());
         return toResponse(repository.save(entity));
     }
 
     public StockResponseDTO update(Long id, StockRequestDTO dto) {
         StockEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock no encontrado con id: " + id));
-        entity.setProductoId(dto.getProductoId());
+        entity.setIdInsumo(dto.getIdInsumo());
         entity.setCantidadActual(dto.getCantidadActual());
-        entity.setStockMinimo(dto.getStockMinimo());
-        entity.setFechaActualizacion(dto.getFechaActualizacion());
+        entity.setCantidadMinima(dto.getCantidadMinima());
         return toResponse(repository.save(entity));
     }
 
@@ -55,10 +54,10 @@ public class StockService {
     private StockResponseDTO toResponse(StockEntity entity) {
         return StockResponseDTO.builder()
                 .id(entity.getId())
-                .productoId(entity.getProductoId())
+                .idInsumo(entity.getIdInsumo())
                 .cantidadActual(entity.getCantidadActual())
-                .stockMinimo(entity.getStockMinimo())
-                .fechaActualizacion(entity.getFechaActualizacion())
+                .cantidadMinima(entity.getCantidadMinima())
+                .ultimaActualizacion(entity.getUltimaActualizacion())
                 .build();
     }
 }

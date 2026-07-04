@@ -17,13 +17,19 @@ public class AsistenciaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_asistencia")
     private Long id;
 
     @NotNull
-    private Long empleadoId;
+    @Column(name = "id_empleado")
+    private Long idEmpleado;
     @NotNull
+    @Column(name = "fecha")
     private java.time.LocalDate fecha;
+    @Column(name = "hora_entrada")
     private java.time.LocalTime horaEntrada;
+    @Column(name = "hora_salida")
     private java.time.LocalTime horaSalida;
+    @Column(name = "observaciones")
     private String observaciones;
 }

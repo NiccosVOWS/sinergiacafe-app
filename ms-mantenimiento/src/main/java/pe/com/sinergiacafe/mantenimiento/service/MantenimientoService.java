@@ -28,10 +28,10 @@ public class MantenimientoService {
 
     public MantenimientoResponseDTO create(MantenimientoRequestDTO dto) {
         MantenimientoEntity entity = new MantenimientoEntity();
-        entity.setEquipoId(dto.getEquipoId());
-        entity.setTipoMantenimientoId(dto.getTipoMantenimientoId());
-        entity.setFecha(dto.getFecha());
-        entity.setResponsable(dto.getResponsable());
+        entity.setIdEquipo(dto.getIdEquipo());
+        entity.setIdTipoMantenimiento(dto.getIdTipoMantenimiento());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setFechaMantenimiento(java.time.LocalDateTime.now());
         entity.setCosto(dto.getCosto());
         entity.setObservaciones(dto.getObservaciones());
         return toResponse(repository.save(entity));
@@ -40,10 +40,9 @@ public class MantenimientoService {
     public MantenimientoResponseDTO update(Long id, MantenimientoRequestDTO dto) {
         MantenimientoEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Mantenimiento no encontrado con id: " + id));
-        entity.setEquipoId(dto.getEquipoId());
-        entity.setTipoMantenimientoId(dto.getTipoMantenimientoId());
-        entity.setFecha(dto.getFecha());
-        entity.setResponsable(dto.getResponsable());
+        entity.setIdEquipo(dto.getIdEquipo());
+        entity.setIdTipoMantenimiento(dto.getIdTipoMantenimiento());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setCosto(dto.getCosto());
         entity.setObservaciones(dto.getObservaciones());
         return toResponse(repository.save(entity));
@@ -59,10 +58,10 @@ public class MantenimientoService {
     private MantenimientoResponseDTO toResponse(MantenimientoEntity entity) {
         return MantenimientoResponseDTO.builder()
                 .id(entity.getId())
-                .equipoId(entity.getEquipoId())
-                .tipoMantenimientoId(entity.getTipoMantenimientoId())
-                .fecha(entity.getFecha())
-                .responsable(entity.getResponsable())
+                .idEquipo(entity.getIdEquipo())
+                .idTipoMantenimiento(entity.getIdTipoMantenimiento())
+                .idEmpleado(entity.getIdEmpleado())
+                .fechaMantenimiento(entity.getFechaMantenimiento())
                 .costo(entity.getCosto())
                 .observaciones(entity.getObservaciones())
                 .build();

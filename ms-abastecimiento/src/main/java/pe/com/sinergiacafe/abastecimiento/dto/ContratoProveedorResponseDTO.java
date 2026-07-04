@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class ContratoProveedorResponseDTO {
 
     private Long id;
-    private Long proveedorId;
+    private Long idProveedor;
     private java.time.LocalDate fechaInicio;
     private java.time.LocalDate fechaFin;
     private String condiciones;
-    private String productosPactados;
+    private Boolean activo;
 }

@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 public class MovimientoStockResponseDTO {
 
     private Long id;
-    private Long stockId;
+    private Long idStock;
+    private Long idEmpleado;
     private String tipoMovimiento;
     private java.math.BigDecimal cantidad;
     private String motivo;
-    private java.time.LocalDateTime fecha;
+    private java.time.LocalDateTime fechaMovimiento;
 }

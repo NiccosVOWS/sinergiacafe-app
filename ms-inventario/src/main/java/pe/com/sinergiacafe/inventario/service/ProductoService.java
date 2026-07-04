@@ -28,22 +28,22 @@ public class ProductoService {
 
     public ProductoResponseDTO create(ProductoRequestDTO dto) {
         ProductoEntity entity = new ProductoEntity();
+        entity.setIdCategoriaProducto(dto.getIdCategoriaProducto());
         entity.setNombre(dto.getNombre());
         entity.setDescripcion(dto.getDescripcion());
         entity.setPrecio(dto.getPrecio());
         entity.setDisponible(dto.getDisponible());
-        entity.setCategoriaProductoId(dto.getCategoriaProductoId());
         return toResponse(repository.save(entity));
     }
 
     public ProductoResponseDTO update(Long id, ProductoRequestDTO dto) {
         ProductoEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
+        entity.setIdCategoriaProducto(dto.getIdCategoriaProducto());
         entity.setNombre(dto.getNombre());
         entity.setDescripcion(dto.getDescripcion());
         entity.setPrecio(dto.getPrecio());
         entity.setDisponible(dto.getDisponible());
-        entity.setCategoriaProductoId(dto.getCategoriaProductoId());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +57,11 @@ public class ProductoService {
     private ProductoResponseDTO toResponse(ProductoEntity entity) {
         return ProductoResponseDTO.builder()
                 .id(entity.getId())
+                .idCategoriaProducto(entity.getIdCategoriaProducto())
                 .nombre(entity.getNombre())
                 .descripcion(entity.getDescripcion())
                 .precio(entity.getPrecio())
                 .disponible(entity.getDisponible())
-                .categoriaProductoId(entity.getCategoriaProductoId())
                 .build();
     }
 }

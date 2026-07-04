@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 public class MovimientoStockRequestDTO {
 
     @NotNull
-    private Long stockId;
+    private Long idStock;
+    @NotNull
+    private Long idEmpleado;
     @NotBlank
     private String tipoMovimiento;
     @NotNull
     private java.math.BigDecimal cantidad;
+    @NotBlank
     private String motivo;
-    private java.time.LocalDateTime fecha;
 }

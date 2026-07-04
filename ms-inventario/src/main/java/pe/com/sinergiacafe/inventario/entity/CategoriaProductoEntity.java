@@ -17,9 +17,12 @@ public class CategoriaProductoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_categoria_producto")
     private Long id;
 
     @NotBlank
+    @Column(name = "nombre")
     private String nombre;
+    @Column(name = "descripcion")
     private String descripcion;
 }

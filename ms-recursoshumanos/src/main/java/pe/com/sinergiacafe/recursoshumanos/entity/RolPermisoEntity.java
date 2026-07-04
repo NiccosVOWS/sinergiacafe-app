@@ -1,7 +1,6 @@
 package pe.com.sinergiacafe.recursoshumanos.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "rol_permiso")
+@IdClass(RolPermisoId.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,11 +16,9 @@ import lombok.NoArgsConstructor;
 public class RolPermisoEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
-    private Long rolId;
-    @NotNull
-    private Long permisoId;
+    @Column(name = "id_rol")
+    private Long idRol;
+    @Id
+    @Column(name = "id_permiso")
+    private Long idPermiso;
 }

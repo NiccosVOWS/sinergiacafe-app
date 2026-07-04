@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 public class AuditoriaResponseDTO {
 
     private Long id;
-    private Long usuarioId;
+    private Long idUsuario;
+    private String modulo;
     private String accion;
-    private java.time.LocalDateTime fecha;
+    private String tablaAfectada;
+    private Integer idRegistro;
     private String detalle;
+    private java.time.LocalDateTime fechaHora;
 }

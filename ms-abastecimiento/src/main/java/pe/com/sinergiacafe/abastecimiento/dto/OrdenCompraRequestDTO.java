@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 public class OrdenCompraRequestDTO {
 
     @NotNull
-    private Long proveedorId;
-    private java.time.LocalDateTime fecha;
-    private String estado;
+    private Long idProveedor;
+    @NotNull
+    private Long idEmpleado;
     @NotNull
     private java.math.BigDecimal montoTotal;
+    private String estado;
 }

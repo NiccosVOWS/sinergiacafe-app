@@ -17,13 +17,18 @@ public class StockEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_stock")
     private Long id;
 
     @NotNull
-    private Long productoId;
+    @Column(name = "id_insumo")
+    private Long idInsumo;
     @NotNull
+    @Column(name = "cantidad_actual")
     private java.math.BigDecimal cantidadActual;
     @NotNull
-    private java.math.BigDecimal stockMinimo;
-    private java.time.LocalDateTime fechaActualizacion;
+    @Column(name = "cantidad_minima")
+    private java.math.BigDecimal cantidadMinima;
+    @Column(name = "ultima_actualizacion")
+    private java.time.LocalDateTime ultimaActualizacion;
 }

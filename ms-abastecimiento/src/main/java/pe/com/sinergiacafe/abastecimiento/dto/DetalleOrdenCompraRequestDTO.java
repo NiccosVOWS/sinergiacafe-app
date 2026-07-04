@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 public class DetalleOrdenCompraRequestDTO {
 
     @NotNull
-    private Long ordenCompraId;
+    private Long idOrdenCompra;
     @NotNull
-    private Long insumoId;
+    private Long idInsumo;
     @NotNull
     private java.math.BigDecimal cantidad;
     @NotNull

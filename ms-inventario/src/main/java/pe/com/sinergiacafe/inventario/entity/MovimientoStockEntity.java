@@ -17,14 +17,24 @@ public class MovimientoStockEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_movimiento_stock")
     private Long id;
 
     @NotNull
-    private Long stockId;
+    @Column(name = "id_stock")
+    private Long idStock;
+    @NotNull
+    @Column(name = "id_empleado")
+    private Long idEmpleado;
     @NotBlank
+    @Column(name = "tipo_movimiento")
     private String tipoMovimiento;
     @NotNull
+    @Column(name = "cantidad")
     private java.math.BigDecimal cantidad;
+    @NotBlank
+    @Column(name = "motivo")
     private String motivo;
-    private java.time.LocalDateTime fecha;
+    @Column(name = "fecha_movimiento")
+    private java.time.LocalDateTime fechaMovimiento;
 }

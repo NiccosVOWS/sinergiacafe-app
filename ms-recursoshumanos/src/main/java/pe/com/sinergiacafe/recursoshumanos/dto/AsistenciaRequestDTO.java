@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class AsistenciaRequestDTO {
 
     @NotNull
-    private Long empleadoId;
+    private Long idEmpleado;
     @NotNull
     private java.time.LocalDate fecha;
     private java.time.LocalTime horaEntrada;

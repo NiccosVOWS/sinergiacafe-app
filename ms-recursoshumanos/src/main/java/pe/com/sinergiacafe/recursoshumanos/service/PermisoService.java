@@ -28,18 +28,18 @@ public class PermisoService {
 
     public PermisoResponseDTO create(PermisoRequestDTO dto) {
         PermisoEntity entity = new PermisoEntity();
-        entity.setNombre(dto.getNombre());
         entity.setModulo(dto.getModulo());
         entity.setAccion(dto.getAccion());
+        entity.setDescripcion(dto.getDescripcion());
         return toResponse(repository.save(entity));
     }
 
     public PermisoResponseDTO update(Long id, PermisoRequestDTO dto) {
         PermisoEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Permiso no encontrado con id: " + id));
-        entity.setNombre(dto.getNombre());
         entity.setModulo(dto.getModulo());
         entity.setAccion(dto.getAccion());
+        entity.setDescripcion(dto.getDescripcion());
         return toResponse(repository.save(entity));
     }
 
@@ -53,9 +53,9 @@ public class PermisoService {
     private PermisoResponseDTO toResponse(PermisoEntity entity) {
         return PermisoResponseDTO.builder()
                 .id(entity.getId())
-                .nombre(entity.getNombre())
                 .modulo(entity.getModulo())
                 .accion(entity.getAccion())
+                .descripcion(entity.getDescripcion())
                 .build();
     }
 }

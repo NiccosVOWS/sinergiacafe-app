@@ -13,4 +13,5 @@ public class RolRequestDTO {
     @NotBlank
     private String nombre;
     private String descripcion;
+    private Boolean activo;
 }

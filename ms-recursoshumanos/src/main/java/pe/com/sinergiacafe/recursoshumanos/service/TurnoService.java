@@ -28,20 +28,18 @@ public class TurnoService {
 
     public TurnoResponseDTO create(TurnoRequestDTO dto) {
         TurnoEntity entity = new TurnoEntity();
-        entity.setEmpleadoId(dto.getEmpleadoId());
-        entity.setFecha(dto.getFecha());
-        entity.setHoraEntrada(dto.getHoraEntrada());
-        entity.setHoraSalida(dto.getHoraSalida());
+        entity.setNombre(dto.getNombre());
+        entity.setHoraInicio(dto.getHoraInicio());
+        entity.setHoraFin(dto.getHoraFin());
         return toResponse(repository.save(entity));
     }
 
     public TurnoResponseDTO update(Long id, TurnoRequestDTO dto) {
         TurnoEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Turno no encontrado con id: " + id));
-        entity.setEmpleadoId(dto.getEmpleadoId());
-        entity.setFecha(dto.getFecha());
-        entity.setHoraEntrada(dto.getHoraEntrada());
-        entity.setHoraSalida(dto.getHoraSalida());
+        entity.setNombre(dto.getNombre());
+        entity.setHoraInicio(dto.getHoraInicio());
+        entity.setHoraFin(dto.getHoraFin());
         return toResponse(repository.save(entity));
     }
 
@@ -55,10 +53,9 @@ public class TurnoService {
     private TurnoResponseDTO toResponse(TurnoEntity entity) {
         return TurnoResponseDTO.builder()
                 .id(entity.getId())
-                .empleadoId(entity.getEmpleadoId())
-                .fecha(entity.getFecha())
-                .horaEntrada(entity.getHoraEntrada())
-                .horaSalida(entity.getHoraSalida())
+                .nombre(entity.getNombre())
+                .horaInicio(entity.getHoraInicio())
+                .horaFin(entity.getHoraFin())
                 .build();
     }
 }

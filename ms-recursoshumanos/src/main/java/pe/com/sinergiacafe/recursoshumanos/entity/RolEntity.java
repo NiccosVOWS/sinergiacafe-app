@@ -17,9 +17,14 @@ public class RolEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_rol")
     private Long id;
 
     @NotBlank
+    @Column(name = "nombre")
     private String nombre;
+    @Column(name = "descripcion")
     private String descripcion;
+    @Column(name = "activo")
+    private Boolean activo;
 }

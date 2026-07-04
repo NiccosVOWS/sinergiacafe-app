@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductoRequestDTO {
 
+    @NotNull
+    private Long idCategoriaProducto;
     @NotBlank
     private String nombre;
     private String descripcion;
     @NotNull
     private java.math.BigDecimal precio;
     private Boolean disponible;
-    @NotNull
-    private Long categoriaProductoId;
 }

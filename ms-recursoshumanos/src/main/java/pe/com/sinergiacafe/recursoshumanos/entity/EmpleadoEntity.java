@@ -17,16 +17,32 @@ public class EmpleadoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_empleado")
     private Long id;
 
+    @NotNull
+    @Column(name = "id_cargo")
+    private Long idCargo;
+    @NotNull
+    @Column(name = "id_turno")
+    private Long idTurno;
     @NotBlank
+    @Column(name = "nombres")
     private String nombres;
     @NotBlank
+    @Column(name = "apellidos")
     private String apellidos;
     @NotBlank
+    @Column(name = "dni")
     private String dni;
+    @Column(name = "telefono")
+    private String telefono;
+    @Email
+    @Column(name = "correo")
+    private String correo;
     @NotNull
-    private Long cargoId;
+    @Column(name = "fecha_ingreso")
     private java.time.LocalDate fechaIngreso;
-    private String estado;
+    @Column(name = "estado_laboral")
+    private String estadoLaboral;
 }

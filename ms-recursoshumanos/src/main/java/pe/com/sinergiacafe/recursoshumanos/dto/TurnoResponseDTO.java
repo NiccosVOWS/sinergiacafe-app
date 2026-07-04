@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 public class TurnoResponseDTO {
 
     private Long id;
-    private Long empleadoId;
-    private java.time.LocalDate fecha;
-    private java.time.LocalTime horaEntrada;
-    private java.time.LocalTime horaSalida;
+    private String nombre;
+    private java.time.LocalTime horaInicio;
+    private java.time.LocalTime horaFin;
 }
