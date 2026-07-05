@@ -7,7 +7,7 @@ import pe.com.sinergiacafe.marketing.dto.CampanaMarketingResponseDTO;
 import pe.com.sinergiacafe.marketing.entity.CampanaMarketingEntity;
 import pe.com.sinergiacafe.marketing.repository.CampanaMarketingRepository;
 import pe.com.sinergiacafe.marketing.service.CampanaMarketingService;
-import pe.com.sinergiacafe.marketing.shared.ResourceNotFoundException;
+import pe.com.sinergiacafe.marketing.exception.ResourceNotFoundException;
 
 import java.util.List;
 

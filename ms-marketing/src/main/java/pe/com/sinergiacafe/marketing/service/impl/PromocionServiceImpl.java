@@ -6,7 +6,7 @@ import pe.com.sinergiacafe.marketing.dto.*;
 import pe.com.sinergiacafe.marketing.entity.*;
 import pe.com.sinergiacafe.marketing.repository.*;
 import pe.com.sinergiacafe.marketing.service.PromocionService;
-import pe.com.sinergiacafe.marketing.shared.ResourceNotFoundException;
+import pe.com.sinergiacafe.marketing.exception.ResourceNotFoundException;
 
 import java.util.List;
 

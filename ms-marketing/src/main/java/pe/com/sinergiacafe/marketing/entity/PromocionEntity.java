@@ -45,10 +45,12 @@ public class PromocionEntity {
     @Column(name = "activo", nullable = false)
     private Boolean activo;
 
+    public enum TipoDescuento {
+        porcentaje, monto_fijo, producto_gratis
+    }
+
     @PrePersist
     public void prePersist() {
-        if (activo == null) {
-            activo = true;
-        }
+        if (activo == null) activo = true;
     }
 }
