@@ -1,14 +1,16 @@
 package pe.com.sinergiacafe.recursoshumanos.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.recursoshumanos.dto.AsistenciaRequestDTO;
 import pe.com.sinergiacafe.recursoshumanos.dto.AsistenciaResponseDTO;
 import pe.com.sinergiacafe.recursoshumanos.service.AsistenciaService;
 import pe.com.sinergiacafe.recursoshumanos.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -16,32 +18,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AsistenciaController {
 
-    private final AsistenciaService service;
+    private final AsistenciaService asistenciaService;
 
     @GetMapping
-    public ApiResponse<List<AsistenciaResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<AsistenciaResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(asistenciaService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<AsistenciaResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<AsistenciaResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(asistenciaService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/empleado/{idEmpleado}")
+    public ResponseEntity<ApiResponse<List<AsistenciaResponseDTO>>> listarPorEmpleado(
+            @PathVariable Long idEmpleado) {
+        return ResponseEntity.ok(ApiResponse.ok(asistenciaService.listarPorEmpleado(idEmpleado)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<AsistenciaResponseDTO> create(@Valid @RequestBody AsistenciaRequestDTO dto) {
-        return ApiResponse.ok("Asistencia creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<AsistenciaResponseDTO>> registrar(
+            @Valid @RequestBody AsistenciaRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Asistencia registrada exitosamente",
+                        asistenciaService.registrar(request)));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<AsistenciaResponseDTO> update(@PathVariable Long id, @Valid @RequestBody AsistenciaRequestDTO dto) {
-        return ApiResponse.ok("Asistencia actualizado correctamente", service.update(id, dto));
+    @PatchMapping("/{id}/hora-salida")
+    public ResponseEntity<ApiResponse<AsistenciaResponseDTO>> actualizarHoraSalida(
+            @PathVariable Long id,
+            @RequestParam LocalTime horaSalida) {
+        return ResponseEntity.ok(ApiResponse.ok("Hora de salida registrada exitosamente",
+                asistenciaService.actualizarHoraSalida(id, horaSalida)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Asistencia eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        asistenciaService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Asistencia eliminada exitosamente", null));
     }
 }

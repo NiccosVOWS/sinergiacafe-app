@@ -1,7 +1,6 @@
 package pe.com.sinergiacafe.recursoshumanos.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,14 +17,14 @@ public class PermisoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_permiso")
-    private Long id;
+    private Long idPermiso;
 
-    @NotBlank
-    @Column(name = "modulo")
+    @Column(name = "modulo", nullable = false, length = 80)
     private String modulo;
-    @NotBlank
-    @Column(name = "accion")
+
+    @Column(name = "accion", nullable = false, length = 50)
     private String accion;
-    @Column(name = "descripcion")
+
+    @Column(name = "descripcion", length = 200)
     private String descripcion;
 }

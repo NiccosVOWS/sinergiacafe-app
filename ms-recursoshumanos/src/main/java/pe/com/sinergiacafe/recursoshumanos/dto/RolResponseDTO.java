@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class RolResponseDTO {
 
-    private Long id;
+    private Long idRol;
     private String nombre;
     private String descripcion;
     private Boolean activo;

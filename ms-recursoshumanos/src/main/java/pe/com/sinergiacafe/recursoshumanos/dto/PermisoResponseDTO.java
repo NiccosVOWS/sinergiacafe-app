@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PermisoResponseDTO {
 
-    private Long id;
+    private Long idPermiso;
     private String modulo;
     private String accion;
     private String descripcion;

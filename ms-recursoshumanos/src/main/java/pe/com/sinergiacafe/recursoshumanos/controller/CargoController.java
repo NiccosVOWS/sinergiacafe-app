@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.recursoshumanos.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.recursoshumanos.dto.CargoRequestDTO;
 import pe.com.sinergiacafe.recursoshumanos.dto.CargoResponseDTO;
 import pe.com.sinergiacafe.recursoshumanos.service.CargoService;
 import pe.com.sinergiacafe.recursoshumanos.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CargoController {
 
-    private final CargoService service;
+    private final CargoService cargoService;
 
     @GetMapping
-    public ApiResponse<List<CargoResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<CargoResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(cargoService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<CargoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<CargoResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(cargoService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<CargoResponseDTO> create(@Valid @RequestBody CargoRequestDTO dto) {
-        return ApiResponse.ok("Cargo creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<CargoResponseDTO>> crear(
+            @Valid @RequestBody CargoRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Cargo creado exitosamente",
+                        cargoService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<CargoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody CargoRequestDTO dto) {
-        return ApiResponse.ok("Cargo actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<CargoResponseDTO>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody CargoRequestDTO request) {
+        return ResponseEntity.ok(ApiResponse.ok("Cargo actualizado exitosamente",
+                cargoService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Cargo eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        cargoService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Cargo eliminado exitosamente", null));
     }
 }

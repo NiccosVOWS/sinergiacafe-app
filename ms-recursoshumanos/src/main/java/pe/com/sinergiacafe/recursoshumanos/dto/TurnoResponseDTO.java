@@ -5,14 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class TurnoResponseDTO {
 
-    private Long id;
+    private Long idTurno;
     private String nombre;
-    private java.time.LocalTime horaInicio;
-    private java.time.LocalTime horaFin;
+    private LocalTime horaInicio;
+    private LocalTime horaFin;
 }

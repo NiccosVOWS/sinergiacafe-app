@@ -6,12 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class RolPermisoResponseDTO {
 
-    private Long id;
-    private Long rolId;
-    private Long permisoId;
+    private RolResponseDTO rol;
+    private PermisoResponseDTO permiso;
 }

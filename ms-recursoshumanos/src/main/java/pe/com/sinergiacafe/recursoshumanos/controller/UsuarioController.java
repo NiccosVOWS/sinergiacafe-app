@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.recursoshumanos.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.recursoshumanos.dto.UsuarioRequestDTO;
 import pe.com.sinergiacafe.recursoshumanos.dto.UsuarioResponseDTO;
 import pe.com.sinergiacafe.recursoshumanos.service.UsuarioService;
 import pe.com.sinergiacafe.recursoshumanos.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioController {
 
-    private final UsuarioService service;
+    private final UsuarioService usuarioService;
 
     @GetMapping
-    public ApiResponse<List<UsuarioResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<UsuarioResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(usuarioService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<UsuarioResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<UsuarioResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(usuarioService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<ApiResponse<UsuarioResponseDTO>> obtenerPorUsername(
+            @PathVariable String username) {
+        return ResponseEntity.ok(ApiResponse.ok(usuarioService.obtenerPorUsername(username)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<UsuarioResponseDTO> create(@Valid @RequestBody UsuarioRequestDTO dto) {
-        return ApiResponse.ok("Usuario creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<UsuarioResponseDTO>> crear(
+            @Valid @RequestBody UsuarioRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Usuario creado exitosamente",
+                        usuarioService.crear(request)));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<UsuarioResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDTO dto) {
-        return ApiResponse.ok("Usuario actualizado correctamente", service.update(id, dto));
+    @PatchMapping("/{id}/rol/{idRol}")
+    public ResponseEntity<ApiResponse<UsuarioResponseDTO>> actualizarRol(
+            @PathVariable Long id,
+            @PathVariable Long idRol) {
+        return ResponseEntity.ok(ApiResponse.ok("Rol actualizado exitosamente",
+                usuarioService.actualizarRol(id, idRol)));
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<ApiResponse<UsuarioResponseDTO>> actualizarEstado(
+            @PathVariable Long id,
+            @RequestParam Boolean activo) {
+        return ResponseEntity.ok(ApiResponse.ok("Estado actualizado exitosamente",
+                usuarioService.actualizarEstado(id, activo)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Usuario eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        usuarioService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Usuario eliminado exitosamente", null));
     }
 }

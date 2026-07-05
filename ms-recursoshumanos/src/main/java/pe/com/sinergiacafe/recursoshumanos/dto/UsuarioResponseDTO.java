@@ -5,18 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class UsuarioResponseDTO {
 
-    private Long id;
-    private Long idEmpleado;
-    private Long idRol;
+    private Long idUsuario;
+    private EmpleadoResponseDTO empleado;
+    private RolResponseDTO rol;
     private String username;
-    private String passwordHash;
     private Boolean activo;
-    private java.time.LocalDateTime fechaCreacion;
-    private java.time.LocalDateTime ultimoAcceso;
+    private LocalDateTime fechaCreacion;
+    private LocalDateTime ultimoAcceso;
 }

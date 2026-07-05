@@ -5,16 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class AsistenciaResponseDTO {
 
-    private Long id;
-    private Long idEmpleado;
-    private java.time.LocalDate fecha;
-    private java.time.LocalTime horaEntrada;
-    private java.time.LocalTime horaSalida;
+    private Long idAsistencia;
+    private EmpleadoResponseDTO empleado;
+    private LocalDate fecha;
+    private LocalTime horaEntrada;
+    private LocalTime horaSalida;
     private String observaciones;
 }

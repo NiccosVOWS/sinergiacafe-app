@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.recursoshumanos.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.recursoshumanos.dto.TurnoRequestDTO;
 import pe.com.sinergiacafe.recursoshumanos.dto.TurnoResponseDTO;
 import pe.com.sinergiacafe.recursoshumanos.service.TurnoService;
 import pe.com.sinergiacafe.recursoshumanos.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TurnoController {
 
-    private final TurnoService service;
+    private final TurnoService turnoService;
 
     @GetMapping
-    public ApiResponse<List<TurnoResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<TurnoResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(turnoService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<TurnoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<TurnoResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(turnoService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<TurnoResponseDTO> create(@Valid @RequestBody TurnoRequestDTO dto) {
-        return ApiResponse.ok("Turno creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<TurnoResponseDTO>> crear(
+            @Valid @RequestBody TurnoRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Turno creado exitosamente",
+                        turnoService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<TurnoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody TurnoRequestDTO dto) {
-        return ApiResponse.ok("Turno actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<TurnoResponseDTO>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody TurnoRequestDTO request) {
+        return ResponseEntity.ok(ApiResponse.ok("Turno actualizado exitosamente",
+                turnoService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Turno eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        turnoService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Turno eliminado exitosamente", null));
     }
 }

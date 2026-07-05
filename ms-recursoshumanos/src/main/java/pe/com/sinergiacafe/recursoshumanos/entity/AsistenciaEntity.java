@@ -1,11 +1,13 @@
 package pe.com.sinergiacafe.recursoshumanos.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "asistencia")
@@ -18,18 +20,21 @@ public class AsistenciaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_asistencia")
-    private Long id;
+    private Long idAsistencia;
 
-    @NotNull
-    @Column(name = "id_empleado")
-    private Long idEmpleado;
-    @NotNull
-    @Column(name = "fecha")
-    private java.time.LocalDate fecha;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_empleado", nullable = false)
+    private EmpleadoEntity empleado;
+
+    @Column(name = "fecha", nullable = false)
+    private LocalDate fecha;
+
     @Column(name = "hora_entrada")
-    private java.time.LocalTime horaEntrada;
+    private LocalTime horaEntrada;
+
     @Column(name = "hora_salida")
-    private java.time.LocalTime horaSalida;
-    @Column(name = "observaciones")
+    private LocalTime horaSalida;
+
+    @Column(name = "observaciones", length = 200)
     private String observaciones;
 }

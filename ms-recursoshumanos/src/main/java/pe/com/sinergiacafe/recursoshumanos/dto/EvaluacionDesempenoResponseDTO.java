@@ -5,16 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class EvaluacionDesempenoResponseDTO {
 
-    private Long id;
-    private Long idEmpleado;
-    private java.time.LocalDate fechaEvaluacion;
-    private java.math.BigDecimal puntaje;
+    private Long idEvaluacionDesempeno;
+    private EmpleadoResponseDTO empleado;
+    private LocalDate fechaEvaluacion;
+    private BigDecimal puntaje;
     private String criterios;
     private String observaciones;
 }

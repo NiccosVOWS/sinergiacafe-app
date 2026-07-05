@@ -1,7 +1,6 @@
 package pe.com.sinergiacafe.recursoshumanos.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,13 +17,19 @@ public class RolEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
-    private Long id;
+    private Long idRol;
 
-    @NotBlank
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false, length = 60)
     private String nombre;
-    @Column(name = "descripcion")
+
+    @Column(name = "descripcion", length = 200)
     private String descripcion;
-    @Column(name = "activo")
+
+    @Column(name = "activo", nullable = false)
     private Boolean activo;
+
+    @PrePersist
+    public void prePersist() {
+        if (activo == null) activo = true;
+    }
 }

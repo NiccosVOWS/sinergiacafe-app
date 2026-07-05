@@ -1,11 +1,12 @@
 package pe.com.sinergiacafe.recursoshumanos.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "turno")
@@ -18,15 +19,14 @@ public class TurnoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_turno")
-    private Long id;
+    private Long idTurno;
 
-    @NotBlank
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
-    @NotNull
-    @Column(name = "hora_inicio")
-    private java.time.LocalTime horaInicio;
-    @NotNull
-    @Column(name = "hora_fin")
-    private java.time.LocalTime horaFin;
+
+    @Column(name = "hora_inicio", nullable = false)
+    private LocalTime horaInicio;
+
+    @Column(name = "hora_fin", nullable = false)
+    private LocalTime horaFin;
 }

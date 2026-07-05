@@ -8,17 +8,22 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "rol_permiso")
-@IdClass(RolPermisoId.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class RolPermisoEntity {
 
-    @Id
-    @Column(name = "id_rol")
-    private Long idRol;
-    @Id
-    @Column(name = "id_permiso")
-    private Long idPermiso;
+    @EmbeddedId
+    private RolPermisoId id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("idRol")
+    @JoinColumn(name = "id_rol")
+    private RolEntity rol;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("idPermiso")
+    @JoinColumn(name = "id_permiso")
+    private PermisoEntity permiso;
 }

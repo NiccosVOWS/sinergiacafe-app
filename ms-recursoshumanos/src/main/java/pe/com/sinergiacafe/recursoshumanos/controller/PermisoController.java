@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.recursoshumanos.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.recursoshumanos.dto.PermisoRequestDTO;
 import pe.com.sinergiacafe.recursoshumanos.dto.PermisoResponseDTO;
 import pe.com.sinergiacafe.recursoshumanos.service.PermisoService;
 import pe.com.sinergiacafe.recursoshumanos.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PermisoController {
 
-    private final PermisoService service;
+    private final PermisoService permisoService;
 
     @GetMapping
-    public ApiResponse<List<PermisoResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<PermisoResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(permisoService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<PermisoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<PermisoResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(permisoService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/modulo/{modulo}")
+    public ResponseEntity<ApiResponse<List<PermisoResponseDTO>>> listarPorModulo(
+            @PathVariable String modulo) {
+        return ResponseEntity.ok(ApiResponse.ok(permisoService.listarPorModulo(modulo)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<PermisoResponseDTO> create(@Valid @RequestBody PermisoRequestDTO dto) {
-        return ApiResponse.ok("Permiso creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<PermisoResponseDTO>> crear(
+            @Valid @RequestBody PermisoRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Permiso creado exitosamente",
+                        permisoService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<PermisoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody PermisoRequestDTO dto) {
-        return ApiResponse.ok("Permiso actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<PermisoResponseDTO>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody PermisoRequestDTO request) {
+        return ResponseEntity.ok(ApiResponse.ok("Permiso actualizado exitosamente",
+                permisoService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Permiso eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        permisoService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Permiso eliminado exitosamente", null));
     }
 }
