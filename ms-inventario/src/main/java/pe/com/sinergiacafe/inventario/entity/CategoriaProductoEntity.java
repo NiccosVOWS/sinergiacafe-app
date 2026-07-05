@@ -1,7 +1,6 @@
 package pe.com.sinergiacafe.inventario.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +16,12 @@ public class CategoriaProductoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_categoria_producto")
+    private Long idCategoriaProducto;
 
-    @NotBlank
+    @Column(name = "nombre", nullable = false, length = 80)
     private String nombre;
+
+    @Column(name = "descripcion", length = 200)
     private String descripcion;
 }

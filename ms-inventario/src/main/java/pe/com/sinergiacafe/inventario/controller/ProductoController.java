@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.inventario.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.inventario.dto.ProductoRequestDTO;
 import pe.com.sinergiacafe.inventario.dto.ProductoResponseDTO;
 import pe.com.sinergiacafe.inventario.service.ProductoService;
 import pe.com.sinergiacafe.inventario.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductoController {
 
-    private final ProductoService service;
+    private final ProductoService productoService;
 
     @GetMapping
-    public ApiResponse<List<ProductoResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<ProductoResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(productoService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ProductoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<ProductoResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(productoService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<ProductoResponseDTO> create(@Valid @RequestBody ProductoRequestDTO dto) {
-        return ApiResponse.ok("Producto creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<ProductoResponseDTO>> crear(
+            @Valid @RequestBody ProductoRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Producto creado exitosamente",
+                        productoService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ProductoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ProductoRequestDTO dto) {
-        return ApiResponse.ok("Producto actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<ProductoResponseDTO>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductoRequestDTO request) {
+        return ResponseEntity.ok(ApiResponse.ok("Producto actualizado exitosamente",
+                productoService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Producto eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        productoService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Producto eliminado exitosamente", null));
     }
 }

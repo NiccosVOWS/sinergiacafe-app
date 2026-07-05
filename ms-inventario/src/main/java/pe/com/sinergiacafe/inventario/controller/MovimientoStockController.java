@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.inventario.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.inventario.dto.MovimientoStockRequestDTO;
 import pe.com.sinergiacafe.inventario.dto.MovimientoStockResponseDTO;
 import pe.com.sinergiacafe.inventario.service.MovimientoStockService;
 import pe.com.sinergiacafe.inventario.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovimientoStockController {
 
-    private final MovimientoStockService service;
+    private final MovimientoStockService movimientoStockService;
 
     @GetMapping
-    public ApiResponse<List<MovimientoStockResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<MovimientoStockResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(movimientoStockService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<MovimientoStockResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<MovimientoStockResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(movimientoStockService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<MovimientoStockResponseDTO> create(@Valid @RequestBody MovimientoStockRequestDTO dto) {
-        return ApiResponse.ok("MovimientoStock creado correctamente", service.create(dto));
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse<MovimientoStockResponseDTO> update(@PathVariable Long id, @Valid @RequestBody MovimientoStockRequestDTO dto) {
-        return ApiResponse.ok("MovimientoStock actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<MovimientoStockResponseDTO>> crear(
+            @Valid @RequestBody MovimientoStockRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Movimiento registrado exitosamente",
+                        movimientoStockService.crear(request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("MovimientoStock eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        movimientoStockService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Movimiento eliminado exitosamente", null));
     }
 }

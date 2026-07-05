@@ -5,16 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MovimientoStockResponseDTO {
 
-    private Long id;
-    private Long stockId;
+    private Long idMovimientoStock;
+    private Long idStock;
+    private Long idEmpleado;
     private String tipoMovimiento;
-    private java.math.BigDecimal cantidad;
+    private BigDecimal cantidad;
     private String motivo;
-    private java.time.LocalDateTime fecha;
+    private LocalDateTime fechaMovimiento;
 }

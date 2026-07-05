@@ -5,15 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class StockResponseDTO {
 
-    private Long id;
-    private Long productoId;
-    private java.math.BigDecimal cantidadActual;
-    private java.math.BigDecimal stockMinimo;
-    private java.time.LocalDateTime fechaActualizacion;
+    private Long idStock;
+    private Long idInsumo;
+    private BigDecimal cantidadActual;
+    private BigDecimal cantidadMinima;
+    private LocalDateTime ultimaActualizacion;
 }
