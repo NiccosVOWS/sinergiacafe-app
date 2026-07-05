@@ -8,13 +8,8 @@ import java.util.List;
 public interface ReporteFinancieroService {
 
     List<ReporteFinancieroResponseDTO> listarTodos();
-
     ReporteFinancieroResponseDTO obtenerPorId(Long id);
-
-    ReporteFinancieroResponseDTO crear(ReporteFinancieroRequestDTO request);
-
-    ReporteFinancieroResponseDTO actualizar(Long id, ReporteFinancieroRequestDTO request);
-
+    ReporteFinancieroResponseDTO obtenerPorPeriodo(String periodo);
+    ReporteFinancieroResponseDTO generar(ReporteFinancieroRequestDTO request);
     void eliminar(Long id);
-
 }

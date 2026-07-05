@@ -1,14 +1,17 @@
 package pe.com.sinergiacafe.finanzas.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import pe.com.sinergiacafe.finanzas.entity.EstadoCuentaPorPagar;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CuentaPorPagarResponseDTO {
 
     private Long idCuentaPorPagar;
@@ -16,5 +19,5 @@ public class CuentaPorPagarResponseDTO {
     private Long idOrdenCompra;
     private BigDecimal monto;
     private LocalDate fechaVencimiento;
-    private EstadoCuentaPorPagar estado;
+    private String estado;
 }

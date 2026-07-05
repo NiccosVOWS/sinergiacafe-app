@@ -25,37 +25,38 @@ public class CuentaPorPagarController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CuentaPorPagarResponseDTO>> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CuentaPorPagarResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok(cuentaPorPagarService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/proveedor/{idProveedor}")
+    public ResponseEntity<ApiResponse<List<CuentaPorPagarResponseDTO>>> listarPorProveedor(
+            @PathVariable Long idProveedor) {
+        return ResponseEntity.ok(ApiResponse.ok(
+                cuentaPorPagarService.listarPorProveedor(idProveedor)));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<CuentaPorPagarResponseDTO>> crear(
             @Valid @RequestBody CuentaPorPagarRequestDTO request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(
-                        "Cuenta por pagar creada exitosamente",
+                .body(ApiResponse.ok("Cuenta por pagar creada exitosamente",
                         cuentaPorPagarService.crear(request)));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CuentaPorPagarResponseDTO>> actualizar(
+    @PatchMapping("/{id}/estado/{estado}")
+    public ResponseEntity<ApiResponse<CuentaPorPagarResponseDTO>> actualizarEstado(
             @PathVariable Long id,
-            @Valid @RequestBody CuentaPorPagarRequestDTO request) {
-
-        return ResponseEntity.ok(ApiResponse.ok(
-                "Cuenta por pagar actualizada exitosamente",
-                cuentaPorPagarService.actualizar(id, request)));
+            @PathVariable String estado) {
+        return ResponseEntity.ok(ApiResponse.ok("Estado actualizado exitosamente",
+                cuentaPorPagarService.actualizarEstado(id, estado)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-
         cuentaPorPagarService.eliminar(id);
-
         return ResponseEntity.ok(ApiResponse.ok(
-                "Cuenta por pagar eliminada exitosamente",
-                null));
+                "Cuenta por pagar eliminada exitosamente", null));
     }
 }

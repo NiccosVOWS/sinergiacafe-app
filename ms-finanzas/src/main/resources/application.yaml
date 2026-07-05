@@ -2,9 +2,9 @@ spring:
   application:
     name: ms-finanzas
   datasource:
-    url: jdbc:mysql://localhost:3307/sinergiacafe_bd?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/sinergiacafe_bd?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
     username: root
-    password: gean
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: false
@@ -16,9 +16,9 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
 
-  server:
-    port: 8090
+server:
+  port: 8090
 
-  logging:
-    level:
-      pe.com.sinergiacafe: DEBUG
+logging:
+  level:
+    pe.com.sinergiacafe: DEBUG

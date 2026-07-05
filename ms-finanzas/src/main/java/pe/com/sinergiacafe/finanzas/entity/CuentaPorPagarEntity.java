@@ -38,10 +38,12 @@ public class CuentaPorPagarEntity {
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoCuentaPorPagar estado;
 
+    public enum EstadoCuentaPorPagar {
+        pendiente, pagada, vencida
+    }
+
     @PrePersist
     public void prePersist() {
-        if (estado == null) {
-            estado = EstadoCuentaPorPagar.PENDIENTE;
-        }
+        if (estado == null) estado = EstadoCuentaPorPagar.pendiente;
     }
 }

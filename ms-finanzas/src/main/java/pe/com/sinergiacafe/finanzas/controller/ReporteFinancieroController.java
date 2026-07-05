@@ -25,37 +25,30 @@ public class ReporteFinancieroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ReporteFinancieroResponseDTO>> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ReporteFinancieroResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok(reporteFinancieroService.obtenerPorId(id)));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ReporteFinancieroResponseDTO>> crear(
-            @Valid @RequestBody ReporteFinancieroRequestDTO request) {
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(
-                        "Reporte financiero creado exitosamente",
-                        reporteFinancieroService.crear(request)));
+    @GetMapping("/periodo/{periodo}")
+    public ResponseEntity<ApiResponse<ReporteFinancieroResponseDTO>> obtenerPorPeriodo(
+            @PathVariable String periodo) {
+        return ResponseEntity.ok(ApiResponse.ok(
+                reporteFinancieroService.obtenerPorPeriodo(periodo)));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ReporteFinancieroResponseDTO>> actualizar(
-            @PathVariable Long id,
+    @PostMapping
+    public ResponseEntity<ApiResponse<ReporteFinancieroResponseDTO>> generar(
             @Valid @RequestBody ReporteFinancieroRequestDTO request) {
-
-        return ResponseEntity.ok(ApiResponse.ok(
-                "Reporte financiero actualizado exitosamente",
-                reporteFinancieroService.actualizar(id, request)));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Reporte financiero generado exitosamente",
+                        reporteFinancieroService.generar(request)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-
         reporteFinancieroService.eliminar(id);
-
         return ResponseEntity.ok(ApiResponse.ok(
-                "Reporte financiero eliminado exitosamente",
-                null));
+                "Reporte financiero eliminado exitosamente", null));
     }
 }
