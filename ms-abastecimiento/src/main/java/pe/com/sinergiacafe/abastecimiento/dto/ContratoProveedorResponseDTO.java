@@ -5,16 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ContratoProveedorResponseDTO {
 
-    private Long id;
-    private Long idProveedor;
-    private java.time.LocalDate fechaInicio;
-    private java.time.LocalDate fechaFin;
+    private Long idContratoProveedor;
+    private ProveedorResponseDTO proveedor;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
     private String condiciones;
     private Boolean activo;
 }

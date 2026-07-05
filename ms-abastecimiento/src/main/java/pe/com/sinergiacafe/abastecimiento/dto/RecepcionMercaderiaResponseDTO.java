@@ -5,16 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class RecepcionMercaderiaResponseDTO {
 
-    private Long id;
-    private Long idOrdenCompra;
+    private Long idRecepcionMercaderia;
+    private OrdenCompraResponseDTO ordenCompra;
     private Long idEmpleado;
-    private java.time.LocalDateTime fechaRecepcion;
+    private LocalDateTime fechaRecepcion;
     private Boolean conforme;
     private String observaciones;
 }

@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.abastecimiento.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.abastecimiento.dto.RecepcionMercaderiaRequestDTO;
 import pe.com.sinergiacafe.abastecimiento.dto.RecepcionMercaderiaResponseDTO;
 import pe.com.sinergiacafe.abastecimiento.service.RecepcionMercaderiaService;
 import pe.com.sinergiacafe.abastecimiento.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecepcionMercaderiaController {
 
-    private final RecepcionMercaderiaService service;
+    private final RecepcionMercaderiaService recepcionMercaderiaService;
 
     @GetMapping
-    public ApiResponse<List<RecepcionMercaderiaResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<RecepcionMercaderiaResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(recepcionMercaderiaService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<RecepcionMercaderiaResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<RecepcionMercaderiaResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(recepcionMercaderiaService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/orden/{idOrdenCompra}")
+    public ResponseEntity<ApiResponse<List<RecepcionMercaderiaResponseDTO>>> listarPorOrden(
+            @PathVariable Long idOrdenCompra) {
+        return ResponseEntity.ok(ApiResponse.ok(
+                recepcionMercaderiaService.listarPorOrden(idOrdenCompra)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<RecepcionMercaderiaResponseDTO> create(@Valid @RequestBody RecepcionMercaderiaRequestDTO dto) {
-        return ApiResponse.ok("RecepcionMercaderia creado correctamente", service.create(dto));
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse<RecepcionMercaderiaResponseDTO> update(@PathVariable Long id, @Valid @RequestBody RecepcionMercaderiaRequestDTO dto) {
-        return ApiResponse.ok("RecepcionMercaderia actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<RecepcionMercaderiaResponseDTO>> registrar(
+            @Valid @RequestBody RecepcionMercaderiaRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Recepción registrada exitosamente",
+                        recepcionMercaderiaService.registrar(request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("RecepcionMercaderia eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        recepcionMercaderiaService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Recepción eliminada exitosamente", null));
     }
 }

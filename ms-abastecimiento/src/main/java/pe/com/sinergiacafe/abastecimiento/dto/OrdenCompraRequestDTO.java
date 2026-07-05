@@ -2,19 +2,21 @@ package pe.com.sinergiacafe.abastecimiento.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrdenCompraRequestDTO {
 
-    @NotNull
+    @NotNull(message = "El proveedor es obligatorio")
     private Long idProveedor;
-    @NotNull
+
+    @NotNull(message = "El empleado es obligatorio")
     private Long idEmpleado;
-    @NotNull
-    private java.math.BigDecimal montoTotal;
-    private String estado;
+
+    private String observaciones;
 }

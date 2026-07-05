@@ -5,16 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class DetalleOrdenCompraResponseDTO {
 
-    private Long id;
+    private Long idDetalleOrdenCompra;
     private Long idOrdenCompra;
     private Long idInsumo;
-    private java.math.BigDecimal cantidad;
-    private java.math.BigDecimal precioUnitario;
-    private java.math.BigDecimal subtotal;
+    private BigDecimal cantidad;
+    private BigDecimal precioUnitario;
+    private BigDecimal subtotal;
 }

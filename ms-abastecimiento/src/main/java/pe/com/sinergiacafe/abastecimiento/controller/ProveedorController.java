@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.abastecimiento.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.abastecimiento.dto.ProveedorRequestDTO;
 import pe.com.sinergiacafe.abastecimiento.dto.ProveedorResponseDTO;
 import pe.com.sinergiacafe.abastecimiento.service.ProveedorService;
 import pe.com.sinergiacafe.abastecimiento.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProveedorController {
 
-    private final ProveedorService service;
+    private final ProveedorService proveedorService;
 
     @GetMapping
-    public ApiResponse<List<ProveedorResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<ProveedorResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(proveedorService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<ProveedorResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<ProveedorResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(proveedorService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<ProveedorResponseDTO> create(@Valid @RequestBody ProveedorRequestDTO dto) {
-        return ApiResponse.ok("Proveedor creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<ProveedorResponseDTO>> crear(
+            @Valid @RequestBody ProveedorRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Proveedor creado exitosamente",
+                        proveedorService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ProveedorResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ProveedorRequestDTO dto) {
-        return ApiResponse.ok("Proveedor actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<ProveedorResponseDTO>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ProveedorRequestDTO request) {
+        return ResponseEntity.ok(ApiResponse.ok("Proveedor actualizado exitosamente",
+                proveedorService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Proveedor eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        proveedorService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Proveedor eliminado exitosamente", null));
     }
 }

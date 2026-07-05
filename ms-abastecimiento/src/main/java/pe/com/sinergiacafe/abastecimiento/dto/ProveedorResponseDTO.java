@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ProveedorResponseDTO {
 
-    private Long id;
+    private Long idProveedor;
     private String razonSocial;
     private String ruc;
     private String contacto;

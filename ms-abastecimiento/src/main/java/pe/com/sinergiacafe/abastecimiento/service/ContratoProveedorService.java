@@ -2,66 +2,15 @@ package pe.com.sinergiacafe.abastecimiento.service;
 
 import pe.com.sinergiacafe.abastecimiento.dto.ContratoProveedorRequestDTO;
 import pe.com.sinergiacafe.abastecimiento.dto.ContratoProveedorResponseDTO;
-import pe.com.sinergiacafe.abastecimiento.entity.ContratoProveedorEntity;
-import pe.com.sinergiacafe.abastecimiento.exception.ResourceNotFoundException;
-import pe.com.sinergiacafe.abastecimiento.repository.ContratoProveedorRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ContratoProveedorService {
+public interface ContratoProveedorService {
 
-    private final ContratoProveedorRepository repository;
-
-    public List<ContratoProveedorResponseDTO> findAll() {
-        return repository.findAll().stream().map(this::toResponse).toList();
-    }
-
-    public ContratoProveedorResponseDTO findById(Long id) {
-        ContratoProveedorEntity entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ContratoProveedor no encontrado con id: " + id));
-        return toResponse(entity);
-    }
-
-    public ContratoProveedorResponseDTO create(ContratoProveedorRequestDTO dto) {
-        ContratoProveedorEntity entity = new ContratoProveedorEntity();
-        entity.setIdProveedor(dto.getIdProveedor());
-        entity.setFechaInicio(dto.getFechaInicio());
-        entity.setFechaFin(dto.getFechaFin());
-        entity.setCondiciones(dto.getCondiciones());
-        entity.setActivo(dto.getActivo());
-        return toResponse(repository.save(entity));
-    }
-
-    public ContratoProveedorResponseDTO update(Long id, ContratoProveedorRequestDTO dto) {
-        ContratoProveedorEntity entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ContratoProveedor no encontrado con id: " + id));
-        entity.setIdProveedor(dto.getIdProveedor());
-        entity.setFechaInicio(dto.getFechaInicio());
-        entity.setFechaFin(dto.getFechaFin());
-        entity.setCondiciones(dto.getCondiciones());
-        entity.setActivo(dto.getActivo());
-        return toResponse(repository.save(entity));
-    }
-
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("ContratoProveedor no encontrado con id: " + id);
-        }
-        repository.deleteById(id);
-    }
-
-    private ContratoProveedorResponseDTO toResponse(ContratoProveedorEntity entity) {
-        return ContratoProveedorResponseDTO.builder()
-                .id(entity.getId())
-                .idProveedor(entity.getIdProveedor())
-                .fechaInicio(entity.getFechaInicio())
-                .fechaFin(entity.getFechaFin())
-                .condiciones(entity.getCondiciones())
-                .activo(entity.getActivo())
-                .build();
-    }
+    List<ContratoProveedorResponseDTO> listarTodos();
+    List<ContratoProveedorResponseDTO> listarPorProveedor(Long idProveedor);
+    ContratoProveedorResponseDTO obtenerPorId(Long id);
+    ContratoProveedorResponseDTO crear(ContratoProveedorRequestDTO request);
+    ContratoProveedorResponseDTO actualizar(Long id, ContratoProveedorRequestDTO request);
+    void eliminar(Long id);
 }

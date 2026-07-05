@@ -5,16 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class OrdenCompraResponseDTO {
 
-    private Long id;
-    private Long idProveedor;
+    private Long idOrdenCompra;
+    private ProveedorResponseDTO proveedor;
     private Long idEmpleado;
-    private java.time.LocalDateTime fechaOrden;
-    private java.math.BigDecimal montoTotal;
+    private LocalDateTime fechaOrden;
+    private BigDecimal montoTotal;
     private String estado;
 }

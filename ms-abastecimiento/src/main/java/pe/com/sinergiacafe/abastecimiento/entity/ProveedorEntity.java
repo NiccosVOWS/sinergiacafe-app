@@ -1,7 +1,6 @@
 package pe.com.sinergiacafe.abastecimiento.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,23 +17,31 @@ public class ProveedorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_proveedor")
-    private Long id;
+    private Long idProveedor;
 
-    @NotBlank
-    @Column(name = "razon_social")
+    @Column(name = "razon_social", nullable = false, length = 200)
     private String razonSocial;
-    @NotBlank
-    @Column(name = "ruc")
+
+    @Column(name = "ruc", nullable = false, length = 11, unique = true)
     private String ruc;
-    @Column(name = "contacto")
+
+    @Column(name = "contacto", length = 100)
     private String contacto;
-    @Column(name = "telefono")
+
+    @Column(name = "telefono", length = 15)
     private String telefono;
-    @Email
-    @Column(name = "correo")
+
+    @Column(name = "correo", length = 100)
     private String correo;
-    @Column(name = "direccion")
+
+    @Column(name = "direccion", length = 300)
     private String direccion;
-    @Column(name = "activo")
+
+    @Column(name = "activo", nullable = false)
     private Boolean activo;
+
+    @PrePersist
+    public void prePersist() {
+        if (activo == null) activo = true;
+    }
 }

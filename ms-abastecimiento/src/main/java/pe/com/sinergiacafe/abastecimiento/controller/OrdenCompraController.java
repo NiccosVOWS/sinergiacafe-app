@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.abastecimiento.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.abastecimiento.dto.OrdenCompraRequestDTO;
 import pe.com.sinergiacafe.abastecimiento.dto.OrdenCompraResponseDTO;
 import pe.com.sinergiacafe.abastecimiento.service.OrdenCompraService;
 import pe.com.sinergiacafe.abastecimiento.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrdenCompraController {
 
-    private final OrdenCompraService service;
+    private final OrdenCompraService ordenCompraService;
 
     @GetMapping
-    public ApiResponse<List<OrdenCompraResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<OrdenCompraResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(ordenCompraService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<OrdenCompraResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<OrdenCompraResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(ordenCompraService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<OrdenCompraResponseDTO> create(@Valid @RequestBody OrdenCompraRequestDTO dto) {
-        return ApiResponse.ok("OrdenCompra creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<OrdenCompraResponseDTO>> crear(
+            @Valid @RequestBody OrdenCompraRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Orden de compra creada exitosamente",
+                        ordenCompraService.crear(request)));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<OrdenCompraResponseDTO> update(@PathVariable Long id, @Valid @RequestBody OrdenCompraRequestDTO dto) {
-        return ApiResponse.ok("OrdenCompra actualizado correctamente", service.update(id, dto));
+    @PatchMapping("/{id}/estado/{estado}")
+    public ResponseEntity<ApiResponse<OrdenCompraResponseDTO>> actualizarEstado(
+            @PathVariable Long id,
+            @PathVariable String estado) {
+        return ResponseEntity.ok(ApiResponse.ok("Estado actualizado exitosamente",
+                ordenCompraService.actualizarEstado(id, estado)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("OrdenCompra eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        ordenCompraService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Orden de compra eliminada exitosamente", null));
     }
 }
