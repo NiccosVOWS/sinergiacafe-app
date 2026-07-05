@@ -8,12 +8,9 @@ import java.util.List;
 public interface InspeccionService {
 
     List<InspeccionResponseDTO> listarTodos();
-
+    List<InspeccionResponseDTO> listarPorArea(String area);
     InspeccionResponseDTO obtenerPorId(Long id);
-
-    InspeccionResponseDTO crear(InspeccionRequestDTO request);
-
-    InspeccionResponseDTO actualizar(Long id, InspeccionRequestDTO request);
-
+    InspeccionResponseDTO registrar(InspeccionRequestDTO request);
+    InspeccionResponseDTO actualizarResultado(Long id, String resultadoGeneral);
     void eliminar(Long id);
 }

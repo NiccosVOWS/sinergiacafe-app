@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface RespuestaEncuestaRepository extends JpaRepository<RespuestaEncuestaEntity, Long> {
 
-    List<RespuestaEncuestaEntity> findByEncuestaSatisfaccionIdEncuestaSatisfaccion(Long idEncuestaSatisfaccion);
+    List<RespuestaEncuestaEntity> findByEncuestaSatisfaccion_IdEncuestaSatisfaccion(Long idEncuestaSatisfaccion);
 }

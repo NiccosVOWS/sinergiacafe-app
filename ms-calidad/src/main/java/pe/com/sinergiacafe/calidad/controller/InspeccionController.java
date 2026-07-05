@@ -17,38 +17,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InspeccionController {
 
-    private final InspeccionService service;
+    private final InspeccionService inspeccionService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<InspeccionResponseDTO>>> listar() {
-        return ResponseEntity.ok(ApiResponse.ok(service.listarTodos()));
+    public ResponseEntity<ApiResponse<List<InspeccionResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(inspeccionService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<InspeccionResponseDTO>> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok(service.obtenerPorId(id)));
+    public ResponseEntity<ApiResponse<InspeccionResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(inspeccionService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/area/{area}")
+    public ResponseEntity<ApiResponse<List<InspeccionResponseDTO>>> listarPorArea(
+            @PathVariable String area) {
+        return ResponseEntity.ok(ApiResponse.ok(inspeccionService.listarPorArea(area)));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<InspeccionResponseDTO>> crear(
+    public ResponseEntity<ApiResponse<InspeccionResponseDTO>> registrar(
             @Valid @RequestBody InspeccionRequestDTO request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok("Inspección creada correctamente", service.crear(request)));
+                .body(ApiResponse.ok("Inspección registrada exitosamente",
+                        inspeccionService.registrar(request)));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<InspeccionResponseDTO>> actualizar(
+    @PatchMapping("/{id}/resultado/{resultadoGeneral}")
+    public ResponseEntity<ApiResponse<InspeccionResponseDTO>> actualizarResultado(
             @PathVariable Long id,
-            @Valid @RequestBody InspeccionRequestDTO request) {
-
-        return ResponseEntity.ok(ApiResponse.ok("Inspección actualizada correctamente",
-                service.actualizar(id, request)));
+            @PathVariable String resultadoGeneral) {
+        return ResponseEntity.ok(ApiResponse.ok("Resultado actualizado exitosamente",
+                inspeccionService.actualizarResultado(id, resultadoGeneral)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.ok(ApiResponse.ok("Inspección eliminada correctamente", null));
+        inspeccionService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Inspección eliminada exitosamente", null));
     }
 }

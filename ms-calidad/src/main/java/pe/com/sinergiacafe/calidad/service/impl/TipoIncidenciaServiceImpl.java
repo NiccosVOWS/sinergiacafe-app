@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import pe.com.sinergiacafe.calidad.dto.TipoIncidenciaRequestDTO;
 import pe.com.sinergiacafe.calidad.dto.TipoIncidenciaResponseDTO;
 import pe.com.sinergiacafe.calidad.entity.TipoIncidenciaEntity;
+import pe.com.sinergiacafe.calidad.exception.ResourceNotFoundException;
 import pe.com.sinergiacafe.calidad.repository.TipoIncidenciaRepository;
 import pe.com.sinergiacafe.calidad.service.TipoIncidenciaService;
-import pe.com.sinergiacafe.calidad.shared.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -15,58 +15,50 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TipoIncidenciaServiceImpl implements TipoIncidenciaService {
 
-    private final TipoIncidenciaRepository repository;
+    private final TipoIncidenciaRepository tipoIncidenciaRepository;
 
     @Override
     public List<TipoIncidenciaResponseDTO> listarTodos() {
-        return repository.findAll()
+        return tipoIncidenciaRepository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponseDTO)
                 .toList();
     }
 
     @Override
     public TipoIncidenciaResponseDTO obtenerPorId(Long id) {
-        TipoIncidenciaEntity entity = repository.findById(id)
+        TipoIncidenciaEntity entity = tipoIncidenciaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("TipoIncidencia", id));
-
-        return toDTO(entity);
+        return toResponseDTO(entity);
     }
 
     @Override
     public TipoIncidenciaResponseDTO crear(TipoIncidenciaRequestDTO request) {
-
         TipoIncidenciaEntity entity = TipoIncidenciaEntity.builder()
                 .nombre(request.getNombre())
                 .descripcion(request.getDescripcion())
                 .build();
-
-        return toDTO(repository.save(entity));
+        return toResponseDTO(tipoIncidenciaRepository.save(entity));
     }
 
     @Override
     public TipoIncidenciaResponseDTO actualizar(Long id, TipoIncidenciaRequestDTO request) {
-
-        TipoIncidenciaEntity entity = repository.findById(id)
+        TipoIncidenciaEntity entity = tipoIncidenciaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("TipoIncidencia", id));
-
         entity.setNombre(request.getNombre());
         entity.setDescripcion(request.getDescripcion());
-
-        return toDTO(repository.save(entity));
+        return toResponseDTO(tipoIncidenciaRepository.save(entity));
     }
 
     @Override
     public void eliminar(Long id) {
-
-        if (!repository.existsById(id)) {
+        if (!tipoIncidenciaRepository.existsById(id)) {
             throw new ResourceNotFoundException("TipoIncidencia", id);
         }
-
-        repository.deleteById(id);
+        tipoIncidenciaRepository.deleteById(id);
     }
 
-    private TipoIncidenciaResponseDTO toDTO(TipoIncidenciaEntity entity) {
+    public TipoIncidenciaResponseDTO toResponseDTO(TipoIncidenciaEntity entity) {
         return TipoIncidenciaResponseDTO.builder()
                 .idTipoIncidencia(entity.getIdTipoIncidencia())
                 .nombre(entity.getNombre())

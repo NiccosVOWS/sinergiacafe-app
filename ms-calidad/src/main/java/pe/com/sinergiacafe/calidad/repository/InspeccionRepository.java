@@ -11,8 +11,6 @@ import java.util.List;
 public interface InspeccionRepository extends JpaRepository<InspeccionEntity, Long> {
 
     List<InspeccionEntity> findByIdEmpleado(Long idEmpleado);
-
     List<InspeccionEntity> findByAreaInspeccionada(String areaInspeccionada);
-
     List<InspeccionEntity> findByFechaInspeccionBetween(LocalDateTime inicio, LocalDateTime fin);
 }

@@ -1,4 +1,4 @@
-package pe.com.sinergiacafe.calidad.shared;
+package pe.com.sinergiacafe.calidad.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

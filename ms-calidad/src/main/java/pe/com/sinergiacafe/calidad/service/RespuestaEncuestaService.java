@@ -8,12 +8,8 @@ import java.util.List;
 public interface RespuestaEncuestaService {
 
     List<RespuestaEncuestaResponseDTO> listarTodos();
-
+    List<RespuestaEncuestaResponseDTO> listarPorEncuesta(Long idEncuestaSatisfaccion);
     RespuestaEncuestaResponseDTO obtenerPorId(Long id);
-
-    RespuestaEncuestaResponseDTO crear(RespuestaEncuestaRequestDTO request);
-
-    RespuestaEncuestaResponseDTO actualizar(Long id, RespuestaEncuestaRequestDTO request);
-
+    RespuestaEncuestaResponseDTO registrar(RespuestaEncuestaRequestDTO request);
     void eliminar(Long id);
 }

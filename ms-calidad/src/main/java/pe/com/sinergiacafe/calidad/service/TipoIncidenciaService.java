@@ -8,12 +8,8 @@ import java.util.List;
 public interface TipoIncidenciaService {
 
     List<TipoIncidenciaResponseDTO> listarTodos();
-
     TipoIncidenciaResponseDTO obtenerPorId(Long id);
-
     TipoIncidenciaResponseDTO crear(TipoIncidenciaRequestDTO request);
-
     TipoIncidenciaResponseDTO actualizar(Long id, TipoIncidenciaRequestDTO request);
-
     void eliminar(Long id);
 }

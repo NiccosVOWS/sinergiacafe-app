@@ -17,38 +17,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EncuestaSatisfaccionController {
 
-    private final EncuestaSatisfaccionService service;
+    private final EncuestaSatisfaccionService encuestaSatisfaccionService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EncuestaSatisfaccionResponseDTO>>> listar() {
-        return ResponseEntity.ok(ApiResponse.ok(service.listarTodos()));
+    public ResponseEntity<ApiResponse<List<EncuestaSatisfaccionResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(encuestaSatisfaccionService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<EncuestaSatisfaccionResponseDTO>> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok(service.obtenerPorId(id)));
+    public ResponseEntity<ApiResponse<EncuestaSatisfaccionResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(encuestaSatisfaccionService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/cliente/{idCliente}")
+    public ResponseEntity<ApiResponse<List<EncuestaSatisfaccionResponseDTO>>> listarPorCliente(
+            @PathVariable Long idCliente) {
+        return ResponseEntity.ok(ApiResponse.ok(
+                encuestaSatisfaccionService.listarPorCliente(idCliente)));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<EncuestaSatisfaccionResponseDTO>> crear(
+    public ResponseEntity<ApiResponse<EncuestaSatisfaccionResponseDTO>> registrar(
             @Valid @RequestBody EncuestaSatisfaccionRequestDTO request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok("Encuesta creada correctamente", service.crear(request)));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<EncuestaSatisfaccionResponseDTO>> actualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody EncuestaSatisfaccionRequestDTO request) {
-
-        return ResponseEntity.ok(ApiResponse.ok("Encuesta actualizada correctamente",
-                service.actualizar(id, request)));
+                .body(ApiResponse.ok("Encuesta registrada exitosamente",
+                        encuestaSatisfaccionService.registrar(request)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.ok(ApiResponse.ok("Encuesta eliminada correctamente", null));
+        encuestaSatisfaccionService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Encuesta eliminada exitosamente", null));
     }
 }

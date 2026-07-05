@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface ResultadoInspeccionRepository extends JpaRepository<ResultadoInspeccionEntity, Long> {
 
-    List<ResultadoInspeccionEntity> findByInspeccionIdInspeccion(Long idInspeccion);
-
-    List<ResultadoInspeccionEntity> findByEstandarCalidadIdEstandarCalidad(Long idEstandarCalidad);
+    List<ResultadoInspeccionEntity> findByInspeccion_IdInspeccion(Long idInspeccion);
+    List<ResultadoInspeccionEntity> findByEstandarCalidad_IdEstandarCalidad(Long idEstandarCalidad);
 }

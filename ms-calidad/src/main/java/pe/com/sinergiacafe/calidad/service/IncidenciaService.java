@@ -8,12 +8,9 @@ import java.util.List;
 public interface IncidenciaService {
 
     List<IncidenciaResponseDTO> listarTodos();
-
+    List<IncidenciaResponseDTO> listarPorEstado(String estado);
     IncidenciaResponseDTO obtenerPorId(Long id);
-
-    IncidenciaResponseDTO crear(IncidenciaRequestDTO request);
-
-    IncidenciaResponseDTO actualizar(Long id, IncidenciaRequestDTO request);
-
+    IncidenciaResponseDTO registrar(IncidenciaRequestDTO request);
+    IncidenciaResponseDTO actualizarEstado(Long id, String estado);
     void eliminar(Long id);
 }

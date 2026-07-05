@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import pe.com.sinergiacafe.calidad.dto.EstandarCalidadRequestDTO;
 import pe.com.sinergiacafe.calidad.dto.EstandarCalidadResponseDTO;
 import pe.com.sinergiacafe.calidad.entity.EstandarCalidadEntity;
+import pe.com.sinergiacafe.calidad.exception.ResourceNotFoundException;
 import pe.com.sinergiacafe.calidad.repository.EstandarCalidadRepository;
 import pe.com.sinergiacafe.calidad.service.EstandarCalidadService;
-import pe.com.sinergiacafe.calidad.shared.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -15,60 +15,60 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EstandarCalidadServiceImpl implements EstandarCalidadService {
 
-    private final EstandarCalidadRepository repository;
+    private final EstandarCalidadRepository estandarCalidadRepository;
 
     @Override
     public List<EstandarCalidadResponseDTO> listarTodos() {
-        return repository.findAll()
+        return estandarCalidadRepository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public List<EstandarCalidadResponseDTO> listarPorAplicableA(String aplicableA) {
+        return estandarCalidadRepository.findByAplicableA(aplicableA)
+                .stream()
+                .map(this::toResponseDTO)
                 .toList();
     }
 
     @Override
     public EstandarCalidadResponseDTO obtenerPorId(Long id) {
-        EstandarCalidadEntity entity = repository.findById(id)
+        EstandarCalidadEntity entity = estandarCalidadRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("EstandarCalidad", id));
-
-        return toDTO(entity);
+        return toResponseDTO(entity);
     }
 
     @Override
     public EstandarCalidadResponseDTO crear(EstandarCalidadRequestDTO request) {
-
         EstandarCalidadEntity entity = EstandarCalidadEntity.builder()
                 .nombre(request.getNombre())
                 .descripcion(request.getDescripcion())
                 .aplicableA(request.getAplicableA())
                 .build();
-
-        return toDTO(repository.save(entity));
+        return toResponseDTO(estandarCalidadRepository.save(entity));
     }
 
     @Override
     public EstandarCalidadResponseDTO actualizar(Long id, EstandarCalidadRequestDTO request) {
-
-        EstandarCalidadEntity entity = repository.findById(id)
+        EstandarCalidadEntity entity = estandarCalidadRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("EstandarCalidad", id));
-
         entity.setNombre(request.getNombre());
         entity.setDescripcion(request.getDescripcion());
         entity.setAplicableA(request.getAplicableA());
-
-        return toDTO(repository.save(entity));
+        return toResponseDTO(estandarCalidadRepository.save(entity));
     }
 
     @Override
     public void eliminar(Long id) {
-
-        if (!repository.existsById(id)) {
+        if (!estandarCalidadRepository.existsById(id)) {
             throw new ResourceNotFoundException("EstandarCalidad", id);
         }
-
-        repository.deleteById(id);
+        estandarCalidadRepository.deleteById(id);
     }
 
-    private EstandarCalidadResponseDTO toDTO(EstandarCalidadEntity entity) {
+    public EstandarCalidadResponseDTO toResponseDTO(EstandarCalidadEntity entity) {
         return EstandarCalidadResponseDTO.builder()
                 .idEstandarCalidad(entity.getIdEstandarCalidad())
                 .nombre(entity.getNombre())

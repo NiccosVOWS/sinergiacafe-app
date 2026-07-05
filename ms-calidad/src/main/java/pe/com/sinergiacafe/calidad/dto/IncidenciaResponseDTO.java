@@ -1,26 +1,23 @@
 package pe.com.sinergiacafe.calidad.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import pe.com.sinergiacafe.calidad.entity.EstadoIncidencia;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class IncidenciaResponseDTO {
 
     private Long idIncidencia;
-
-    private TipoIncidenciaSimpleDTO tipoIncidencia;
-
+    private TipoIncidenciaResponseDTO tipoIncidencia;
     private Long idEmpleado;
-
     private LocalDateTime fechaIncidencia;
-
     private String area;
-
     private String descripcion;
-
-    private EstadoIncidencia estado;
+    private String estado;
 }

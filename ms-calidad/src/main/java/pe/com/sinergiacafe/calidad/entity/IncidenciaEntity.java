@@ -41,13 +41,13 @@ public class IncidenciaEntity {
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoIncidencia estado;
 
+    public enum EstadoIncidencia {
+        abierta, en_proceso, resuelta
+    }
+
     @PrePersist
     public void prePersist() {
-        if (fechaIncidencia == null) {
-            fechaIncidencia = LocalDateTime.now();
-        }
-        if (estado == null) {
-            estado = EstadoIncidencia.ABIERTA;
-        }
+        if (fechaIncidencia == null) fechaIncidencia = LocalDateTime.now();
+        if (estado == null) estado = EstadoIncidencia.abierta;
     }
 }

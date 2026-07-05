@@ -2,11 +2,12 @@ package pe.com.sinergiacafe.calidad.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pe.com.sinergiacafe.calidad.dto.*;
-import pe.com.sinergiacafe.calidad.entity.*;
-import pe.com.sinergiacafe.calidad.repository.*;
+import pe.com.sinergiacafe.calidad.dto.EncuestaSatisfaccionRequestDTO;
+import pe.com.sinergiacafe.calidad.dto.EncuestaSatisfaccionResponseDTO;
+import pe.com.sinergiacafe.calidad.entity.EncuestaSatisfaccionEntity;
+import pe.com.sinergiacafe.calidad.exception.ResourceNotFoundException;
+import pe.com.sinergiacafe.calidad.repository.EncuestaSatisfaccionRepository;
 import pe.com.sinergiacafe.calidad.service.EncuestaSatisfaccionService;
-import pe.com.sinergiacafe.calidad.shared.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -14,61 +15,50 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EncuestaSatisfaccionServiceImpl implements EncuestaSatisfaccionService {
 
-    private final EncuestaSatisfaccionRepository repository;
+    private final EncuestaSatisfaccionRepository encuestaSatisfaccionRepository;
 
     @Override
     public List<EncuestaSatisfaccionResponseDTO> listarTodos() {
-        return repository.findAll()
+        return encuestaSatisfaccionRepository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public List<EncuestaSatisfaccionResponseDTO> listarPorCliente(Long idCliente) {
+        return encuestaSatisfaccionRepository.findByIdCliente(idCliente)
+                .stream()
+                .map(this::toResponseDTO)
                 .toList();
     }
 
     @Override
     public EncuestaSatisfaccionResponseDTO obtenerPorId(Long id) {
-        EncuestaSatisfaccionEntity entity = repository.findById(id)
+        EncuestaSatisfaccionEntity entity = encuestaSatisfaccionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("EncuestaSatisfaccion", id));
-
-        return toDTO(entity);
+        return toResponseDTO(entity);
     }
 
     @Override
-    public EncuestaSatisfaccionResponseDTO crear(EncuestaSatisfaccionRequestDTO request) {
-
+    public EncuestaSatisfaccionResponseDTO registrar(EncuestaSatisfaccionRequestDTO request) {
         EncuestaSatisfaccionEntity entity = EncuestaSatisfaccionEntity.builder()
                 .idCliente(request.getIdCliente())
                 .canal(request.getCanal())
                 .puntuacionGeneral(request.getPuntuacionGeneral())
                 .build();
-
-        return toDTO(repository.save(entity));
-    }
-
-    @Override
-    public EncuestaSatisfaccionResponseDTO actualizar(Long id, EncuestaSatisfaccionRequestDTO request) {
-
-        EncuestaSatisfaccionEntity entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("EncuestaSatisfaccion", id));
-
-        entity.setIdCliente(request.getIdCliente());
-        entity.setCanal(request.getCanal());
-        entity.setPuntuacionGeneral(request.getPuntuacionGeneral());
-
-        return toDTO(repository.save(entity));
+        return toResponseDTO(encuestaSatisfaccionRepository.save(entity));
     }
 
     @Override
     public void eliminar(Long id) {
-
-        if (!repository.existsById(id)) {
+        if (!encuestaSatisfaccionRepository.existsById(id)) {
             throw new ResourceNotFoundException("EncuestaSatisfaccion", id);
         }
-
-        repository.deleteById(id);
+        encuestaSatisfaccionRepository.deleteById(id);
     }
 
-    private EncuestaSatisfaccionResponseDTO toDTO(EncuestaSatisfaccionEntity entity) {
-
+    public EncuestaSatisfaccionResponseDTO toResponseDTO(EncuestaSatisfaccionEntity entity) {
         return EncuestaSatisfaccionResponseDTO.builder()
                 .idEncuestaSatisfaccion(entity.getIdEncuestaSatisfaccion())
                 .idCliente(entity.getIdCliente())

@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import pe.com.sinergiacafe.calidad.dto.InspeccionRequestDTO;
 import pe.com.sinergiacafe.calidad.dto.InspeccionResponseDTO;
 import pe.com.sinergiacafe.calidad.entity.InspeccionEntity;
+import pe.com.sinergiacafe.calidad.exception.ResourceNotFoundException;
 import pe.com.sinergiacafe.calidad.repository.InspeccionRepository;
 import pe.com.sinergiacafe.calidad.service.InspeccionService;
-import pe.com.sinergiacafe.calidad.shared.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -15,66 +15,64 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InspeccionServiceImpl implements InspeccionService {
 
-    private final InspeccionRepository repository;
+    private final InspeccionRepository inspeccionRepository;
 
     @Override
     public List<InspeccionResponseDTO> listarTodos() {
-        return repository.findAll()
+        return inspeccionRepository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public List<InspeccionResponseDTO> listarPorArea(String area) {
+        return inspeccionRepository.findByAreaInspeccionada(area)
+                .stream()
+                .map(this::toResponseDTO)
                 .toList();
     }
 
     @Override
     public InspeccionResponseDTO obtenerPorId(Long id) {
-        InspeccionEntity entity = repository.findById(id)
+        InspeccionEntity entity = inspeccionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inspeccion", id));
-
-        return toDTO(entity);
+        return toResponseDTO(entity);
     }
 
     @Override
-    public InspeccionResponseDTO crear(InspeccionRequestDTO request) {
-
+    public InspeccionResponseDTO registrar(InspeccionRequestDTO request) {
         InspeccionEntity entity = InspeccionEntity.builder()
                 .idEmpleado(request.getIdEmpleado())
                 .areaInspeccionada(request.getAreaInspeccionada())
-                .resultadoGeneral(request.getResultadoGeneral())
                 .build();
-
-        return toDTO(repository.save(entity));
+        return toResponseDTO(inspeccionRepository.save(entity));
     }
 
     @Override
-    public InspeccionResponseDTO actualizar(Long id, InspeccionRequestDTO request) {
-
-        InspeccionEntity entity = repository.findById(id)
+    public InspeccionResponseDTO actualizarResultado(Long id, String resultadoGeneral) {
+        InspeccionEntity entity = inspeccionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inspeccion", id));
-
-        entity.setIdEmpleado(request.getIdEmpleado());
-        entity.setAreaInspeccionada(request.getAreaInspeccionada());
-        entity.setResultadoGeneral(request.getResultadoGeneral());
-
-        return toDTO(repository.save(entity));
+        entity.setResultadoGeneral(
+                InspeccionEntity.ResultadoGeneralInspeccion.valueOf(resultadoGeneral));
+        return toResponseDTO(inspeccionRepository.save(entity));
     }
 
     @Override
     public void eliminar(Long id) {
-
-        if (!repository.existsById(id)) {
+        if (!inspeccionRepository.existsById(id)) {
             throw new ResourceNotFoundException("Inspeccion", id);
         }
-
-        repository.deleteById(id);
+        inspeccionRepository.deleteById(id);
     }
 
-    private InspeccionResponseDTO toDTO(InspeccionEntity entity) {
+    public InspeccionResponseDTO toResponseDTO(InspeccionEntity entity) {
         return InspeccionResponseDTO.builder()
                 .idInspeccion(entity.getIdInspeccion())
                 .idEmpleado(entity.getIdEmpleado())
                 .fechaInspeccion(entity.getFechaInspeccion())
                 .areaInspeccionada(entity.getAreaInspeccionada())
-                .resultadoGeneral(entity.getResultadoGeneral())
+                .resultadoGeneral(entity.getResultadoGeneral().name())
                 .build();
     }
 }

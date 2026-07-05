@@ -8,12 +8,8 @@ import java.util.List;
 public interface EncuestaSatisfaccionService {
 
     List<EncuestaSatisfaccionResponseDTO> listarTodos();
-
+    List<EncuestaSatisfaccionResponseDTO> listarPorCliente(Long idCliente);
     EncuestaSatisfaccionResponseDTO obtenerPorId(Long id);
-
-    EncuestaSatisfaccionResponseDTO crear(EncuestaSatisfaccionRequestDTO request);
-
-    EncuestaSatisfaccionResponseDTO actualizar(Long id, EncuestaSatisfaccionRequestDTO request);
-
+    EncuestaSatisfaccionResponseDTO registrar(EncuestaSatisfaccionRequestDTO request);
     void eliminar(Long id);
 }

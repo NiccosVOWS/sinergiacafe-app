@@ -17,38 +17,45 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EstandarCalidadController {
 
-    private final EstandarCalidadService service;
+    private final EstandarCalidadService estandarCalidadService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EstandarCalidadResponseDTO>>> listar() {
-        return ResponseEntity.ok(ApiResponse.ok(service.listarTodos()));
+    public ResponseEntity<ApiResponse<List<EstandarCalidadResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(estandarCalidadService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<EstandarCalidadResponseDTO>> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok(service.obtenerPorId(id)));
+    public ResponseEntity<ApiResponse<EstandarCalidadResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(estandarCalidadService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/aplicable/{aplicableA}")
+    public ResponseEntity<ApiResponse<List<EstandarCalidadResponseDTO>>> listarPorAplicableA(
+            @PathVariable String aplicableA) {
+        return ResponseEntity.ok(ApiResponse.ok(
+                estandarCalidadService.listarPorAplicableA(aplicableA)));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<EstandarCalidadResponseDTO>> crear(
             @Valid @RequestBody EstandarCalidadRequestDTO request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok("Estandar creado correctamente", service.crear(request)));
+                .body(ApiResponse.ok("Estándar creado exitosamente",
+                        estandarCalidadService.crear(request)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EstandarCalidadResponseDTO>> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody EstandarCalidadRequestDTO request) {
-
-        return ResponseEntity.ok(ApiResponse.ok("Estandar actualizado correctamente",
-                service.actualizar(id, request)));
+        return ResponseEntity.ok(ApiResponse.ok("Estándar actualizado exitosamente",
+                estandarCalidadService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.ok(ApiResponse.ok("Estandar eliminado correctamente", null));
+        estandarCalidadService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Estándar eliminado exitosamente", null));
     }
 }

@@ -17,38 +17,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IncidenciaController {
 
-    private final IncidenciaService service;
+    private final IncidenciaService incidenciaService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<IncidenciaResponseDTO>>> listar() {
-        return ResponseEntity.ok(ApiResponse.ok(service.listarTodos()));
+    public ResponseEntity<ApiResponse<List<IncidenciaResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(incidenciaService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<IncidenciaResponseDTO>> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.ok(service.obtenerPorId(id)));
+    public ResponseEntity<ApiResponse<IncidenciaResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(incidenciaService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<ApiResponse<List<IncidenciaResponseDTO>>> listarPorEstado(
+            @PathVariable String estado) {
+        return ResponseEntity.ok(ApiResponse.ok(incidenciaService.listarPorEstado(estado)));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<IncidenciaResponseDTO>> crear(
+    public ResponseEntity<ApiResponse<IncidenciaResponseDTO>> registrar(
             @Valid @RequestBody IncidenciaRequestDTO request) {
-
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok("Incidencia creada correctamente", service.crear(request)));
+                .body(ApiResponse.ok("Incidencia registrada exitosamente",
+                        incidenciaService.registrar(request)));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<IncidenciaResponseDTO>> actualizar(
+    @PatchMapping("/{id}/estado/{estado}")
+    public ResponseEntity<ApiResponse<IncidenciaResponseDTO>> actualizarEstado(
             @PathVariable Long id,
-            @Valid @RequestBody IncidenciaRequestDTO request) {
-
-        return ResponseEntity.ok(ApiResponse.ok("Incidencia actualizada correctamente",
-                service.actualizar(id, request)));
+            @PathVariable String estado) {
+        return ResponseEntity.ok(ApiResponse.ok("Estado actualizado exitosamente",
+                incidenciaService.actualizarEstado(id, estado)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.ok(ApiResponse.ok("Incidencia eliminada correctamente", null));
+        incidenciaService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Incidencia eliminada exitosamente", null));
     }
 }

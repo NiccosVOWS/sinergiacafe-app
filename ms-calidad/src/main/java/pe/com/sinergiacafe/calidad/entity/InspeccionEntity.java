@@ -34,13 +34,13 @@ public class InspeccionEntity {
     @Column(name = "resultado_general", nullable = false, length = 20)
     private ResultadoGeneralInspeccion resultadoGeneral;
 
+    public enum ResultadoGeneralInspeccion {
+        conforme, no_conforme, observado
+    }
+
     @PrePersist
     public void prePersist() {
-        if (fechaInspeccion == null) {
-            fechaInspeccion = LocalDateTime.now();
-        }
-        if (resultadoGeneral == null) {
-            resultadoGeneral = ResultadoGeneralInspeccion.CONFORME;
-        }
+        if (fechaInspeccion == null) fechaInspeccion = LocalDateTime.now();
+        if (resultadoGeneral == null) resultadoGeneral = ResultadoGeneralInspeccion.conforme;
     }
 }
