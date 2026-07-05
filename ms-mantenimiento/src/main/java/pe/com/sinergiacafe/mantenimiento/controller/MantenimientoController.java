@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.mantenimiento.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.mantenimiento.dto.MantenimientoRequestDTO;
 import pe.com.sinergiacafe.mantenimiento.dto.MantenimientoResponseDTO;
 import pe.com.sinergiacafe.mantenimiento.service.MantenimientoService;
 import pe.com.sinergiacafe.mantenimiento.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MantenimientoController {
 
-    private final MantenimientoService service;
+    private final MantenimientoService mantenimientoService;
 
     @GetMapping
-    public ApiResponse<List<MantenimientoResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<MantenimientoResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(mantenimientoService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<MantenimientoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<MantenimientoResponseDTO>> obtenerPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(mantenimientoService.obtenerPorId(id)));
+    }
+
+    @GetMapping("/equipo/{idEquipo}")
+    public ResponseEntity<ApiResponse<List<MantenimientoResponseDTO>>> listarPorEquipo(
+            @PathVariable Long idEquipo) {
+        return ResponseEntity.ok(ApiResponse.ok(mantenimientoService.listarPorEquipo(idEquipo)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<MantenimientoResponseDTO> create(@Valid @RequestBody MantenimientoRequestDTO dto) {
-        return ApiResponse.ok("Mantenimiento creado correctamente", service.create(dto));
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse<MantenimientoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody MantenimientoRequestDTO dto) {
-        return ApiResponse.ok("Mantenimiento actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<MantenimientoResponseDTO>> registrar(
+            @Valid @RequestBody MantenimientoRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Mantenimiento registrado exitosamente",
+                        mantenimientoService.registrar(request)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Mantenimiento eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        mantenimientoService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Mantenimiento eliminado exitosamente", null));
     }
 }

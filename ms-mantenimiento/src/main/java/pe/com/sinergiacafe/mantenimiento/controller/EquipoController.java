@@ -1,13 +1,14 @@
 package pe.com.sinergiacafe.mantenimiento.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import pe.com.sinergiacafe.mantenimiento.dto.EquipoRequestDTO;
 import pe.com.sinergiacafe.mantenimiento.dto.EquipoResponseDTO;
 import pe.com.sinergiacafe.mantenimiento.service.EquipoService;
 import pe.com.sinergiacafe.mantenimiento.shared.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,32 +17,46 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EquipoController {
 
-    private final EquipoService service;
+    private final EquipoService equipoService;
 
     @GetMapping
-    public ApiResponse<List<EquipoResponseDTO>> findAll() {
-        return ApiResponse.ok(service.findAll());
+    public ResponseEntity<ApiResponse<List<EquipoResponseDTO>>> listarTodos() {
+        return ResponseEntity.ok(ApiResponse.ok(equipoService.listarTodos()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<EquipoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
+    public ResponseEntity<ApiResponse<EquipoResponseDTO>> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(equipoService.obtenerPorId(id)));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<EquipoResponseDTO> create(@Valid @RequestBody EquipoRequestDTO dto) {
-        return ApiResponse.ok("Equipo creado correctamente", service.create(dto));
+    public ResponseEntity<ApiResponse<EquipoResponseDTO>> crear(
+            @Valid @RequestBody EquipoRequestDTO request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Equipo creado exitosamente",
+                        equipoService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<EquipoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody EquipoRequestDTO dto) {
-        return ApiResponse.ok("Equipo actualizado correctamente", service.update(id, dto));
+    public ResponseEntity<ApiResponse<EquipoResponseDTO>> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody EquipoRequestDTO request) {
+        return ResponseEntity.ok(ApiResponse.ok("Equipo actualizado exitosamente",
+                equipoService.actualizar(id, request)));
+    }
+
+    @PatchMapping("/{id}/estado/{estado}")
+    public ResponseEntity<ApiResponse<EquipoResponseDTO>> actualizarEstado(
+            @PathVariable Long id,
+            @PathVariable String estado) {
+        return ResponseEntity.ok(ApiResponse.ok("Estado actualizado exitosamente",
+                equipoService.actualizarEstado(id, estado)));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("Equipo eliminado correctamente", null);
+    public ResponseEntity<ApiResponse<Void>> eliminar(@PathVariable Long id) {
+        equipoService.eliminar(id);
+        return ResponseEntity.ok(ApiResponse.ok("Equipo eliminado exitosamente", null));
     }
 }

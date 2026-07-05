@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class TipoMantenimientoResponseDTO {
 
-    private Long id;
+    private Long idTipoMantenimiento;
     private String nombre;
     private String descripcion;
 }

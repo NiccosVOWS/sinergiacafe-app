@@ -1,10 +1,12 @@
 package pe.com.sinergiacafe.mantenimiento.shared;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse<T> {
@@ -14,14 +16,26 @@ public class ApiResponse<T> {
     private T data;
 
     public static <T> ApiResponse<T> ok(T data) {
-        return new ApiResponse<>(true, "OK", data);
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message("OK")
+                .data(data)
+                .build();
     }
 
     public static <T> ApiResponse<T> ok(String message, T data) {
-        return new ApiResponse<>(true, message, data);
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .data(data)
+                .build();
     }
 
     public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>(false, message, null);
+        return ApiResponse.<T>builder()
+                .success(false)
+                .message(message)
+                .data(null)
+                .build();
     }
 }

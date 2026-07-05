@@ -2,68 +2,14 @@ package pe.com.sinergiacafe.mantenimiento.service;
 
 import pe.com.sinergiacafe.mantenimiento.dto.MantenimientoRequestDTO;
 import pe.com.sinergiacafe.mantenimiento.dto.MantenimientoResponseDTO;
-import pe.com.sinergiacafe.mantenimiento.entity.MantenimientoEntity;
-import pe.com.sinergiacafe.mantenimiento.exception.ResourceNotFoundException;
-import pe.com.sinergiacafe.mantenimiento.repository.MantenimientoRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class MantenimientoService {
+public interface MantenimientoService {
 
-    private final MantenimientoRepository repository;
-
-    public List<MantenimientoResponseDTO> findAll() {
-        return repository.findAll().stream().map(this::toResponse).toList();
-    }
-
-    public MantenimientoResponseDTO findById(Long id) {
-        MantenimientoEntity entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Mantenimiento no encontrado con id: " + id));
-        return toResponse(entity);
-    }
-
-    public MantenimientoResponseDTO create(MantenimientoRequestDTO dto) {
-        MantenimientoEntity entity = new MantenimientoEntity();
-        entity.setIdEquipo(dto.getIdEquipo());
-        entity.setIdTipoMantenimiento(dto.getIdTipoMantenimiento());
-        entity.setIdEmpleado(dto.getIdEmpleado());
-        entity.setFechaMantenimiento(java.time.LocalDateTime.now());
-        entity.setCosto(dto.getCosto());
-        entity.setObservaciones(dto.getObservaciones());
-        return toResponse(repository.save(entity));
-    }
-
-    public MantenimientoResponseDTO update(Long id, MantenimientoRequestDTO dto) {
-        MantenimientoEntity entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Mantenimiento no encontrado con id: " + id));
-        entity.setIdEquipo(dto.getIdEquipo());
-        entity.setIdTipoMantenimiento(dto.getIdTipoMantenimiento());
-        entity.setIdEmpleado(dto.getIdEmpleado());
-        entity.setCosto(dto.getCosto());
-        entity.setObservaciones(dto.getObservaciones());
-        return toResponse(repository.save(entity));
-    }
-
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Mantenimiento no encontrado con id: " + id);
-        }
-        repository.deleteById(id);
-    }
-
-    private MantenimientoResponseDTO toResponse(MantenimientoEntity entity) {
-        return MantenimientoResponseDTO.builder()
-                .id(entity.getId())
-                .idEquipo(entity.getIdEquipo())
-                .idTipoMantenimiento(entity.getIdTipoMantenimiento())
-                .idEmpleado(entity.getIdEmpleado())
-                .fechaMantenimiento(entity.getFechaMantenimiento())
-                .costo(entity.getCosto())
-                .observaciones(entity.getObservaciones())
-                .build();
-    }
+    List<MantenimientoResponseDTO> listarTodos();
+    List<MantenimientoResponseDTO> listarPorEquipo(Long idEquipo);
+    MantenimientoResponseDTO obtenerPorId(Long id);
+    MantenimientoResponseDTO registrar(MantenimientoRequestDTO request);
+    void eliminar(Long id);
 }

@@ -1,7 +1,6 @@
 package pe.com.sinergiacafe.mantenimiento.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,11 +17,11 @@ public class TipoEquipoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_equipo")
-    private Long id;
+    private Long idTipoEquipo;
 
-    @NotBlank
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false, length = 80)
     private String nombre;
-    @Column(name = "descripcion")
+
+    @Column(name = "descripcion", length = 200)
     private String descripcion;
 }

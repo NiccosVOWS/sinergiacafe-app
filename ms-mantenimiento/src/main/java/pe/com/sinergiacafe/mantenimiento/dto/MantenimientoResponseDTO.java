@@ -5,17 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MantenimientoResponseDTO {
 
-    private Long id;
-    private Long idEquipo;
-    private Long idTipoMantenimiento;
+    private Long idMantenimiento;
+    private EquipoResponseDTO equipo;
+    private TipoMantenimientoResponseDTO tipoMantenimiento;
     private Long idEmpleado;
-    private java.time.LocalDateTime fechaMantenimiento;
-    private java.math.BigDecimal costo;
+    private LocalDateTime fechaMantenimiento;
+    private BigDecimal costo;
     private String observaciones;
 }
