@@ -1,3 +1,24 @@
 spring:
   application:
     name: ms-recursoshumanos
+  datasource:
+    url: jdbc:mysql://localhost:3306/sinergiacafe_bd?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+server:
+  port: 8088
+
+logging:
+  level:
+    pe.com.sinergiacafe: DEBUG

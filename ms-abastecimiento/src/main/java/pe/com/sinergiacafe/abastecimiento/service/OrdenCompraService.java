@@ -28,20 +28,21 @@ public class OrdenCompraService {
 
     public OrdenCompraResponseDTO create(OrdenCompraRequestDTO dto) {
         OrdenCompraEntity entity = new OrdenCompraEntity();
-        entity.setProveedorId(dto.getProveedorId());
-        entity.setFecha(dto.getFecha());
-        entity.setEstado(dto.getEstado());
+        entity.setIdProveedor(dto.getIdProveedor());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setFechaOrden(java.time.LocalDateTime.now());
         entity.setMontoTotal(dto.getMontoTotal());
+        entity.setEstado(dto.getEstado());
         return toResponse(repository.save(entity));
     }
 
     public OrdenCompraResponseDTO update(Long id, OrdenCompraRequestDTO dto) {
         OrdenCompraEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("OrdenCompra no encontrado con id: " + id));
-        entity.setProveedorId(dto.getProveedorId());
-        entity.setFecha(dto.getFecha());
-        entity.setEstado(dto.getEstado());
+        entity.setIdProveedor(dto.getIdProveedor());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setMontoTotal(dto.getMontoTotal());
+        entity.setEstado(dto.getEstado());
         return toResponse(repository.save(entity));
     }
 
@@ -55,10 +56,11 @@ public class OrdenCompraService {
     private OrdenCompraResponseDTO toResponse(OrdenCompraEntity entity) {
         return OrdenCompraResponseDTO.builder()
                 .id(entity.getId())
-                .proveedorId(entity.getProveedorId())
-                .fecha(entity.getFecha())
-                .estado(entity.getEstado())
+                .idProveedor(entity.getIdProveedor())
+                .idEmpleado(entity.getIdEmpleado())
+                .fechaOrden(entity.getFechaOrden())
                 .montoTotal(entity.getMontoTotal())
+                .estado(entity.getEstado())
                 .build();
     }
 }

@@ -30,6 +30,7 @@ public class RolService {
         RolEntity entity = new RolEntity();
         entity.setNombre(dto.getNombre());
         entity.setDescripcion(dto.getDescripcion());
+        entity.setActivo(dto.getActivo());
         return toResponse(repository.save(entity));
     }
 
@@ -38,6 +39,7 @@ public class RolService {
                 .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con id: " + id));
         entity.setNombre(dto.getNombre());
         entity.setDescripcion(dto.getDescripcion());
+        entity.setActivo(dto.getActivo());
         return toResponse(repository.save(entity));
     }
 
@@ -53,6 +55,7 @@ public class RolService {
                 .id(entity.getId())
                 .nombre(entity.getNombre())
                 .descripcion(entity.getDescripcion())
+                .activo(entity.getActivo())
                 .build();
     }
 }

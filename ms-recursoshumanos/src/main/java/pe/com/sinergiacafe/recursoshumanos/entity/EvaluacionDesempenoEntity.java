@@ -17,12 +17,20 @@ public class EvaluacionDesempenoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_evaluacion_desempeno")
     private Long id;
 
     @NotNull
-    private Long empleadoId;
-    private java.time.LocalDate fecha;
+    @Column(name = "id_empleado")
+    private Long idEmpleado;
+    @NotNull
+    @Column(name = "fecha_evaluacion")
+    private java.time.LocalDate fechaEvaluacion;
+    @NotNull
+    @Column(name = "puntaje")
+    private java.math.BigDecimal puntaje;
+    @Column(name = "criterios")
     private String criterios;
-    private Integer puntaje;
+    @Column(name = "observaciones")
     private String observaciones;
 }

@@ -28,22 +28,22 @@ public class EquipoService {
 
     public EquipoResponseDTO create(EquipoRequestDTO dto) {
         EquipoEntity entity = new EquipoEntity();
+        entity.setIdTipoEquipo(dto.getIdTipoEquipo());
         entity.setNombre(dto.getNombre());
         entity.setModelo(dto.getModelo());
         entity.setFechaAdquisicion(dto.getFechaAdquisicion());
         entity.setEstado(dto.getEstado());
-        entity.setTipoEquipoId(dto.getTipoEquipoId());
         return toResponse(repository.save(entity));
     }
 
     public EquipoResponseDTO update(Long id, EquipoRequestDTO dto) {
         EquipoEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
+        entity.setIdTipoEquipo(dto.getIdTipoEquipo());
         entity.setNombre(dto.getNombre());
         entity.setModelo(dto.getModelo());
         entity.setFechaAdquisicion(dto.getFechaAdquisicion());
         entity.setEstado(dto.getEstado());
-        entity.setTipoEquipoId(dto.getTipoEquipoId());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +57,11 @@ public class EquipoService {
     private EquipoResponseDTO toResponse(EquipoEntity entity) {
         return EquipoResponseDTO.builder()
                 .id(entity.getId())
+                .idTipoEquipo(entity.getIdTipoEquipo())
                 .nombre(entity.getNombre())
                 .modelo(entity.getModelo())
                 .fechaAdquisicion(entity.getFechaAdquisicion())
                 .estado(entity.getEstado())
-                .tipoEquipoId(entity.getTipoEquipoId())
                 .build();
     }
 }

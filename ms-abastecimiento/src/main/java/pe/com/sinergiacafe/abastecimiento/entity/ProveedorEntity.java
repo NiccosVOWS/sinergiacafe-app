@@ -17,13 +17,24 @@ public class ProveedorEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_proveedor")
     private Long id;
 
     @NotBlank
-    private String nombre;
+    @Column(name = "razon_social")
+    private String razonSocial;
     @NotBlank
+    @Column(name = "ruc")
     private String ruc;
+    @Column(name = "contacto")
     private String contacto;
-    private String condicionesPago;
-    private String estado;
+    @Column(name = "telefono")
+    private String telefono;
+    @Email
+    @Column(name = "correo")
+    private String correo;
+    @Column(name = "direccion")
+    private String direccion;
+    @Column(name = "activo")
+    private Boolean activo;
 }

@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 public class MantenimientoResponseDTO {
 
     private Long id;
-    private Long equipoId;
-    private Long tipoMantenimientoId;
-    private java.time.LocalDateTime fecha;
-    private String responsable;
+    private Long idEquipo;
+    private Long idTipoMantenimiento;
+    private Long idEmpleado;
+    private java.time.LocalDateTime fechaMantenimiento;
     private java.math.BigDecimal costo;
     private String observaciones;
 }

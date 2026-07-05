@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 public class ContratoProveedorRequestDTO {
 
     @NotNull
-    private Long proveedorId;
+    private Long idProveedor;
+    @NotNull
     private java.time.LocalDate fechaInicio;
     private java.time.LocalDate fechaFin;
     private String condiciones;
-    private String productosPactados;
+    private Boolean activo;
 }

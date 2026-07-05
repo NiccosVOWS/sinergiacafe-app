@@ -28,22 +28,25 @@ public class UsuarioService {
 
     public UsuarioResponseDTO create(UsuarioRequestDTO dto) {
         UsuarioEntity entity = new UsuarioEntity();
-        entity.setEmpleadoId(dto.getEmpleadoId());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setIdRol(dto.getIdRol());
         entity.setUsername(dto.getUsername());
-        entity.setPassword(dto.getPassword());
-        entity.setRolId(dto.getRolId());
-        entity.setEstado(dto.getEstado());
+        entity.setPasswordHash(dto.getPasswordHash());
+        entity.setActivo(dto.getActivo());
+        entity.setFechaCreacion(java.time.LocalDateTime.now());
+        entity.setUltimoAcceso(dto.getUltimoAcceso());
         return toResponse(repository.save(entity));
     }
 
     public UsuarioResponseDTO update(Long id, UsuarioRequestDTO dto) {
         UsuarioEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        entity.setEmpleadoId(dto.getEmpleadoId());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setIdRol(dto.getIdRol());
         entity.setUsername(dto.getUsername());
-        entity.setPassword(dto.getPassword());
-        entity.setRolId(dto.getRolId());
-        entity.setEstado(dto.getEstado());
+        entity.setPasswordHash(dto.getPasswordHash());
+        entity.setActivo(dto.getActivo());
+        entity.setUltimoAcceso(dto.getUltimoAcceso());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +60,13 @@ public class UsuarioService {
     private UsuarioResponseDTO toResponse(UsuarioEntity entity) {
         return UsuarioResponseDTO.builder()
                 .id(entity.getId())
-                .empleadoId(entity.getEmpleadoId())
+                .idEmpleado(entity.getIdEmpleado())
+                .idRol(entity.getIdRol())
                 .username(entity.getUsername())
-                .password(entity.getPassword())
-                .rolId(entity.getRolId())
-                .estado(entity.getEstado())
+                .passwordHash(entity.getPasswordHash())
+                .activo(entity.getActivo())
+                .fechaCreacion(entity.getFechaCreacion())
+                .ultimoAcceso(entity.getUltimoAcceso())
                 .build();
     }
 }

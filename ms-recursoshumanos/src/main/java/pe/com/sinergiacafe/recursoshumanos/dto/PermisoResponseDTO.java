@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PermisoResponseDTO {
 
     private Long id;
-    private String nombre;
     private String modulo;
     private String accion;
+    private String descripcion;
 }

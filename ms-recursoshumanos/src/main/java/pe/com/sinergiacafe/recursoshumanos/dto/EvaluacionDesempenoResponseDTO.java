@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class EvaluacionDesempenoResponseDTO {
 
     private Long id;
-    private Long empleadoId;
-    private java.time.LocalDate fecha;
+    private Long idEmpleado;
+    private java.time.LocalDate fechaEvaluacion;
+    private java.math.BigDecimal puntaje;
     private String criterios;
-    private Integer puntaje;
     private String observaciones;
 }

@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class OrdenCompraResponseDTO {
 
     private Long id;
-    private Long proveedorId;
-    private java.time.LocalDateTime fecha;
-    private String estado;
+    private Long idProveedor;
+    private Long idEmpleado;
+    private java.time.LocalDateTime fechaOrden;
     private java.math.BigDecimal montoTotal;
+    private String estado;
 }

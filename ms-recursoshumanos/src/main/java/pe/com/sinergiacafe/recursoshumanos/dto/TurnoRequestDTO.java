@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TurnoRequestDTO {
 
+    @NotBlank
+    private String nombre;
     @NotNull
-    private Long empleadoId;
+    private java.time.LocalTime horaInicio;
     @NotNull
-    private java.time.LocalDate fecha;
-    private java.time.LocalTime horaEntrada;
-    private java.time.LocalTime horaSalida;
+    private java.time.LocalTime horaFin;
 }

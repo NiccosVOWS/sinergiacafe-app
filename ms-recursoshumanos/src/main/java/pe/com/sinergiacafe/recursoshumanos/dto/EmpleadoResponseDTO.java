@@ -12,10 +12,13 @@ import lombok.NoArgsConstructor;
 public class EmpleadoResponseDTO {
 
     private Long id;
+    private Long idCargo;
+    private Long idTurno;
     private String nombres;
     private String apellidos;
     private String dni;
-    private Long cargoId;
+    private String telefono;
+    private String correo;
     private java.time.LocalDate fechaIngreso;
-    private String estado;
+    private String estadoLaboral;
 }

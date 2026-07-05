@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class DetalleOrdenCompraResponseDTO {
 
     private Long id;
-    private Long ordenCompraId;
-    private Long insumoId;
+    private Long idOrdenCompra;
+    private Long idInsumo;
     private java.math.BigDecimal cantidad;
     private java.math.BigDecimal precioUnitario;
+    private java.math.BigDecimal subtotal;
 }

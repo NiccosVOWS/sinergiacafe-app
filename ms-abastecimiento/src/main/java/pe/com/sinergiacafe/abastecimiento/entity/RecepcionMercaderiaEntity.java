@@ -17,14 +17,19 @@ public class RecepcionMercaderiaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_recepcion_mercaderia")
     private Long id;
 
     @NotNull
-    private Long ordenCompraId;
+    @Column(name = "id_orden_compra")
+    private Long idOrdenCompra;
     @NotNull
-    private Long proveedorId;
-    private java.time.LocalDateTime fecha;
-    @NotNull
-    private java.math.BigDecimal cantidadRecibida;
+    @Column(name = "id_empleado")
+    private Long idEmpleado;
+    @Column(name = "fecha_recepcion")
+    private java.time.LocalDateTime fechaRecepcion;
+    @Column(name = "conforme")
     private Boolean conforme;
+    @Column(name = "observaciones")
+    private String observaciones;
 }

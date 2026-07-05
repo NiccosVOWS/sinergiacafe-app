@@ -10,14 +10,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmpleadoRequestDTO {
 
+    @NotNull
+    private Long idCargo;
+    @NotNull
+    private Long idTurno;
     @NotBlank
     private String nombres;
     @NotBlank
     private String apellidos;
     @NotBlank
     private String dni;
+    private String telefono;
+    @Email
+    private String correo;
     @NotNull
-    private Long cargoId;
     private java.time.LocalDate fechaIngreso;
-    private String estado;
+    private String estadoLaboral;
 }

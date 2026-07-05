@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 public class MantenimientoRequestDTO {
 
     @NotNull
-    private Long equipoId;
+    private Long idEquipo;
     @NotNull
-    private Long tipoMantenimientoId;
-    private java.time.LocalDateTime fecha;
-    private String responsable;
+    private Long idTipoMantenimiento;
+    @NotNull
+    private Long idEmpleado;
     private java.math.BigDecimal costo;
     private String observaciones;
 }

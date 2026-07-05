@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 public class UsuarioResponseDTO {
 
     private Long id;
-    private Long empleadoId;
+    private Long idEmpleado;
+    private Long idRol;
     private String username;
-    private String password;
-    private Long rolId;
-    private String estado;
+    private String passwordHash;
+    private Boolean activo;
+    private java.time.LocalDateTime fechaCreacion;
+    private java.time.LocalDateTime ultimoAcceso;
 }

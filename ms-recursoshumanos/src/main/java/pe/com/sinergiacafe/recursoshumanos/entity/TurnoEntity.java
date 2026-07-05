@@ -17,12 +17,16 @@ public class TurnoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_turno")
     private Long id;
 
+    @NotBlank
+    @Column(name = "nombre")
+    private String nombre;
     @NotNull
-    private Long empleadoId;
+    @Column(name = "hora_inicio")
+    private java.time.LocalTime horaInicio;
     @NotNull
-    private java.time.LocalDate fecha;
-    private java.time.LocalTime horaEntrada;
-    private java.time.LocalTime horaSalida;
+    @Column(name = "hora_fin")
+    private java.time.LocalTime horaFin;
 }

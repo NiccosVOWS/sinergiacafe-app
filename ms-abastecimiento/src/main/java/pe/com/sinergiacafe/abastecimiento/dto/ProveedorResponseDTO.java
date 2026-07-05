@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 public class ProveedorResponseDTO {
 
     private Long id;
-    private String nombre;
+    private String razonSocial;
     private String ruc;
     private String contacto;
-    private String condicionesPago;
-    private String estado;
+    private String telefono;
+    private String correo;
+    private String direccion;
+    private Boolean activo;
 }

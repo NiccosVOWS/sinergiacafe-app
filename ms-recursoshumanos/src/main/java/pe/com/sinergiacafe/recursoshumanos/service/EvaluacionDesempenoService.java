@@ -28,10 +28,10 @@ public class EvaluacionDesempenoService {
 
     public EvaluacionDesempenoResponseDTO create(EvaluacionDesempenoRequestDTO dto) {
         EvaluacionDesempenoEntity entity = new EvaluacionDesempenoEntity();
-        entity.setEmpleadoId(dto.getEmpleadoId());
-        entity.setFecha(dto.getFecha());
-        entity.setCriterios(dto.getCriterios());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setFechaEvaluacion(dto.getFechaEvaluacion());
         entity.setPuntaje(dto.getPuntaje());
+        entity.setCriterios(dto.getCriterios());
         entity.setObservaciones(dto.getObservaciones());
         return toResponse(repository.save(entity));
     }
@@ -39,10 +39,10 @@ public class EvaluacionDesempenoService {
     public EvaluacionDesempenoResponseDTO update(Long id, EvaluacionDesempenoRequestDTO dto) {
         EvaluacionDesempenoEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("EvaluacionDesempeno no encontrado con id: " + id));
-        entity.setEmpleadoId(dto.getEmpleadoId());
-        entity.setFecha(dto.getFecha());
-        entity.setCriterios(dto.getCriterios());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setFechaEvaluacion(dto.getFechaEvaluacion());
         entity.setPuntaje(dto.getPuntaje());
+        entity.setCriterios(dto.getCriterios());
         entity.setObservaciones(dto.getObservaciones());
         return toResponse(repository.save(entity));
     }
@@ -57,10 +57,10 @@ public class EvaluacionDesempenoService {
     private EvaluacionDesempenoResponseDTO toResponse(EvaluacionDesempenoEntity entity) {
         return EvaluacionDesempenoResponseDTO.builder()
                 .id(entity.getId())
-                .empleadoId(entity.getEmpleadoId())
-                .fecha(entity.getFecha())
-                .criterios(entity.getCriterios())
+                .idEmpleado(entity.getIdEmpleado())
+                .fechaEvaluacion(entity.getFechaEvaluacion())
                 .puntaje(entity.getPuntaje())
+                .criterios(entity.getCriterios())
                 .observaciones(entity.getObservaciones())
                 .build();
     }

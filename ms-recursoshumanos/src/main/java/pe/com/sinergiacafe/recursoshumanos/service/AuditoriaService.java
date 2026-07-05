@@ -28,19 +28,24 @@ public class AuditoriaService {
 
     public AuditoriaResponseDTO create(AuditoriaRequestDTO dto) {
         AuditoriaEntity entity = new AuditoriaEntity();
-        entity.setUsuarioId(dto.getUsuarioId());
+        entity.setIdUsuario(dto.getIdUsuario());
+        entity.setModulo(dto.getModulo());
         entity.setAccion(dto.getAccion());
-        entity.setFecha(dto.getFecha());
+        entity.setTablaAfectada(dto.getTablaAfectada());
+        entity.setIdRegistro(dto.getIdRegistro());
         entity.setDetalle(dto.getDetalle());
+        entity.setFechaHora(java.time.LocalDateTime.now());
         return toResponse(repository.save(entity));
     }
 
     public AuditoriaResponseDTO update(Long id, AuditoriaRequestDTO dto) {
         AuditoriaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Auditoria no encontrado con id: " + id));
-        entity.setUsuarioId(dto.getUsuarioId());
+        entity.setIdUsuario(dto.getIdUsuario());
+        entity.setModulo(dto.getModulo());
         entity.setAccion(dto.getAccion());
-        entity.setFecha(dto.getFecha());
+        entity.setTablaAfectada(dto.getTablaAfectada());
+        entity.setIdRegistro(dto.getIdRegistro());
         entity.setDetalle(dto.getDetalle());
         return toResponse(repository.save(entity));
     }
@@ -55,10 +60,13 @@ public class AuditoriaService {
     private AuditoriaResponseDTO toResponse(AuditoriaEntity entity) {
         return AuditoriaResponseDTO.builder()
                 .id(entity.getId())
-                .usuarioId(entity.getUsuarioId())
+                .idUsuario(entity.getIdUsuario())
+                .modulo(entity.getModulo())
                 .accion(entity.getAccion())
-                .fecha(entity.getFecha())
+                .tablaAfectada(entity.getTablaAfectada())
+                .idRegistro(entity.getIdRegistro())
                 .detalle(entity.getDetalle())
+                .fechaHora(entity.getFechaHora())
                 .build();
     }
 }

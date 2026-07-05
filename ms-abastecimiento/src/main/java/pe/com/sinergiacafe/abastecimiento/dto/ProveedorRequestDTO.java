@@ -11,10 +11,13 @@ import lombok.NoArgsConstructor;
 public class ProveedorRequestDTO {
 
     @NotBlank
-    private String nombre;
+    private String razonSocial;
     @NotBlank
     private String ruc;
     private String contacto;
-    private String condicionesPago;
-    private String estado;
+    private String telefono;
+    @Email
+    private String correo;
+    private String direccion;
+    private Boolean activo;
 }

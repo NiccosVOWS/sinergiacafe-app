@@ -11,12 +11,13 @@ import lombok.NoArgsConstructor;
 public class UsuarioRequestDTO {
 
     @NotNull
-    private Long empleadoId;
+    private Long idEmpleado;
+    @NotNull
+    private Long idRol;
     @NotBlank
     private String username;
     @NotBlank
-    private String password;
-    @NotNull
-    private Long rolId;
-    private String estado;
+    private String passwordHash;
+    private Boolean activo;
+    private java.time.LocalDateTime ultimoAcceso;
 }

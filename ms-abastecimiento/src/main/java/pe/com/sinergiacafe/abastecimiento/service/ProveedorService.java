@@ -28,22 +28,26 @@ public class ProveedorService {
 
     public ProveedorResponseDTO create(ProveedorRequestDTO dto) {
         ProveedorEntity entity = new ProveedorEntity();
-        entity.setNombre(dto.getNombre());
+        entity.setRazonSocial(dto.getRazonSocial());
         entity.setRuc(dto.getRuc());
         entity.setContacto(dto.getContacto());
-        entity.setCondicionesPago(dto.getCondicionesPago());
-        entity.setEstado(dto.getEstado());
+        entity.setTelefono(dto.getTelefono());
+        entity.setCorreo(dto.getCorreo());
+        entity.setDireccion(dto.getDireccion());
+        entity.setActivo(dto.getActivo());
         return toResponse(repository.save(entity));
     }
 
     public ProveedorResponseDTO update(Long id, ProveedorRequestDTO dto) {
         ProveedorEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con id: " + id));
-        entity.setNombre(dto.getNombre());
+        entity.setRazonSocial(dto.getRazonSocial());
         entity.setRuc(dto.getRuc());
         entity.setContacto(dto.getContacto());
-        entity.setCondicionesPago(dto.getCondicionesPago());
-        entity.setEstado(dto.getEstado());
+        entity.setTelefono(dto.getTelefono());
+        entity.setCorreo(dto.getCorreo());
+        entity.setDireccion(dto.getDireccion());
+        entity.setActivo(dto.getActivo());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +61,13 @@ public class ProveedorService {
     private ProveedorResponseDTO toResponse(ProveedorEntity entity) {
         return ProveedorResponseDTO.builder()
                 .id(entity.getId())
-                .nombre(entity.getNombre())
+                .razonSocial(entity.getRazonSocial())
                 .ruc(entity.getRuc())
                 .contacto(entity.getContacto())
-                .condicionesPago(entity.getCondicionesPago())
-                .estado(entity.getEstado())
+                .telefono(entity.getTelefono())
+                .correo(entity.getCorreo())
+                .direccion(entity.getDireccion())
+                .activo(entity.getActivo())
                 .build();
     }
 }

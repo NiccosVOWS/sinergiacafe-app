@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="11874c79-6061-4339-bc1d-9f46b904473f" name="Changes" comment="implementa CRUD completo de MS-Inventario, MS-Abastecimiento, MS-Mantenimiento y MS-RecursosHumanos">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/trabajo grupal.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/pe/com/sinergiacafe/gateway/config/CorsConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/pe/com/sinergiacafe/gateway/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/pe/com/sinergiacafe/gateway/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/pe/com/sinergiacafe/gateway/security/jwt/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/pe/com/sinergiacafe/gateway/security/jwt/JwtUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/controller/CategoriaGastoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/controller/DocumentoAdministrativoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/controller/GastoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/dto/CategoriaGastoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/dto/CategoriaGastoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/dto/DocumentoAdministrativoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/dto/DocumentoAdministrativoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/dto/GastoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/dto/GastoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/entity/CategoriaGastoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/entity/DocumentoAdministrativoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/entity/GastoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/repository/CategoriaGastoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/repository/DocumentoAdministrativoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/repository/GastoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/service/CategoriaGastoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/service/DocumentoAdministrativoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/service/GastoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/service/impl/CategoriaGastoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/service/impl/DocumentoAdministrativoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/service/impl/GastoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-administracion/src/main/java/pe/com/sinergiacafe/administracion/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/EncuestaSatisfaccionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/EstandarCalidadController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/IncidenciaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/InspeccionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/RespuestaEncuestaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/ResultadoInspeccionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/controller/TipoIncidenciaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/EncuestaSatisfaccionRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/EncuestaSatisfaccionResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/EncuestaSatisfaccionSimpleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/EstandarCalidadRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/EstandarCalidadResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/EstandarCalidadSimpleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/IncidenciaRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/IncidenciaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/InspeccionRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/InspeccionResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/InspeccionSimpleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/RespuestaEncuestaRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/RespuestaEncuestaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/ResultadoInspeccionRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/ResultadoInspeccionResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/TipoIncidenciaRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/TipoIncidenciaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/dto/TipoIncidenciaSimpleDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/EncuestaSatisfaccionEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/EstadoIncidencia.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/EstandarCalidadEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/IncidenciaEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/InspeccionEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/RespuestaEncuestaEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/ResultadoGeneralInspeccion.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/ResultadoInspeccionEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/entity/TipoIncidenciaEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/EncuestaSatisfaccionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/EstandarCalidadRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/IncidenciaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/InspeccionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/RespuestaEncuestaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/ResultadoInspeccionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/repository/TipoIncidenciaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/EncuestaSatisfaccionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/EstandarCalidadService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/IncidenciaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/InspeccionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/RespuestaEncuestaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/ResultadoInspeccionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/TipoIncidenciaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/EncuestaSatisfaccionServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/EstandarCalidadServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/IncidenciaServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/InspeccionServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/RespuestaEncuestaServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/ResultadoInspeccionServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/service/impl/TipoIncidenciaServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-calidad/src/main/java/pe/com/sinergiacafe/calidad/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/controller/BeneficioClienteController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/controller/ProgramaFidelizacionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/service/BeneficioClienteService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/service/BeneficioClienteServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/service/ProgramaFidelizacionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/service/ProgramaFidelizacionServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/controller/CuentaPorPagarController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/controller/PresupuestoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/controller/ReporteFinancieroController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/dto/CuentaPorPagarRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/dto/CuentaPorPagarResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/dto/PresupuestoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/dto/PresupuestoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/dto/ReporteFinancieroRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/dto/ReporteFinancieroResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/entity/CuentaPorPagarEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/entity/EstadoCuentaPorPagar.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/entity/PresupuestoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/entity/ReporteFinancieroEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/repository/CuentaPorPagarRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/repository/PresupuestoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/repository/ReporteFinancieroRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/service/CuentaPorPagarService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/service/PresupuestoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/service/ReporteFinancieroService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/service/impl/CuentaPorPagarServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/service/impl/PresupuestoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/service/impl/ReporteFinancieroServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-finanzas/src/main/java/pe/com/sinergiacafe/finanzas/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/controller/CampanaMarketingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/controller/PromocionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/dto/CampanaMarketingRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/dto/CampanaMarketingResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/dto/PromocionRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/dto/PromocionResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/entity/CampanaMarketingEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/entity/PromocionEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/entity/TipoDescuento.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/repository/CampanaMarketingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/repository/PromocionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/service/CampanaMarketingService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/service/PromocionService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/service/impl/CampanaMarketingServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/service/impl/PromocionServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/shared/BadRequestException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-marketing/src/main/java/pe/com/sinergiacafe/marketing/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/controller/DetallePedidoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/controller/EstadoPedidoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/controller/PedidoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/dto/DetallePedidoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/dto/DetallePedidoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/dto/EstadoPedidoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/dto/PedidoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/dto/PedidoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/entity/DetallePedidoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/entity/EstadoPedidoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/entity/PedidoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/repository/DetallePedidoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/repository/EstadoPedidoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/repository/PedidoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/service/DetallePedidoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/service/DetallePedidoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/service/PedidoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/service/PedidoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-pedidos/src/main/java/pe/com/sinergiacafe/pedidos/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/controller/CategoriaInsumoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/controller/InsumoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/controller/RecetaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/controller/RecetaInsumoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/CategoriaInsumoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/InsumoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/InsumoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/RecetaInsumoRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/RecetaInsumoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/RecetaRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/dto/RecetaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/entity/CategoriaInsumoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/entity/InsumoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/entity/RecetaEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/entity/RecetaInsumoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/entity/RecetaInsumoId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/repository/CategoriaInsumoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/repository/InsumoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/repository/RecetaInsumoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/repository/RecetaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/service/InsumoService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/service/InsumoServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/service/RecetaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/service/RecetaServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-produccion/src/main/java/pe/com/sinergiacafe/produccion/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/controller/CajaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/controller/CierreCajaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/controller/ComprobanteController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/controller/MetodoPagoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/controller/TipoComprobanteController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/CajaRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/CajaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/CierreCajaRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/CierreCajaResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/ComprobanteRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/ComprobanteResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/MetodoPagoResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/dto/TipoComprobanteResponseDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/entity/CajaEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/entity/CierreCajaEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/entity/ComprobanteEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/entity/MetodoPagoEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/entity/TipoComprobanteEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/repository/CajaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/repository/CierreCajaRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/repository/ComprobanteRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/repository/MetodoPagoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/repository/TipoComprobanteRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/service/CajaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/service/CajaServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/service/CierreCajaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/service/CierreCajaServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/service/ComprobanteService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/service/ComprobanteServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/shared/ApiResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-ventas/src/main/java/pe/com/sinergiacafe/ventas/shared/ResourceNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ContratoProveedorRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ContratoProveedorRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ContratoProveedorResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ContratoProveedorResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/DetalleOrdenCompraRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/DetalleOrdenCompraRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/DetalleOrdenCompraResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/DetalleOrdenCompraResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/OrdenCompraRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/OrdenCompraRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/OrdenCompraResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/OrdenCompraResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ProveedorRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ProveedorRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ProveedorResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/ProveedorResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/RecepcionMercaderiaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/RecepcionMercaderiaRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/RecepcionMercaderiaResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/dto/RecepcionMercaderiaResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/ContratoProveedorEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/ContratoProveedorEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/DetalleOrdenCompraEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/DetalleOrdenCompraEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/OrdenCompraEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/OrdenCompraEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/ProveedorEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/ProveedorEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/RecepcionMercaderiaEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/entity/RecepcionMercaderiaEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/ContratoProveedorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/ContratoProveedorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/DetalleOrdenCompraService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/DetalleOrdenCompraService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/OrdenCompraService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/OrdenCompraService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/ProveedorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/ProveedorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/RecepcionMercaderiaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/service/RecepcionMercaderiaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/shared/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-abastecimiento/src/main/java/pe/com/sinergiacafe/abastecimiento/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-administracion/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-administracion/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-administracion/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-administracion/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-calidad/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-calidad/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/entity/BeneficioClienteEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-clientes/src/main/java/pe/com/sinergiacafe/clientes/entity/BeneficioClienteEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-finanzas/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-finanzas/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/MovimientoStockRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/MovimientoStockRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/MovimientoStockResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/MovimientoStockResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/ProductoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/ProductoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/ProductoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/ProductoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/StockRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/StockRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/StockResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/dto/StockResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/CategoriaProductoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/CategoriaProductoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/MovimientoStockEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/MovimientoStockEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/ProductoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/ProductoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/StockEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/entity/StockEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/service/MovimientoStockService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/service/MovimientoStockService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/service/ProductoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/service/ProductoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/service/StockService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/service/StockService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/shared/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-inventario/src/main/java/pe/com/sinergiacafe/inventario/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/EquipoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/EquipoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/EquipoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/EquipoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/MantenimientoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/MantenimientoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/MantenimientoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/dto/MantenimientoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/EquipoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/EquipoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/MantenimientoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/MantenimientoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/TipoEquipoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/TipoEquipoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/TipoMantenimientoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/entity/TipoMantenimientoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/service/EquipoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/service/EquipoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/service/MantenimientoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/service/MantenimientoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/shared/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-mantenimiento/src/main/java/pe/com/sinergiacafe/mantenimiento/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-marketing/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-marketing/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-pedidos/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-pedidos/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-produccion/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-produccion/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/controller/RolPermisoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/controller/RolPermisoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AsistenciaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AsistenciaRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AsistenciaResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AsistenciaResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AuditoriaRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AuditoriaRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AuditoriaResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/AuditoriaResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EmpleadoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EmpleadoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EmpleadoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EmpleadoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EvaluacionDesempenoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EvaluacionDesempenoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EvaluacionDesempenoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/EvaluacionDesempenoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/PermisoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/PermisoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/PermisoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/PermisoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/RolPermisoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/RolPermisoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/RolRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/RolRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/RolResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/RolResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/TurnoRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/TurnoRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/TurnoResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/TurnoResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/UsuarioRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/UsuarioRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/UsuarioResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/dto/UsuarioResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/AsistenciaEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/AsistenciaEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/AuditoriaEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/AuditoriaEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/CargoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/CargoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/EmpleadoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/EmpleadoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/EvaluacionDesempenoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/EvaluacionDesempenoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/PermisoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/PermisoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/RolEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/RolEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/RolPermisoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/RolPermisoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/TurnoEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/TurnoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/UsuarioEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/entity/UsuarioEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/repository/RolPermisoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/repository/RolPermisoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/AsistenciaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/AsistenciaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/AuditoriaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/AuditoriaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/EmpleadoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/EmpleadoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/EvaluacionDesempenoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/EvaluacionDesempenoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/PermisoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/PermisoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/RolPermisoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/RolPermisoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/RolService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/RolService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/TurnoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/TurnoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/UsuarioService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/service/UsuarioService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/shared/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-recursoshumanos/src/main/java/pe/com/sinergiacafe/recursoshumanos/shared/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-ventas/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-ventas/src/main/resources/application.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="module" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;sibelcabrera&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Alberto43342/sinergiacafe-app.git&quot;,
+    &quot;accountId&quot;: &quot;1793e2f8-242b-418b-b685-fc438bfbd9dd&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3G0J6TC3R7LIwa6QMmzq1USfk2n" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "Merging main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/sibelrodriguez/IdeaProjects/sinergiacafe-app",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.26222.65" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.26222.65" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="11874c79-6061-4339-bc1d-9f46b904473f" name="Changes" comment="" />
+      <created>1783102378593</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1783102378593</updated>
+      <workItem from="1783102384940" duration="330000" />
+      <workItem from="1783102845353" duration="5000" />
+      <workItem from="1783147027685" duration="940000" />
+      <workItem from="1783148190014" duration="1267000" />
+      <workItem from="1783190716791" duration="33000" />
+      <workItem from="1783191046210" duration="79000" />
+      <workItem from="1783191675595" duration="1596000" />
+    </task>
+    <task id="LOCAL-00001" summary="implementa CRUD completo de MS-Inventario, MS-Abastecimiento, MS-Mantenimiento y MS-RecursosHumanos">
+      <option name="closed" value="true" />
+      <created>1783147691655</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1783147691655</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="a01896c1-a3dd-400d-9314-c9796319b7fd" value="TOOL_WINDOW" />
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+        <entry key="a01896c1-a3dd-400d-9314-c9796319b7fd">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="implementa CRUD completo de MS-Inventario, MS-Abastecimiento, MS-Mantenimiento y MS-RecursosHumanos" />
+    <option name="LAST_COMMIT_MESSAGE" value="implementa CRUD completo de MS-Inventario, MS-Abastecimiento, MS-Mantenimiento y MS-RecursosHumanos" />
+  </component>
+</project>

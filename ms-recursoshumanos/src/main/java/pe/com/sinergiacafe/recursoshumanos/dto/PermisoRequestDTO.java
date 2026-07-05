@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 public class PermisoRequestDTO {
 
     @NotBlank
-    private String nombre;
     private String modulo;
+    @NotBlank
     private String accion;
+    private String descripcion;
 }

@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EquipoRequestDTO {
 
+    @NotNull
+    private Long idTipoEquipo;
     @NotBlank
     private String nombre;
     private String modelo;
     private java.time.LocalDate fechaAdquisicion;
     private String estado;
-    @NotNull
-    private Long tipoEquipoId;
 }

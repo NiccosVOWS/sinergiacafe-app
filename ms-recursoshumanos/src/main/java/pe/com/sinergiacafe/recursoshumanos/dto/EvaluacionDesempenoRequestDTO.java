@@ -11,9 +11,11 @@ import lombok.NoArgsConstructor;
 public class EvaluacionDesempenoRequestDTO {
 
     @NotNull
-    private Long empleadoId;
-    private java.time.LocalDate fecha;
+    private Long idEmpleado;
+    @NotNull
+    private java.time.LocalDate fechaEvaluacion;
+    @NotNull
+    private java.math.BigDecimal puntaje;
     private String criterios;
-    private Integer puntaje;
     private String observaciones;
 }

@@ -17,10 +17,15 @@ public class PermisoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_permiso")
     private Long id;
 
     @NotBlank
-    private String nombre;
+    @Column(name = "modulo")
     private String modulo;
+    @NotBlank
+    @Column(name = "accion")
     private String accion;
+    @Column(name = "descripcion")
+    private String descripcion;
 }

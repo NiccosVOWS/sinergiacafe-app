@@ -28,22 +28,21 @@ public class RecepcionMercaderiaService {
 
     public RecepcionMercaderiaResponseDTO create(RecepcionMercaderiaRequestDTO dto) {
         RecepcionMercaderiaEntity entity = new RecepcionMercaderiaEntity();
-        entity.setOrdenCompraId(dto.getOrdenCompraId());
-        entity.setProveedorId(dto.getProveedorId());
-        entity.setFecha(dto.getFecha());
-        entity.setCantidadRecibida(dto.getCantidadRecibida());
+        entity.setIdOrdenCompra(dto.getIdOrdenCompra());
+        entity.setIdEmpleado(dto.getIdEmpleado());
+        entity.setFechaRecepcion(java.time.LocalDateTime.now());
         entity.setConforme(dto.getConforme());
+        entity.setObservaciones(dto.getObservaciones());
         return toResponse(repository.save(entity));
     }
 
     public RecepcionMercaderiaResponseDTO update(Long id, RecepcionMercaderiaRequestDTO dto) {
         RecepcionMercaderiaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RecepcionMercaderia no encontrado con id: " + id));
-        entity.setOrdenCompraId(dto.getOrdenCompraId());
-        entity.setProveedorId(dto.getProveedorId());
-        entity.setFecha(dto.getFecha());
-        entity.setCantidadRecibida(dto.getCantidadRecibida());
+        entity.setIdOrdenCompra(dto.getIdOrdenCompra());
+        entity.setIdEmpleado(dto.getIdEmpleado());
         entity.setConforme(dto.getConforme());
+        entity.setObservaciones(dto.getObservaciones());
         return toResponse(repository.save(entity));
     }
 
@@ -57,11 +56,11 @@ public class RecepcionMercaderiaService {
     private RecepcionMercaderiaResponseDTO toResponse(RecepcionMercaderiaEntity entity) {
         return RecepcionMercaderiaResponseDTO.builder()
                 .id(entity.getId())
-                .ordenCompraId(entity.getOrdenCompraId())
-                .proveedorId(entity.getProveedorId())
-                .fecha(entity.getFecha())
-                .cantidadRecibida(entity.getCantidadRecibida())
+                .idOrdenCompra(entity.getIdOrdenCompra())
+                .idEmpleado(entity.getIdEmpleado())
+                .fechaRecepcion(entity.getFechaRecepcion())
                 .conforme(entity.getConforme())
+                .observaciones(entity.getObservaciones())
                 .build();
     }
 }

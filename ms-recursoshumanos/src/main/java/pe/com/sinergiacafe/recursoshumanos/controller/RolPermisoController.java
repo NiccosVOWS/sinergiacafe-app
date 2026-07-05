@@ -1,7 +1,7 @@
 package pe.com.sinergiacafe.recursoshumanos.controller;
 
 import pe.com.sinergiacafe.recursoshumanos.dto.RolPermisoRequestDTO;
-import pe.com.sinergiacafe.recursoshumanos.dto.RolPermisoResponseDTO;
+import pe.com.sinergiacafe.recursoshumanos.entity.RolPermisoEntity;
 import pe.com.sinergiacafe.recursoshumanos.service.RolPermisoService;
 import pe.com.sinergiacafe.recursoshumanos.shared.ApiResponse;
 import jakarta.validation.Valid;
@@ -19,29 +19,19 @@ public class RolPermisoController {
     private final RolPermisoService service;
 
     @GetMapping
-    public ApiResponse<List<RolPermisoResponseDTO>> findAll() {
+    public ApiResponse<List<RolPermisoEntity>> findAll() {
         return ApiResponse.ok(service.findAll());
-    }
-
-    @GetMapping("/{id}")
-    public ApiResponse<RolPermisoResponseDTO> findById(@PathVariable Long id) {
-        return ApiResponse.ok(service.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<RolPermisoResponseDTO> create(@Valid @RequestBody RolPermisoRequestDTO dto) {
-        return ApiResponse.ok("RolPermiso creado correctamente", service.create(dto));
+    public ApiResponse<RolPermisoEntity> create(@Valid @RequestBody RolPermisoRequestDTO dto) {
+        return ApiResponse.ok("Rol-Permiso asignado correctamente", service.create(dto));
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<RolPermisoResponseDTO> update(@PathVariable Long id, @Valid @RequestBody RolPermisoRequestDTO dto) {
-        return ApiResponse.ok("RolPermiso actualizado correctamente", service.update(id, dto));
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ApiResponse.ok("RolPermiso eliminado correctamente", null);
+    @DeleteMapping("/{idRol}/{idPermiso}")
+    public ApiResponse<Void> delete(@PathVariable Long idRol, @PathVariable Long idPermiso) {
+        service.delete(idRol, idPermiso);
+        return ApiResponse.ok("Rol-Permiso eliminado correctamente", null);
     }
 }

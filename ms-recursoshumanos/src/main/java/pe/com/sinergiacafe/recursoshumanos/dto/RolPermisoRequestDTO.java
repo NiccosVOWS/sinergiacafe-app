@@ -1,6 +1,5 @@
 package pe.com.sinergiacafe.recursoshumanos.dto;
 
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RolPermisoRequestDTO {
 
-    @NotNull
-    private Long rolId;
-    @NotNull
-    private Long permisoId;
+    @jakarta.validation.constraints.NotNull
+    private Long idRol;
+    @jakarta.validation.constraints.NotNull
+    private Long idPermiso;
 }

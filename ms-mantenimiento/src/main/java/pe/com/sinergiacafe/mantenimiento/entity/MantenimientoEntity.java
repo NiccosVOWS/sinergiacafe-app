@@ -17,14 +17,22 @@ public class MantenimientoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_mantenimiento")
     private Long id;
 
     @NotNull
-    private Long equipoId;
+    @Column(name = "id_equipo")
+    private Long idEquipo;
     @NotNull
-    private Long tipoMantenimientoId;
-    private java.time.LocalDateTime fecha;
-    private String responsable;
+    @Column(name = "id_tipo_mantenimiento")
+    private Long idTipoMantenimiento;
+    @NotNull
+    @Column(name = "id_empleado")
+    private Long idEmpleado;
+    @Column(name = "fecha_mantenimiento")
+    private java.time.LocalDateTime fechaMantenimiento;
+    @Column(name = "costo")
     private java.math.BigDecimal costo;
+    @Column(name = "observaciones")
     private String observaciones;
 }

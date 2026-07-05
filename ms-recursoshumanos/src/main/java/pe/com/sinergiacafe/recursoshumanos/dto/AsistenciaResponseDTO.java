@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class AsistenciaResponseDTO {
 
     private Long id;
-    private Long empleadoId;
+    private Long idEmpleado;
     private java.time.LocalDate fecha;
     private java.time.LocalTime horaEntrada;
     private java.time.LocalTime horaSalida;
