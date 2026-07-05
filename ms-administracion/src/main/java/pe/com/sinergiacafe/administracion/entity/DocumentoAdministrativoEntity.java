@@ -7,14 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "documentoadministrativo")
+@Table(name = "documento_administrativo")
 public class DocumentoAdministrativoEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_documento_administrativo")
@@ -30,5 +32,10 @@ public class DocumentoAdministrativoEntity {
     private String descripcion;
 
     @Column(name = "id_empleado", nullable = false)
-    private Integer idEmpleado;
+    private Long idEmpleado;
+
+    @PrePersist
+    public void prePersist() {
+        if (fechaDocumento == null) fechaDocumento = LocalDate.now();
+    }
 }

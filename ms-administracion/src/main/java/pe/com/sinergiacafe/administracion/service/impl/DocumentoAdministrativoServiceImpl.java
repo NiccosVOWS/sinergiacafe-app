@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import pe.com.sinergiacafe.administracion.dto.DocumentoAdministrativoRequestDTO;
 import pe.com.sinergiacafe.administracion.dto.DocumentoAdministrativoResponseDTO;
 import pe.com.sinergiacafe.administracion.entity.DocumentoAdministrativoEntity;
+import pe.com.sinergiacafe.administracion.exception.ResourceNotFoundException;
 import pe.com.sinergiacafe.administracion.repository.DocumentoAdministrativoRepository;
 import pe.com.sinergiacafe.administracion.service.DocumentoAdministrativoService;
-import pe.com.sinergiacafe.administracion.shared.ResourceNotFoundException;
 
 import java.util.List;
 

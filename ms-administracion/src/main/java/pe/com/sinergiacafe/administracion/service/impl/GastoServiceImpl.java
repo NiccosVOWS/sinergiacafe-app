@@ -7,10 +7,10 @@ import pe.com.sinergiacafe.administracion.dto.GastoRequestDTO;
 import pe.com.sinergiacafe.administracion.dto.GastoResponseDTO;
 import pe.com.sinergiacafe.administracion.entity.CategoriaGastoEntity;
 import pe.com.sinergiacafe.administracion.entity.GastoEntity;
+import pe.com.sinergiacafe.administracion.exception.ResourceNotFoundException;
 import pe.com.sinergiacafe.administracion.repository.CategoriaGastoRepository;
 import pe.com.sinergiacafe.administracion.repository.GastoRepository;
 import pe.com.sinergiacafe.administracion.service.GastoService;
-import pe.com.sinergiacafe.administracion.shared.ResourceNotFoundException;
 
 import java.util.List;
 

@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CategoriaGastoRepository extends JpaRepository<CategoriaGastoEntity, Long> {
 
+    Optional<CategoriaGastoEntity> findByNombre(String nombre);
 }

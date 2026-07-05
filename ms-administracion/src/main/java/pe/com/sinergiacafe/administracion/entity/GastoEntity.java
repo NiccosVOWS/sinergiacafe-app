@@ -34,4 +34,9 @@ public class GastoEntity {
 
     @Column(name = "descripcion", nullable = false, length = 300)
     private String descripcion;
+
+    @PrePersist
+    public void prePersist() {
+        if (fechaGasto == null) fechaGasto = LocalDate.now();
+    }
 }

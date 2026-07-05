@@ -8,13 +8,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface DocumentoAdministrativoRepository extends JpaRepository<DocumentoAdministrativoEntity, Long>{
-    // Buscar documentos por tipo
+public interface DocumentoAdministrativoRepository extends JpaRepository<DocumentoAdministrativoEntity, Long> {
+
     List<DocumentoAdministrativoEntity> findByTipoDocumento(String tipoDocumento);
-
-    // Buscar documentos por fecha
     List<DocumentoAdministrativoEntity> findByFechaDocumento(LocalDate fechaDocumento);
-
-    // Buscar documentos por empleado
-    List<DocumentoAdministrativoEntity> findByIdEmpleado(Integer idEmpleado);
+    List<DocumentoAdministrativoEntity> findByIdEmpleado(Long idEmpleado);
 }
