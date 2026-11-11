@@ -1,10 +1,374 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Clientes — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; }
+        .tab-btn { padding:8px 20px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        textarea.form-input { resize:vertical; min-height:60px; font-family:'Inter',sans-serif; }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+        .detail-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+        .detail-sub { font-size:13px; color:#7A7068; margin-top:4px; }
+        .section-label { font-size:11px; font-weight:600; letter-spacing:0.06em; color:#A09890; text-transform:uppercase; margin:20px 0 10px; }
+        .points-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .point-card { background:#F5F0E8; border-radius:8px; padding:12px 14px; }
+        .point-card .n { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; }
+        .point-card .l { font-size:11px; color:#7A7068; margin-top:2px; }
+        .mini-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .mini-table th { text-align:left; font-size:11px; color:#A09890; padding:8px 6px; border-bottom:1px solid #EDE8DF; }
+        .mini-table td { padding:9px 6px; border-bottom:1px solid #F0EBE2; }
+        .empty { color:#A09890; font-size:13px; padding:14px 0; text-align:center; }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="clientes">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Clientes</h1>
+            <p>Padrón de clientes y programas de fidelización de Sinergia Café</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuevo cliente
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabClientes" onclick="switchTab('clientes')">Clientes</button>
+        <button class="tab-btn" id="tabProgramas" onclick="switchTab('programas')">Programas de fidelización</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nombre o DNI…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelClientes" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre completo</th><th>DNI</th><th>Teléfono</th><th>Correo</th><th>Tipo</th><th>Registro</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="clientesBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelProgramas" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Programa</th><th>Descripción</th><th>Puntos por sol</th><th>Mín. para canje</th><th>Vigencia</th><th>Estado</th></tr></thead>
+            <tbody id="programasBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal crear / editar cliente -->
+<div class="modal-overlay" id="modalCliente">
+    <div class="modal" style="max-width:540px;">
+        <h2 class="modal-title" id="modalClienteTitle">Nuevo cliente</h2>
+        <input type="hidden" id="clienteId" />
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Nombres *</label><input type="text" class="form-input" id="fNombres" maxlength="100" placeholder="Ej: María Elena" /></div>
+            <div class="form-group"><label class="form-label">Apellidos *</label><input type="text" class="form-input" id="fApellidos" maxlength="100" placeholder="Ej: Rojas Vega" /></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">DNI * (8 dígitos)</label><input type="text" class="form-input" id="fDni" maxlength="8" placeholder="12345678" /></div>
+            <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="fTelefono" maxlength="15" placeholder="9XXXXXXXX" /></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Correo</label><input type="email" class="form-input" id="fCorreo" placeholder="correo@ejemplo.com" /></div>
+            <div class="form-group"><label class="form-label">Fecha de nacimiento</label><input type="date" class="form-input" id="fNacimiento" /></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Tipo de cliente *</label>
+            <select class="form-input" id="fTipoCliente"></select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalCliente')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardar">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal detalle del cliente -->
+<div class="modal-overlay" id="modalDetalle">
+    <div class="modal" style="max-width:600px;">
+        <div class="detail-head">
+            <div>
+                <h2 class="modal-title" style="margin-bottom:0;" id="detNombre"></h2>
+                <p class="detail-sub" id="detSub"></p>
+            </div>
+            <button class="btn-primary" id="btnNuevaVisita" style="padding:8px 14px;">+ Registrar visita</button>
+        </div>
+        <div class="section-label">Puntos de fidelización</div>
+        <div id="detPuntos"></div>
+        <div class="section-label">Historial de visitas</div>
+        <div id="detVisitas"></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalDetalle')">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal registrar visita -->
+<div class="modal-overlay" id="modalVisita" style="z-index:105;">
+    <div class="modal" style="max-width:400px;">
+        <h2 class="modal-title">Registrar visita</h2>
+        <div class="form-group">
+            <label class="form-label">Consumo total (S/) *</label>
+            <input type="number" class="form-input" id="vConsumo" min="0" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-input" id="vObs" placeholder="Opcional"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalVisita')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarVisita">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm eliminar -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3>Eliminar cliente</h3>
+        <p>¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-danger" id="confirmEliminar">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const ICON_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+    const ICON_EYE  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+    let clientes = [], tipos = [], programas = [];
+    let tabActual = 'clientes', deleteId = null, clienteDetalle = null;
+
+    const money = n => `S/ ${parseFloat(n || 0).toFixed(2)}`;
+    const fmtDia = f => f ? f.split('-').reverse().join('/') : '—';     // LocalDate sin desfase de zona horaria
+    const fmtFecha = f => f ? new Date(f).toLocaleDateString('es-PE') : '—';
+    const fmtFechaHora = f => f ? new Date(f).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+    const val = id => document.getElementById(id).value.trim();
+    const valOrNull = id => val(id) || null;
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // --------------- Carga -------------------
+    async function loadAll() {
+      try {
+        [clientes, tipos, programas] = await Promise.all([
+          getList('/api/v1/clientes'), getList('/api/v1/tipos-cliente'), getList('/api/v1/programas-fidelizacion'),
+        ]);
+      } catch { showToast('Error al cargar los datos de clientes', 'error'); }
+      document.getElementById('fTipoCliente').innerHTML = '<option value="">— Seleccionar —</option>' +
+        tipos.filter(t => t.activo !== false)
+             .map(t => `<option value="${t.idTipoCliente}">${t.nombre}${parseFloat(t.descuentoPct) > 0 ? ` (${t.descuentoPct} % de descuento)` : ''}</option>`).join('');
+      renderTablaActual();
+    }
+
+    // -------------- Tabs, búsqueda y render ---------------
+    function switchTab(tab) {
+      tabActual = tab;
+      document.getElementById('panelClientes').style.display = tab === 'clientes' ? '' : 'none';
+      document.getElementById('panelProgramas').style.display = tab === 'programas' ? '' : 'none';
+      document.getElementById('tabClientes').className = `tab-btn ${tab === 'clientes' ? 'active' : ''}`;
+      document.getElementById('tabProgramas').className = `tab-btn ${tab === 'programas' ? 'active' : ''}`;
+      document.getElementById('btnNuevo').style.display = tab === 'clientes' ? '' : 'none';
+      document.getElementById('searchInput').placeholder = tab === 'clientes' ? 'Buscar por nombre o DNI…' : 'Buscar programa…';
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (tabActual === 'clientes') renderClientes(clientes.filter(c => `${c.nombres} ${c.apellidos}`.toLowerCase().includes(q) || (c.dni || '').includes(q)));
+      else renderProgramas(programas.filter(p => (p.nombre || '').toLowerCase().includes(q)));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+
+    function renderClientes(data) {
+      setBody('clientesBody', 9, data, c => {
+        const activo = c.activo !== false;
+        const dto = parseFloat(c.tipoCliente?.descuentoPct) > 0 ? ` <span style="font-size:11px;color:#7A7068;">(${c.tipoCliente.descuentoPct} %)</span>` : '';
+        return `<tr>
+          <td class="td-id">#${c.idCliente}</td>
+          <td class="td-bold">${c.nombres} ${c.apellidos}</td>
+          <td>${c.dni || '—'}</td>
+          <td>${c.telefono || '—'}</td>
+          <td class="td-muted">${c.correo || '—'}</td>
+          <td>${c.tipoCliente?.nombre || '—'}${dto}</td>
+          <td class="td-muted">${fmtFecha(c.fechaRegistro)}</td>
+          <td><span class="badge ${activo ? 'badge-activo' : 'badge-inactivo'}">${activo ? 'Activo' : 'Inactivo'}</span></td>
+          <td>
+            <button class="action-btn" onclick="openDetalle(${c.idCliente})" title="Ver visitas y puntos">${ICON_EYE}</button>
+            <button class="action-btn" onclick="openEdit(${c.idCliente})" title="Editar">${ICON_EDIT}</button>
+            <button class="action-btn delete" onclick="openConfirm(${c.idCliente})" title="Eliminar">${ICON_DEL}</button>
+          </td></tr>`;
+      }, 'Sin clientes');
+    }
+
+    function renderProgramas(data) {
+      setBody('programasBody', 7, data, p => `<tr>
+        <td class="td-id">#${p.idProgramaFidelizacion}</td>
+        <td class="td-bold">${p.nombre}</td>
+        <td class="td-muted">${p.descripcion || '—'}</td>
+        <td>${parseFloat(p.puntosPorSol ?? 0)}</td>
+        <td>${p.minPuntosCanje ?? '—'}</td>
+        <td class="td-muted">${fmtDia(p.fechaInicio)} – ${p.fechaFin ? fmtDia(p.fechaFin) : 'sin fin'}</td>
+        <td><span class="badge ${p.activo !== false ? 'badge-activo' : 'badge-inactivo'}">${p.activo !== false ? 'Activo' : 'Inactivo'}</span></td>
+      </tr>`, 'Sin programas de fidelización');
+    }
+
+    // ------------------- Modales -------------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalCliente', 'modalDetalle', 'modalVisita'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    async function reloadClientes() {
+      clientes = await getList('/api/v1/clientes');
+      renderTablaActual();
+    }
+
+    // ------------------- Crear / editar ---------------
+    function openModalCliente(c = null) {
+      document.getElementById('modalClienteTitle').textContent = c ? 'Editar cliente' : 'Nuevo cliente';
+      document.getElementById('clienteId').value = c?.idCliente || '';
+      document.getElementById('fNombres').value = c?.nombres || '';
+      document.getElementById('fApellidos').value = c?.apellidos || '';
+      document.getElementById('fDni').value = c?.dni || '';
+      document.getElementById('fTelefono').value = c?.telefono || '';
+      document.getElementById('fCorreo').value = c?.correo || '';
+      document.getElementById('fNacimiento').value = c?.fechaNacimiento || '';
+      document.getElementById('fTipoCliente').value = c?.tipoCliente?.idTipoCliente || '';
+      openModal('modalCliente');
+    }
+    function openEdit(id) { const c = clientes.find(x => x.idCliente === id); if (c) openModalCliente(c); }
+    document.getElementById('btnNuevo').addEventListener('click', () => {
+      if (!tipos.length) { showToast('No se pudieron cargar los tipos de cliente. Verifica que ms-clientes (8081) esté en ejecución', 'error'); return; }
+      openModalCliente();
+    });
+
+    document.getElementById('btnGuardar').addEventListener('click', async () => {
+      const id = val('clienteId');
+      if (!val('fNombres') || !val('fApellidos') || !/^\d{8}$/.test(val('fDni')) || !val('fTipoCliente')) {
+        showToast('Nombres, apellidos, DNI de 8 dígitos y tipo de cliente son obligatorios', 'error'); return;
+      }
+      const body = {
+        idTipoCliente: parseInt(val('fTipoCliente')), nombres: val('fNombres'), apellidos: val('fApellidos'), dni: val('fDni'),
+        telefono: valOrNull('fTelefono'), correo: valOrNull('fCorreo'), fechaNacimiento: valOrNull('fNacimiento'),
+      };
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/clientes${id ? '/' + id : ''}`, { method: id ? 'PUT' : 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error();
+        showToast(id ? 'Cliente actualizado' : 'Cliente creado');
+        closeModal('modalCliente');
+        await reloadClientes();
+      } catch { showToast('Error al guardar (revisa el correo y que el DNI no esté repetido)', 'error'); }
+    });
+
+    // --------------------- Detalle: puntos y visitas -----------------
+    async function openDetalle(id) {
+      clienteDetalle = clientes.find(x => x.idCliente === id);
+      if (!clienteDetalle) return;
+      document.getElementById('detNombre').textContent = `${clienteDetalle.nombres} ${clienteDetalle.apellidos}`;
+      document.getElementById('detSub').textContent = `DNI ${clienteDetalle.dni} · ${clienteDetalle.tipoCliente?.nombre || 'Sin tipo'}`;
+      document.getElementById('detPuntos').innerHTML = '<p class="empty">Cargando…</p>';
+      document.getElementById('detVisitas').innerHTML = '<p class="empty">Cargando…</p>';
+      openModal('modalDetalle');
+      await cargarDetalle();
+    }
+
+    async function cargarDetalle() {
+      const id = clienteDetalle.idCliente;
+      const [beneficios, visitas] = await Promise.all([
+        getList(`/api/v1/beneficios-cliente/cliente/${id}`).catch(() => []),
+        getList(`/api/v1/historial-visitas/cliente/${id}`).catch(() => []),
+      ]);
+
+      document.getElementById('detPuntos').innerHTML = beneficios.length
+        ? beneficios.map(b => `
+            <p style="font-size:12px;color:#7A7068;margin-bottom:6px;">${b.programaFidelizacion?.nombre || 'Programa'}</p>
+            <div class="points-grid" style="margin-bottom:10px;">
+              <div class="point-card"><div class="n" style="color:var(--verde-medio);">${b.puntosDisponibles ?? 0}</div><div class="l">Disponibles</div></div>
+              <div class="point-card"><div class="n">${b.puntosAcumulados ?? 0}</div><div class="l">Acumulados</div></div>
+              <div class="point-card"><div class="n">${b.puntosCanjeados ?? 0}</div><div class="l">Canjeados</div></div>
+            </div>`).join('')
+        : '<p class="empty">Este cliente aún no tiene puntos registrados.</p>';
+
+      const total = visitas.reduce((s, v) => s + parseFloat(v.consumoTotal || 0), 0);
+      document.getElementById('detVisitas').innerHTML = visitas.length
+        ? `<table class="mini-table"><thead><tr><th>Fecha</th><th>Consumo</th><th>Observaciones</th></tr></thead><tbody>` +
+          visitas.map(v => `<tr><td>${fmtFechaHora(v.fechaVisita)}</td><td><strong>${money(v.consumoTotal)}</strong></td><td style="color:#7A7068;">${v.observaciones || '—'}</td></tr>`).join('') +
+          `</tbody></table><p style="text-align:right;font-size:13px;margin-top:10px;color:#7A7068;">${visitas.length} visita${visitas.length !== 1 ? 's' : ''} · Consumo total <strong>${money(total)}</strong></p>`
+        : '<p class="empty">Sin visitas registradas.</p>';
+    }
+
+    document.getElementById('btnNuevaVisita').addEventListener('click', () => {
+      document.getElementById('vConsumo').value = '';
+      document.getElementById('vObs').value = '';
+      openModal('modalVisita');
+    });
+
+    document.getElementById('btnGuardarVisita').addEventListener('click', async () => {
+      const consumo = parseFloat(val('vConsumo'));
+      if (isNaN(consumo) || consumo < 0) { showToast('Ingresa un consumo válido (0 o más)', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/historial-visitas`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ idCliente: clienteDetalle.idCliente, consumoTotal: consumo, observaciones: valOrNull('vObs') })
+        });
+        if (!res.ok) throw new Error();
+        showToast('Visita registrada');
+        closeModal('modalVisita');
+        await cargarDetalle();
+      } catch { showToast('Error al registrar la visita', 'error'); }
+    });
+
+    // --------- Eliminar ------------
+    function openConfirm(id) { deleteId = id; openModal('confirmOverlay'); }
+    document.getElementById('confirmCancelar').addEventListener('click', () => { closeModal('confirmOverlay'); deleteId = null; });
+    document.getElementById('confirmEliminar').addEventListener('click', async () => {
+      if (!deleteId) return;
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/clientes/${deleteId}`, { method: 'DELETE', headers });
+        if (!res.ok) throw new Error();
+        showToast('Cliente eliminado');
+        closeModal('confirmOverlay');
+        deleteId = null;
+        await reloadClientes();
+      } catch { showToast('No se pudo eliminar (puede tener pedidos o visitas asociadas)', 'error'); }
+    });
+
+    loadAll();
+</script>
 </body>
 </html>

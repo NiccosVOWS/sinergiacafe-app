@@ -1,10 +1,539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Recursos Humanos — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; flex-wrap:wrap; }
+        .tab-btn { padding:8px 16px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        textarea.form-input { resize:vertical; min-height:60px; font-family:'Inter',sans-serif; }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="recursoshumanos">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Recursos Humanos</h1>
+            <p>Empleados, cargos, turnos, asistencias y evaluaciones</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="btnNuevoLabel">Nuevo empleado</span>
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabEmpleados" onclick="switchTab('empleados')">Empleados</button>
+        <button class="tab-btn" id="tabCargos" onclick="switchTab('cargos')">Cargos</button>
+        <button class="tab-btn" id="tabTurnos" onclick="switchTab('turnos')">Turnos</button>
+        <button class="tab-btn" id="tabAsistencias" onclick="switchTab('asistencias')">Asistencias</button>
+        <button class="tab-btn" id="tabEvaluaciones" onclick="switchTab('evaluaciones')">Evaluaciones</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelEmpleados" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre completo</th><th>DNI</th><th>Cargo</th><th>Turno</th><th>Ingreso</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="empleadosBody"></tbody>
+        </table>
+    </div>
+    <div id="panelCargos" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th></th></tr></thead>
+            <tbody id="cargosBody"></tbody>
+        </table>
+    </div>
+    <div id="panelTurnos" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Hora inicio</th><th>Hora fin</th><th></th></tr></thead>
+            <tbody id="turnosBody"></tbody>
+        </table>
+    </div>
+    <div id="panelAsistencias" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Empleado</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Observaciones</th><th></th></tr></thead>
+            <tbody id="asistenciasBody"></tbody>
+        </table>
+    </div>
+    <div id="panelEvaluaciones" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Empleado</th><th>Fecha</th><th>Puntaje</th><th>Criterios</th><th>Observaciones</th><th></th></tr></thead>
+            <tbody id="evaluacionesBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal Empleado -->
+<div class="modal-overlay" id="modalEmpleado">
+    <div class="modal" style="max-width:540px;">
+        <h2 class="modal-title" id="modalEmpleadoTitle">Nuevo empleado</h2>
+        <input type="hidden" id="empleadoId" />
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Nombres *</label><input type="text" class="form-input" id="emNombres" maxlength="100" /></div>
+            <div class="form-group"><label class="form-label">Apellidos *</label><input type="text" class="form-input" id="emApellidos" maxlength="100" /></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">DNI * (8 dígitos)</label><input type="text" class="form-input" id="emDni" maxlength="8" placeholder="12345678" /></div>
+            <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="emTelefono" maxlength="15" placeholder="9XXXXXXXX" /></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Correo</label><input type="email" class="form-input" id="emCorreo" placeholder="correo@ejemplo.com" /></div>
+            <div class="form-group"><label class="form-label">Fecha de ingreso *</label><input type="date" class="form-input" id="emIngreso" /></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Cargo *</label><select class="form-input" id="emCargo"></select></div>
+            <div class="form-group"><label class="form-label">Turno *</label><select class="form-input" id="emTurno"></select></div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalEmpleado')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarEmpleado">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cargo -->
+<div class="modal-overlay" id="modalCargo">
+    <div class="modal">
+        <h2 class="modal-title" id="modalCargoTitle">Nuevo cargo</h2>
+        <input type="hidden" id="cargoId" />
+        <div class="form-group"><label class="form-label">Nombre *</label><input type="text" class="form-input" id="cgNombre" maxlength="80" placeholder="Ej: Barista" /></div>
+        <div class="form-group"><label class="form-label">Descripción</label><input type="text" class="form-input" id="cgDescripcion" maxlength="200" /></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalCargo')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarCargo">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Turno -->
+<div class="modal-overlay" id="modalTurno">
+    <div class="modal">
+        <h2 class="modal-title" id="modalTurnoTitle">Nuevo turno</h2>
+        <input type="hidden" id="turnoId" />
+        <div class="form-group"><label class="form-label">Nombre *</label><input type="text" class="form-input" id="tnNombre" maxlength="50" placeholder="Ej: Turno mañana" /></div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Hora de inicio *</label><input type="time" class="form-input" id="tnInicio" /></div>
+            <div class="form-group"><label class="form-label">Hora de fin *</label><input type="time" class="form-input" id="tnFin" /></div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalTurno')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarTurno">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Asistencia -->
+<div class="modal-overlay" id="modalAsistencia">
+    <div class="modal">
+        <h2 class="modal-title">Registrar asistencia</h2>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Empleado *</label><select class="form-input" id="asEmpleado"></select></div>
+            <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="asFecha" /></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Hora de entrada</label><input type="time" class="form-input" id="asEntrada" /></div>
+            <div class="form-group"><label class="form-label">Hora de salida</label><input type="time" class="form-input" id="asSalida" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Observaciones</label><input type="text" class="form-input" id="asObs" maxlength="200" /></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalAsistencia')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarAsistencia">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Hora de salida -->
+<div class="modal-overlay" id="modalSalida">
+    <div class="modal" style="max-width:360px;">
+        <h2 class="modal-title">Registrar salida</h2>
+        <input type="hidden" id="salidaId" />
+        <div class="form-group"><label class="form-label">Hora de salida *</label><input type="time" class="form-input" id="salidaHora" /></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalSalida')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarSalida">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Evaluación -->
+<div class="modal-overlay" id="modalEvaluacion">
+    <div class="modal">
+        <h2 class="modal-title">Registrar evaluación</h2>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Empleado *</label><select class="form-input" id="evEmpleado"></select></div>
+            <div class="form-group"><label class="form-label">Fecha *</label><input type="date" class="form-input" id="evFecha" /></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Puntaje (0 a 5) *</label>
+            <input type="number" class="form-input" id="evPuntaje" min="0" max="5" step="0.1" placeholder="4.5" />
+        </div>
+        <div class="form-group"><label class="form-label">Criterios evaluados</label><textarea class="form-input" id="evCriterios" maxlength="300" placeholder="Puntualidad, trato al cliente, trabajo en equipo…"></textarea></div>
+        <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-input" id="evObs" maxlength="300"></textarea></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalEvaluacion')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarEvaluacion">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmación genérica -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3 id="confirmTitle"></h3>
+        <p id="confirmText"></p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-danger" id="confirmAceptar">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const ICON_EDIT  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const ICON_DEL   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+    const ICON_POWER = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>';
+    const ICON_CLOCK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+
+    const RUTAS = { empleado: '/api/v1/empleados', cargo: '/api/v1/cargos', turno: '/api/v1/turnos',
+                    asistencia: '/api/v1/asistencias', evaluacion: '/api/v1/evaluaciones-desempeno' };
+    const TABS = ['empleados', 'cargos', 'turnos', 'asistencias', 'evaluaciones'];
+    const LABELS = { empleados: 'Nuevo empleado', cargos: 'Nuevo cargo', turnos: 'Nuevo turno',
+                     asistencias: 'Registrar asistencia', evaluaciones: 'Registrar evaluación' };
+
+    let empleados = [], cargos = [], turnos = [], asistencias = [], evaluaciones = [];
+    let tabActual = 'empleados', confirmFn = null;
+
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const fmtDia = f => f ? f.split('-').reverse().join('/') : '—';     // LocalDate sin desfase de zona horaria
+    const hhmm = t => t ? t.slice(0, 5) : '—';
+    const nombreCompleto = e => e ? `${e.nombres} ${e.apellidos}` : '—';
+    const hoyLocal = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const ahoraLocal = () => { const d = new Date(); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+    const val = id => document.getElementById(id).value.trim();
+    const valOrNull = id => val(id) || null;
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // -------------- Carga -----------------
+    async function loadAll() {
+      try {
+        [empleados, cargos, turnos, asistencias, evaluaciones] = await Promise.all([
+          getList(RUTAS.empleado), getList(RUTAS.cargo), getList(RUTAS.turno),
+          getList(RUTAS.asistencia), getList(RUTAS.evaluacion),
+        ]);
+      } catch { showToast('Error al cargar los datos de recursos humanos', 'error'); }
+      populateSelects();
+      renderTablaActual();
+    }
+
+    function fill(id, items, value, label) {
+      const sel = document.getElementById(id), prev = sel.value;
+      sel.innerHTML = '<option value="">— Seleccionar —</option>' + items.map(i => `<option value="${value(i)}">${label(i)}</option>`).join('');
+      sel.value = prev;
+    }
+    function populateSelects() {
+      fill('emCargo', cargos, c => c.idCargo, c => c.nombre);
+      fill('emTurno', turnos, t => t.idTurno, t => `${t.nombre} (${hhmm(t.horaInicio)}–${hhmm(t.horaFin)})`);
+      const activos = empleados.filter(e => e.estadoLaboral !== 'inactivo');
+      ['asEmpleado', 'evEmpleado'].forEach(id => fill(id, activos, e => e.idEmpleado, nombreCompleto));
+    }
+
+    // --------------- Tabs y búsqueda ----------------
+    function switchTab(tab) {
+      tabActual = tab;
+      TABS.forEach(t => {
+        document.getElementById(`panel${cap(t)}`).style.display = t === tab ? '' : 'none';
+        document.getElementById(`tab${cap(t)}`).className = `tab-btn ${t === tab ? 'active' : ''}`;
+      });
+      document.getElementById('btnNuevoLabel').textContent = LABELS[tab];
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const has = (s) => (s || '').toLowerCase().includes(q);
+      if (tabActual === 'empleados') renderEmpleados(empleados.filter(e => has(nombreCompleto(e)) || (e.dni || '').includes(q)));
+      else if (tabActual === 'cargos') renderCargos(cargos.filter(c => has(c.nombre)));
+      else if (tabActual === 'turnos') renderTurnos(turnos.filter(t => has(t.nombre)));
+      else if (tabActual === 'asistencias') renderAsistencias(asistencias.filter(a => has(nombreCompleto(a.empleado))));
+      else renderEvaluaciones(evaluaciones.filter(v => has(nombreCompleto(v.empleado))));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+    document.getElementById('btnNuevo').addEventListener('click', () => ({
+      empleados: () => openModalEmpleado(), cargos: () => openModalCargo(), turnos: () => openModalTurno(),
+      asistencias: openModalAsistencia, evaluaciones: openModalEvaluacion,
+    })[tabActual]());
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+    const btnDel = (tipo, id) => `<button class="action-btn delete" onclick="pedirEliminar('${tipo}',${id})" title="Eliminar">${ICON_DEL}</button>`;
+
+    // -------------- Render ---------------------
+    function renderEmpleados(data) {
+      setBody('empleadosBody', 8, data, e => {
+        const activo = e.estadoLaboral !== 'inactivo';
+        return `<tr>
+          <td class="td-id">#${e.idEmpleado}</td>
+          <td class="td-bold">${nombreCompleto(e)}</td>
+          <td>${e.dni || '—'}</td>
+          <td>${e.cargo?.nombre || '—'}</td>
+          <td>${e.turno?.nombre || '—'}</td>
+          <td class="td-muted">${fmtDia(e.fechaIngreso)}</td>
+          <td><span class="badge ${activo ? 'badge-activo' : 'badge-inactivo'}">${activo ? 'Activo' : 'Inactivo'}</span></td>
+          <td>
+            <button class="action-btn" onclick="alternarEstado(${e.idEmpleado})" title="${activo ? 'Dar de baja' : 'Reactivar'}">${ICON_POWER}</button>
+            <button class="action-btn" onclick="openEditEmpleado(${e.idEmpleado})" title="Editar">${ICON_EDIT}</button>
+            ${btnDel('empleado', e.idEmpleado)}
+          </td></tr>`;
+      }, 'Sin empleados');
+    }
+    function renderCargos(data) {
+      setBody('cargosBody', 4, data, c => `<tr>
+        <td class="td-id">#${c.idCargo}</td><td class="td-bold">${c.nombre}</td><td class="td-muted">${c.descripcion || '—'}</td>
+        <td><button class="action-btn" onclick="openEditCargo(${c.idCargo})" title="Editar">${ICON_EDIT}</button>${btnDel('cargo', c.idCargo)}</td></tr>`, 'Sin cargos');
+    }
+    function renderTurnos(data) {
+      setBody('turnosBody', 5, data, t => `<tr>
+        <td class="td-id">#${t.idTurno}</td><td class="td-bold">${t.nombre}</td><td>${hhmm(t.horaInicio)}</td><td>${hhmm(t.horaFin)}</td>
+        <td><button class="action-btn" onclick="openEditTurno(${t.idTurno})" title="Editar">${ICON_EDIT}</button>${btnDel('turno', t.idTurno)}</td></tr>`, 'Sin turnos');
+    }
+    function renderAsistencias(data) {
+      setBody('asistenciasBody', 7, data, a => `<tr>
+        <td class="td-id">#${a.idAsistencia}</td>
+        <td class="td-bold">${nombreCompleto(a.empleado)}</td>
+        <td class="td-muted">${fmtDia(a.fecha)}</td>
+        <td>${hhmm(a.horaEntrada)}</td>
+        <td>${a.horaSalida ? hhmm(a.horaSalida) : '<span class="badge badge-pendiente">Sin registrar</span>'}</td>
+        <td class="td-muted">${a.observaciones || '—'}</td>
+        <td>
+          ${a.horaSalida ? '' : `<button class="action-btn" onclick="openSalida(${a.idAsistencia})" title="Registrar salida">${ICON_CLOCK}</button>`}
+          ${btnDel('asistencia', a.idAsistencia)}
+        </td></tr>`, 'Sin asistencias registradas');
+    }
+    function renderEvaluaciones(data) {
+      setBody('evaluacionesBody', 7, data, v => {
+        const p = parseFloat(v.puntaje || 0);
+        return `<tr>
+          <td class="td-id">#${v.idEvaluacionDesempeno}</td>
+          <td class="td-bold">${nombreCompleto(v.empleado)}</td>
+          <td class="td-muted">${fmtDia(v.fechaEvaluacion)}</td>
+          <td class="td-bold" style="color:${p >= 4 ? '#065F46' : p < 2.5 ? '#991B1B' : 'inherit'};">${p.toFixed(1)} / 5</td>
+          <td class="td-muted">${v.criterios || '—'}</td>
+          <td class="td-muted">${v.observaciones || '—'}</td>
+          <td>${btnDel('evaluacion', v.idEvaluacionDesempeno)}</td></tr>`;
+      }, 'Sin evaluaciones registradas');
+    }
+
+    // ------------ Helpers de modal, confirmación y recarga ------------------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalEmpleado', 'modalCargo', 'modalTurno', 'modalAsistencia', 'modalSalida', 'modalEvaluacion'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    function ask(titulo, texto, fn, peligro = true) {
+      document.getElementById('confirmTitle').textContent = titulo;
+      document.getElementById('confirmText').textContent = texto;
+      document.getElementById('confirmAceptar').className = peligro ? 'btn-danger' : 'btn-primary';
+      confirmFn = fn;
+      openModal('confirmOverlay');
+    }
+    document.getElementById('confirmCancelar').addEventListener('click', () => { closeModal('confirmOverlay'); confirmFn = null; });
+    document.getElementById('confirmAceptar').addEventListener('click', async () => {
+      const fn = confirmFn; confirmFn = null;
+      closeModal('confirmOverlay');
+      if (fn) await fn();
+    });
+
+    async function reload(tipo) {
+      const data = await getList(RUTAS[tipo]);
+      ({ empleado: () => empleados = data, cargo: () => cargos = data, turno: () => turnos = data,
+         asistencia: () => asistencias = data, evaluacion: () => evaluaciones = data })[tipo]();
+      populateSelects();
+      renderTablaActual();
+    }
+
+    function pedirEliminar(tipo, id) {
+      const nombres = { empleado: 'empleado', cargo: 'cargo', turno: 'turno', asistencia: 'asistencia', evaluacion: 'evaluación' };
+      ask(`Eliminar ${nombres[tipo]}`, '¿Estás seguro? Esta acción no se puede deshacer.', async () => {
+        try {
+          const res = await fetch(`${GATEWAY}${RUTAS[tipo]}/${id}`, { method: 'DELETE', headers });
+          if (!res.ok) throw new Error();
+          showToast('Eliminado correctamente');
+          await reload(tipo);
+        } catch { showToast('No se pudo eliminar (puede tener registros asociados)', 'error'); }
+      });
+    }
+
+    async function guardar(tipo, id, body, mensaje, modal) {
+      try {
+        const res = await fetch(`${GATEWAY}${RUTAS[tipo]}${id ? '/' + id : ''}`, { method: id ? 'PUT' : 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error();
+        showToast(mensaje);
+        closeModal(modal);
+        await reload(tipo);
+      } catch { showToast('Error al guardar. Revisa los datos ingresados', 'error'); }
+    }
+
+    // ----------- Empleado ------------------
+    function openModalEmpleado(e = null) {
+      if (!e && (!cargos.length || !turnos.length)) {
+        showToast(!cargos.length ? 'Primero crea un cargo en la pestaña Cargos' : 'Primero crea un turno en la pestaña Turnos', 'error'); return;
+      }
+      document.getElementById('modalEmpleadoTitle').textContent = e ? 'Editar empleado' : 'Nuevo empleado';
+      document.getElementById('empleadoId').value = e?.idEmpleado || '';
+      document.getElementById('emNombres').value = e?.nombres || '';
+      document.getElementById('emApellidos').value = e?.apellidos || '';
+      document.getElementById('emDni').value = e?.dni || '';
+      document.getElementById('emTelefono').value = e?.telefono || '';
+      document.getElementById('emCorreo').value = e?.correo || '';
+      document.getElementById('emIngreso').value = e?.fechaIngreso || hoyLocal();
+      document.getElementById('emCargo').value = e?.cargo?.idCargo || '';
+      document.getElementById('emTurno').value = e?.turno?.idTurno || '';
+      openModal('modalEmpleado');
+    }
+    function openEditEmpleado(id) { const e = empleados.find(x => x.idEmpleado === id); if (e) openModalEmpleado(e); }
+
+    document.getElementById('btnGuardarEmpleado').addEventListener('click', () => {
+      const id = val('empleadoId');
+      if (!val('emNombres') || !val('emApellidos') || !/^\d{8}$/.test(val('emDni')) || !val('emIngreso') || !val('emCargo') || !val('emTurno')) {
+        showToast('Nombres, apellidos, DNI de 8 dígitos, ingreso, cargo y turno son obligatorios', 'error'); return;
+      }
+      guardar('empleado', id, {
+        idCargo: parseInt(val('emCargo')), idTurno: parseInt(val('emTurno')),
+        nombres: val('emNombres'), apellidos: val('emApellidos'), dni: val('emDni'),
+        telefono: valOrNull('emTelefono'), correo: valOrNull('emCorreo'), fechaIngreso: val('emIngreso'),
+      }, id ? 'Empleado actualizado' : 'Empleado creado', 'modalEmpleado');
+    });
+
+    function alternarEstado(id) {
+      const e = empleados.find(x => x.idEmpleado === id);
+      const darDeBaja = e.estadoLaboral !== 'inactivo';
+      ask(darDeBaja ? 'Dar de baja' : 'Reactivar empleado',
+          `¿${darDeBaja ? 'Dar de baja a' : 'Reactivar a'} ${nombreCompleto(e)}?`, async () => {
+        try {
+          const res = await fetch(`${GATEWAY}${RUTAS.empleado}/${id}/estado/${darDeBaja ? 'inactivo' : 'activo'}`, { method: 'PATCH', headers });
+          if (!res.ok) throw new Error();
+          showToast(darDeBaja ? 'Empleado dado de baja' : 'Empleado reactivado');
+          await reload('empleado');
+        } catch { showToast('Error al cambiar el estado', 'error'); }
+      }, darDeBaja);
+    }
+
+    // ------------- Cargo y turno -----------------
+    function openModalCargo(c = null) {
+      document.getElementById('modalCargoTitle').textContent = c ? 'Editar cargo' : 'Nuevo cargo';
+      document.getElementById('cargoId').value = c?.idCargo || '';
+      document.getElementById('cgNombre').value = c?.nombre || '';
+      document.getElementById('cgDescripcion').value = c?.descripcion || '';
+      openModal('modalCargo');
+    }
+    function openEditCargo(id) { const c = cargos.find(x => x.idCargo === id); if (c) openModalCargo(c); }
+    document.getElementById('btnGuardarCargo').addEventListener('click', () => {
+      if (!val('cgNombre')) { showToast('El nombre es obligatorio', 'error'); return; }
+      const id = val('cargoId');
+      guardar('cargo', id, { nombre: val('cgNombre'), descripcion: valOrNull('cgDescripcion') }, id ? 'Cargo actualizado' : 'Cargo creado', 'modalCargo');
+    });
+
+    function openModalTurno(t = null) {
+      document.getElementById('modalTurnoTitle').textContent = t ? 'Editar turno' : 'Nuevo turno';
+      document.getElementById('turnoId').value = t?.idTurno || '';
+      document.getElementById('tnNombre').value = t?.nombre || '';
+      document.getElementById('tnInicio').value = t ? hhmm(t.horaInicio) : '';
+      document.getElementById('tnFin').value = t ? hhmm(t.horaFin) : '';
+      openModal('modalTurno');
+    }
+    function openEditTurno(id) { const t = turnos.find(x => x.idTurno === id); if (t) openModalTurno(t); }
+    document.getElementById('btnGuardarTurno').addEventListener('click', () => {
+      if (!val('tnNombre') || !val('tnInicio') || !val('tnFin')) { showToast('Nombre, hora de inicio y hora de fin son obligatorios', 'error'); return; }
+      const id = val('turnoId');
+      guardar('turno', id, { nombre: val('tnNombre'), horaInicio: val('tnInicio'), horaFin: val('tnFin') }, id ? 'Turno actualizado' : 'Turno creado', 'modalTurno');
+    });
+
+    // ---------------- Asistencia ----------------------
+    function openModalAsistencia() {
+      if (!empleados.length) { showToast('Primero registra empleados', 'error'); return; }
+      document.getElementById('asEmpleado').value = '';
+      document.getElementById('asFecha').value = hoyLocal();
+      document.getElementById('asEntrada').value = ahoraLocal();
+      document.getElementById('asSalida').value = '';
+      document.getElementById('asObs').value = '';
+      openModal('modalAsistencia');
+    }
+    document.getElementById('btnGuardarAsistencia').addEventListener('click', () => {
+      if (!val('asEmpleado') || !val('asFecha')) { showToast('Empleado y fecha son obligatorios', 'error'); return; }
+      guardar('asistencia', '', {
+        idEmpleado: parseInt(val('asEmpleado')), fecha: val('asFecha'),
+        horaEntrada: valOrNull('asEntrada'), horaSalida: valOrNull('asSalida'), observaciones: valOrNull('asObs'),
+      }, 'Asistencia registrada', 'modalAsistencia');
+    });
+
+    function openSalida(id) {
+      document.getElementById('salidaId').value = id;
+      document.getElementById('salidaHora').value = ahoraLocal();
+      openModal('modalSalida');
+    }
+    document.getElementById('btnGuardarSalida').addEventListener('click', async () => {
+      const id = val('salidaId'), hora = val('salidaHora');
+      if (!hora) { showToast('Indica la hora de salida', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}${RUTAS.asistencia}/${id}/hora-salida?horaSalida=${hora}:00`, { method: 'PATCH', headers });
+        if (!res.ok) throw new Error();
+        showToast('Hora de salida registrada');
+        closeModal('modalSalida');
+        await reload('asistencia');
+      } catch { showToast('Error al registrar la hora de salida', 'error'); }
+    });
+
+    // -------------- Evaluación -----------------------
+    function openModalEvaluacion() {
+      if (!empleados.length) { showToast('Primero registra empleados', 'error'); return; }
+      document.getElementById('evEmpleado').value = '';
+      document.getElementById('evFecha').value = hoyLocal();
+      document.getElementById('evPuntaje').value = '';
+      document.getElementById('evCriterios').value = '';
+      document.getElementById('evObs').value = '';
+      openModal('modalEvaluacion');
+    }
+    document.getElementById('btnGuardarEvaluacion').addEventListener('click', () => {
+      const puntaje = parseFloat(val('evPuntaje'));
+      if (!val('evEmpleado') || !val('evFecha') || isNaN(puntaje)) { showToast('Empleado, fecha y puntaje son obligatorios', 'error'); return; }
+      if (puntaje < 0 || puntaje > 5) { showToast('El puntaje debe estar entre 0 y 5', 'error'); return; }
+      guardar('evaluacion', '', {
+        idEmpleado: parseInt(val('evEmpleado')), fechaEvaluacion: val('evFecha'), puntaje,
+        criterios: valOrNull('evCriterios'), observaciones: valOrNull('evObs'),
+      }, 'Evaluación registrada', 'modalEvaluacion');
+    });
+
+    loadAll();
+</script>
 </body>
 </html>

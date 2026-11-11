@@ -1,10 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>SIGESCA — Sinergia Café</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+          --verde-profundo: #1E4D3F;
+          --verde-medio: #2D6A5A;
+          --beige: #F5F0E8;
+          --terracota: #C4623A;
+          --blanco-hueso: #FAFAF7;
+          --grafito: #2C2C2C;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--beige); color: var(--grafito); }
+        .font-display { font-family: 'Playfair Display', serif; }
+
+        /* === LADO IZQUIERDO === */
+        .login-left {
+          background-color: var(--verde-profundo);
+          position: relative;
+          overflow: hidden;
+        }
+        .login-left::before {
+          content: '';
+          position: absolute;
+          top: -120px; right: -80px;
+          width: 320px; height: 320px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.04);
+          pointer-events: none;
+        }
+        .login-left::after {
+          content: '';
+          position: absolute;
+          bottom: -60px; left: -40px;
+          width: 200px; height: 200px;
+          border-radius: 50%;
+          background: rgba(196,98,58,0.12);
+          pointer-events: none;
+        }
+
+        /* === FORMULARIO === */
+        .form-input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 1.5px solid #D9D3C7;
+          border-radius: 6px;
+          background: var(--blanco-hueso);
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          color: var(--grafito);
+          transition: border-color 0.2s;
+          outline: none;
+        }
+        .form-input:focus { border-color: var(--verde-medio); }
+        .form-input::placeholder { color: #A09890; }
+
+        .btn-primary {
+          width: 100%;
+          padding: 13px;
+          background: var(--terracota);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          letter-spacing: 0.02em;
+          transition: background 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover { background: #B3562F; }
+        .btn-primary:active { transform: scale(0.99); }
+        .btn-primary:disabled { background: #C4A49A; cursor: not-allowed; }
+
+        .error-msg {
+          color: #B91C1C;
+          font-size: 13px;
+          margin-top: 6px;
+          display: none;
+        }
+        .error-msg.visible { display: block; }
+
+        @media (prefers-reduced-motion: reduce) {
+          * { transition: none !important; }
+        }
+    </style>
 </head>
 <body>
-$END$
+<div style="display:flex; min-height:100vh;">
+
+    <!-- IZQUIERDA: identidad -->
+    <div class="login-left" style="flex:0 0 42%; display:flex; flex-direction:column; justify-content:center; padding: 64px 56px;">
+        <div style="position:relative; z-index:1;">
+            <!-- Logo / marca -->
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:56px;">
+                <div style="width:40px; height:40px; border:2px solid rgba(245,240,232,0.4); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F0E8" stroke-width="1.8">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                        <line x1="6" y1="1" x2="6" y2="4"/>
+                        <line x1="10" y1="1" x2="10" y2="4"/>
+                        <line x1="14" y1="1" x2="14" y2="4"/>
+                    </svg>
+                </div>
+                <span style="color:rgba(245,240,232,0.6); font-size:13px; font-weight:500; letter-spacing:0.08em;">SINERGIA CAFÉ</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="font-display" style="color:#F5F0E8; font-size:clamp(36px,4vw,52px); line-height:1.1; font-weight:700; margin-bottom:20px;">
+                Sistema de<br/>Gestión<br/>Integrado
+            </h1>
+            <p style="color:rgba(245,240,232,0.55); font-size:14px; line-height:1.7; max-width:300px;">
+                SIGESCA centraliza las operaciones de Sinergia Café — desde el pedido hasta el reporte financiero.
+            </p>
+
+            <!-- Módulos como puntos discretos -->
+            <div style="margin-top:48px; display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:4px; height:4px; border-radius:50%; background:var(--terracota);"></div>
+                    <span style="color:rgba(245,240,232,0.45); font-size:12px;">12 módulos de gestión</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:4px; height:4px; border-radius:50%; background:var(--terracota);"></div>
+                    <span style="color:rgba(245,240,232,0.45); font-size:12px;">Acceso centralizado vía API Gateway</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:4px; height:4px; border-radius:50%; background:var(--terracota);"></div>
+                    <span style="color:rgba(245,240,232,0.45); font-size:12px;">Autenticación JWT</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DERECHA: formulario -->
+    <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:48px 40px; background:var(--beige);">
+        <div style="width:100%; max-width:360px;">
+
+            <h2 class="font-display" style="font-size:28px; font-weight:600; color:var(--grafito); margin-bottom:6px;">
+                Iniciar sesión
+            </h2>
+            <p style="font-size:13px; color:#7A7068; margin-bottom:36px;">
+                Ingresa tus credenciales para continuar
+            </p>
+
+            <form id="loginForm" novalidate>
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:13px; font-weight:500; color:var(--grafito); margin-bottom:6px;">
+                        Usuario
+                    </label>
+                    <input
+                            type="text"
+                            id="username"
+                            class="form-input"
+                            placeholder="mgutierrez"
+                            autocomplete="username"
+                    />
+                    <p class="error-msg" id="usernameError">El usuario es obligatorio</p>
+                </div>
+
+                <div style="margin-bottom:28px;">
+                    <label style="display:block; font-size:13px; font-weight:500; color:var(--grafito); margin-bottom:6px;">
+                        Contraseña
+                    </label>
+                    <div style="position:relative;">
+                        <input
+                                type="password"
+                                id="password"
+                                class="form-input"
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                                style="padding-right:44px;"
+                        />
+                        <button type="button" id="togglePassword" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#A09890; padding:0;">
+                            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="error-msg" id="passwordError">La contraseña es obligatoria</p>
+                </div>
+
+                <p class="error-msg" id="loginError" style="margin-bottom:14px; text-align:center;">
+                    Credenciales incorrectas
+                </p>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    Ingresar
+                </button>
+            </form>
+
+            <p style="margin-top:32px; font-size:12px; color:#A09890; text-align:center;">
+                SIGESCA · Sinergia Café · Chosica, Lima
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Toggle contraseña ──────────────────────────────────────────────
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    toggleBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.innerHTML = isPassword
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    });
+
+    // ----------- Login -------------------
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Reset errores
+      document.getElementById('usernameError').classList.remove('visible');
+      document.getElementById('passwordError').classList.remove('visible');
+      document.getElementById('loginError').classList.remove('visible');
+
+      let hasError = false;
+      if (!username) {
+        document.getElementById('usernameError').classList.add('visible');
+        hasError = true;
+      }
+      if (!password) {
+        document.getElementById('passwordError').classList.add('visible');
+        hasError = true;
+      }
+      if (hasError) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verificando…';
+
+      try {
+        const res = await fetch('http://localhost:8080/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (!res.ok) throw new Error('Credenciales inválidas');
+
+        const data = await res.json();
+        const token = data.data?.token || data.token;
+
+        if (!token) throw new Error('Token no recibido');
+
+        localStorage.setItem('sigesca_token', token);
+        localStorage.setItem('sigesca_user', username);
+        window.location.href = 'pages/dashboard.html';
+
+      } catch (err) {
+        document.getElementById('loginError').classList.add('visible');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Ingresar';
+      }
+    });
+</script>
 </body>
 </html>

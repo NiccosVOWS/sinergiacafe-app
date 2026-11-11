@@ -29,3 +29,13 @@ replay_pid*
 *.iml
 *.iws
 *.ipr
+out/
+
+# Maven / Gradle
+target/
+build/
+.gradle/
+
+# Otros editores y sistema
+.vscode/
+.DS_Store

@@ -3,6 +3,7 @@ package pe.com.sinergiacafe.marketing.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class PromocionRequestDTO {
     private PromocionEntity.TipoDescuento tipoDescuento;
 
     @NotNull(message = "El valor del descuento es obligatorio")
-    @Positive(message = "El valor del descuento debe ser mayor a 0")
+    @PositiveOrZero(message = "El valor del descuento no puede ser negativo")
     private BigDecimal valorDescuento;
 
     @NotNull(message = "La fecha de inicio es obligatoria")

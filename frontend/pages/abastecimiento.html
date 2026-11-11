@@ -1,10 +1,654 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Abastecimiento — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; flex-wrap:wrap; }
+        .tab-btn { padding:8px 18px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        textarea.form-input { resize:vertical; min-height:60px; font-family:'Inter',sans-serif; }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+        .items-list { display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; }
+        .item-row { display:flex; gap:8px; align-items:center; }
+        .item-row select { flex:1; }
+        .item-subtotal { min-width:80px; text-align:right; font-size:13px; font-weight:500; }
+        .item-remove { flex-shrink:0; padding:8px; background:none; border:1.5px solid #D9D3C7; border-radius:6px; cursor:pointer; color:#991B1B; }
+        .item-remove:hover { background:#FEE2E2; }
+        .btn-add-row { margin-top:8px; padding:8px 14px; background:none; border:1.5px dashed #D9D3C7; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; color:#7A7068; cursor:pointer; width:100%; }
+        .btn-add-row:hover { border-color:var(--verde-medio); color:var(--verde-medio); }
+        .total-line { display:flex; justify-content:space-between; align-items:baseline; padding-top:14px; margin-top:6px; border-top:1px solid #EDE8DF; font-size:13px; color:#7A7068; }
+        .total-line strong { font-family:'Playfair Display',serif; font-size:22px; color:var(--grafito); }
+        .mini-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .mini-table th { text-align:left; font-size:11px; color:#A09890; padding:8px 6px; border-bottom:1px solid #EDE8DF; }
+        .mini-table td { padding:9px 6px; border-bottom:1px solid #F0EBE2; }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="abastecimiento">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Abastecimiento</h1>
+            <p>Proveedores, contratos, órdenes de compra y recepciones</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="btnNuevoLabel">Nuevo proveedor</span>
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabProveedores" onclick="switchTab('proveedores')">Proveedores</button>
+        <button class="tab-btn" id="tabContratos" onclick="switchTab('contratos')">Contratos</button>
+        <button class="tab-btn" id="tabOrdenes" onclick="switchTab('ordenes')">Órdenes de compra</button>
+        <button class="tab-btn" id="tabRecepciones" onclick="switchTab('recepciones')">Recepciones</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelProveedores" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Razón social</th><th>RUC</th><th>Contacto</th><th>Correo</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="proveedoresBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelContratos" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Proveedor</th><th>Inicio</th><th>Fin</th><th>Condiciones</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="contratosBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelOrdenes" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Proveedor</th><th>Fecha</th><th>Total</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="ordenesBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelRecepciones" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Orden</th><th>Fecha</th><th>Empleado</th><th>Conforme</th><th>Observaciones</th><th></th></tr></thead>
+            <tbody id="recepcionesBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal Proveedor -->
+<div class="modal-overlay" id="modalProveedor">
+    <div class="modal">
+        <h2 class="modal-title" id="modalProveedorTitle">Nuevo proveedor</h2>
+        <input type="hidden" id="proveedorId" />
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Razón social *</label>
+                <input type="text" class="form-input" id="pvRazon" maxlength="200" placeholder="Ej: Café del Perú SAC" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">RUC * (11 dígitos)</label>
+                <input type="text" class="form-input" id="pvRuc" maxlength="11" placeholder="20XXXXXXXXX" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Contacto</label>
+                <input type="text" class="form-input" id="pvContacto" maxlength="100" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Teléfono</label>
+                <input type="text" class="form-input" id="pvTelefono" maxlength="15" placeholder="9XXXXXXXX" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Correo</label>
+                <input type="email" class="form-input" id="pvCorreo" placeholder="proveedor@ejemplo.com" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Dirección</label>
+                <input type="text" class="form-input" id="pvDireccion" maxlength="300" />
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalProveedor')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarProveedor">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Contrato -->
+<div class="modal-overlay" id="modalContrato">
+    <div class="modal">
+        <h2 class="modal-title" id="modalContratoTitle">Nuevo contrato</h2>
+        <input type="hidden" id="contratoId" />
+        <div class="form-group">
+            <label class="form-label">Proveedor *</label>
+            <select class="form-input" id="ctProveedor"></select>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Fecha de inicio *</label>
+                <input type="date" class="form-input" id="ctInicio" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fecha de fin</label>
+                <input type="date" class="form-input" id="ctFin" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Condiciones</label>
+            <textarea class="form-input" id="ctCondiciones" maxlength="300" placeholder="Plazos de pago, entregas, descuentos…"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalContrato')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarContrato">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nueva orden -->
+<div class="modal-overlay" id="modalOrden">
+    <div class="modal" style="max-width:600px;">
+        <h2 class="modal-title">Nueva orden de compra</h2>
+        <div class="form-group">
+            <label class="form-label">Proveedor *</label>
+            <select class="form-input" id="orProveedor"></select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Insumos *</label>
+            <div class="items-list" id="itemsList"></div>
+            <button type="button" class="btn-add-row" id="btnAddItem">+ Agregar insumo</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Observaciones</label>
+            <input type="text" class="form-input" id="orObs" placeholder="Opcional" />
+        </div>
+        <div class="total-line"><span>Total de la orden</span><strong id="totalOrden">S/ 0.00</strong></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalOrden')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarOrden">Crear orden</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ver detalle -->
+<div class="modal-overlay" id="modalDetalle">
+    <div class="modal" style="max-width:560px;">
+        <h2 class="modal-title" id="detalleTitulo">Detalle de la orden</h2>
+        <div id="detalleContenido"></div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalDetalle')">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Cambiar estado orden -->
+<div class="patch-overlay" id="patchOverlay">
+    <div class="patch-box">
+        <h3>Cambiar estado</h3>
+        <input type="hidden" id="patchId" />
+        <div class="form-group">
+            <label class="form-label">Nuevo estado</label>
+            <select class="form-input" id="patchEstado">
+                <option value="borrador">Borrador</option>
+                <option value="enviada">Enviada</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="recibida">Recibida</option>
+                <option value="cancelada">Cancelada</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="patchCancelar">Cancelar</button>
+            <button class="btn-primary" id="patchGuardar">Actualizar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Recepción -->
+<div class="modal-overlay" id="modalRecepcion">
+    <div class="modal">
+        <h2 class="modal-title">Registrar recepción</h2>
+        <div class="form-group">
+            <label class="form-label">Orden de compra *</label>
+            <select class="form-input" id="recOrden"></select>
+            <p class="hint">Solo órdenes enviadas o confirmadas. Al guardar, la orden pasa a "recibida".</p>
+        </div>
+        <div class="form-group">
+            <label class="form-label">¿Mercadería conforme?</label>
+            <select class="form-input" id="recConforme">
+                <option value="true">Sí, conforme</option>
+                <option value="false">No, con observaciones</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-input" id="recObs" maxlength="300" placeholder="Detalle si no fue conforme…"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalRecepcion')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarRecepcion">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm eliminar -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3 id="confirmTitle">Eliminar</h3>
+        <p>¿Estás seguro? Esta acción no se puede deshacer.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-danger" id="confirmEliminar">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const ICON_EDIT  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const ICON_DEL   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+    const ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+    const ICON_EYE   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const ICON_X     = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+    let proveedores = [], contratos = [], ordenes = [], recepciones = [], insumos = [], detalles = {};
+    let tabActual = 'proveedores', deleteId = null, deleteType = null;
+    const TABS = ['proveedores', 'contratos', 'ordenes', 'recepciones'];
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const money = n => `S/ ${parseFloat(n || 0).toFixed(2)}`;
+    const fmtFecha = f => f ? new Date(f).toLocaleDateString('es-PE') : '—';
+    const fmtDia = f => f ? f.split('-').reverse().join('/') : '—';   // LocalDate sin desfase de zona horaria
+    const nombreInsumo = id => insumos.find(i => i.idInsumo === id)?.nombre || `Insumo #${id}`;
+    const totalOrden = o => detalles[o.idOrdenCompra]
+      ? detalles[o.idOrdenCompra].reduce((s, d) => s + parseFloat(d.subtotal || 0), 0)
+      : parseFloat(o.montoTotal || 0);
+    const estadoOrdenMap = {
+      borrador: ['Borrador', 'badge-pendiente'], enviada: ['Enviada', 'badge-preparacion'],
+      confirmada: ['Confirmada', 'badge-activo'], recibida: ['Recibida', 'badge-entregado'], cancelada: ['Cancelada', 'badge-cancelado'],
+    };
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // ------------------ Carga ---------------------
+    async function loadDetalles() {
+      const pares = await Promise.all(ordenes.map(async o => {
+        try { return [o.idOrdenCompra, await getList(`/api/v1/detalle-ordenes-compra/orden/${o.idOrdenCompra}`)]; }
+        catch { return [o.idOrdenCompra, null]; }
+      }));
+      detalles = {};
+      pares.forEach(([id, lista]) => { if (lista) detalles[id] = lista; });
+    }
+
+    async function loadAll() {
+      try {
+        [proveedores, contratos, ordenes, recepciones] = await Promise.all([
+          getList('/api/v1/proveedores'), getList('/api/v1/contratos-proveedor'),
+          getList('/api/v1/ordenes-compra'), getList('/api/v1/recepciones-mercaderia'),
+        ]);
+        await loadDetalles();
+      } catch { showToast('Error al cargar los datos de abastecimiento', 'error'); }
+      try { insumos = await getList('/api/v1/insumos'); } catch { insumos = []; }
+      renderTablaActual();
+    }
+
+    // -------------- Tabs y búsqueda ---------------------
+    function switchTab(tab) {
+      tabActual = tab;
+      TABS.forEach(t => {
+        document.getElementById(`panel${cap(t)}`).style.display = t === tab ? '' : 'none';
+        document.getElementById(`tab${cap(t)}`).className = `tab-btn ${t === tab ? 'active' : ''}`;
+      });
+      document.getElementById('btnNuevoLabel').textContent =
+        { proveedores: 'Nuevo proveedor', contratos: 'Nuevo contrato', ordenes: 'Nueva orden de compra', recepciones: 'Registrar recepción' }[tab];
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (tabActual === 'proveedores') renderProveedores(proveedores.filter(p => p.razonSocial?.toLowerCase().includes(q) || (p.ruc || '').includes(q)));
+      else if (tabActual === 'contratos') renderContratos(contratos.filter(c => (c.proveedor?.razonSocial || '').toLowerCase().includes(q)));
+      else if (tabActual === 'ordenes') renderOrdenes(ordenes.filter(o => (o.proveedor?.razonSocial || '').toLowerCase().includes(q) || `#${o.idOrdenCompra}`.includes(q)));
+      else renderRecepciones(recepciones.filter(r => (r.ordenCompra?.proveedor?.razonSocial || '').toLowerCase().includes(q)));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+    document.getElementById('btnNuevo').addEventListener('click', () => {
+      ({ proveedores: () => openModalProveedor(), contratos: () => openModalContrato(),
+         ordenes: openModalOrden, recepciones: openModalRecepcion })[tabActual]();
+    });
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+
+    // ------------ Render --------------
+    function renderProveedores(data) {
+      setBody('proveedoresBody', 7, data, p => `<tr>
+        <td class="td-id">#${p.idProveedor}</td>
+        <td class="td-bold">${p.razonSocial}</td>
+        <td>${p.ruc || '—'}</td>
+        <td>${p.contacto || '—'}</td>
+        <td class="td-muted">${p.correo || '—'}</td>
+        <td><span class="badge ${p.activo !== false ? 'badge-activo' : 'badge-inactivo'}">${p.activo !== false ? 'Activo' : 'Inactivo'}</span></td>
+        <td>
+          <button class="action-btn" onclick="openEditProveedor(${p.idProveedor})" title="Editar">${ICON_EDIT}</button>
+          <button class="action-btn delete" onclick="openConfirm(${p.idProveedor},'proveedor')" title="Eliminar">${ICON_DEL}</button>
+        </td></tr>`, 'Sin proveedores');
+    }
+
+    function renderContratos(data) {
+      setBody('contratosBody', 7, data, c => {
+        const cond = c.condiciones || '—';
+        return `<tr>
+          <td class="td-id">#${c.idContratoProveedor}</td>
+          <td class="td-bold">${c.proveedor?.razonSocial || '—'}</td>
+          <td class="td-muted">${fmtDia(c.fechaInicio)}</td>
+          <td class="td-muted">${fmtDia(c.fechaFin)}</td>
+          <td class="td-muted">${cond.length > 50 ? cond.slice(0, 50) + '…' : cond}</td>
+          <td><span class="badge ${c.activo !== false ? 'badge-activo' : 'badge-inactivo'}">${c.activo !== false ? 'Vigente' : 'Inactivo'}</span></td>
+          <td>
+            <button class="action-btn" onclick="openEditContrato(${c.idContratoProveedor})" title="Editar">${ICON_EDIT}</button>
+            <button class="action-btn delete" onclick="openConfirm(${c.idContratoProveedor},'contrato')" title="Eliminar">${ICON_DEL}</button>
+          </td></tr>`;
+      }, 'Sin contratos');
+    }
+
+    function renderOrdenes(data) {
+      setBody('ordenesBody', 6, data, o => {
+        const [label, cls] = estadoOrdenMap[o.estado] || [o.estado || '—', 'badge-pendiente'];
+        return `<tr>
+          <td class="td-id">#${o.idOrdenCompra}</td>
+          <td class="td-bold">${o.proveedor?.razonSocial || '—'}</td>
+          <td class="td-muted">${fmtFecha(o.fechaOrden)}</td>
+          <td class="td-bold">${money(totalOrden(o))}</td>
+          <td><span class="badge ${cls}">${label}</span></td>
+          <td>
+            <button class="action-btn" onclick="verDetalle(${o.idOrdenCompra})" title="Ver detalle">${ICON_EYE}</button>
+            <button class="action-btn" onclick="openPatch(${o.idOrdenCompra},'${o.estado}')" title="Cambiar estado">${ICON_CHECK}</button>
+            <button class="action-btn delete" onclick="openConfirm(${o.idOrdenCompra},'orden')" title="Eliminar">${ICON_DEL}</button>
+          </td></tr>`;
+      }, 'Sin órdenes de compra');
+    }
+
+    function renderRecepciones(data) {
+      setBody('recepcionesBody', 7, data, r => `<tr>
+        <td class="td-id">#${r.idRecepcionMercaderia}</td>
+        <td class="td-bold">#${r.ordenCompra?.idOrdenCompra ?? '—'} · ${r.ordenCompra?.proveedor?.razonSocial || ''}</td>
+        <td class="td-muted">${fmtFecha(r.fechaRecepcion)}</td>
+        <td>Empleado #${r.idEmpleado}</td>
+        <td><span class="badge ${r.conforme !== false ? 'badge-activo' : 'badge-cancelado'}">${r.conforme !== false ? 'Sí' : 'No'}</span></td>
+        <td class="td-muted">${r.observaciones || '—'}</td>
+        <td><button class="action-btn delete" onclick="openConfirm(${r.idRecepcionMercaderia},'recepcion')" title="Eliminar">${ICON_DEL}</button></td>
+      </tr>`, 'Sin recepciones registradas');
+    }
+
+    // ------------ Helpers de modal y recarga -----------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalProveedor', 'modalContrato', 'modalOrden', 'modalDetalle', 'modalRecepcion'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    const rutas = { proveedor: '/api/v1/proveedores', contrato: '/api/v1/contratos-proveedor',
+                    orden: '/api/v1/ordenes-compra', recepcion: '/api/v1/recepciones-mercaderia' };
+    async function reload(tipo) {
+      const data = await getList(rutas[tipo]);
+      if (tipo === 'proveedor') proveedores = data;
+      else if (tipo === 'contrato') contratos = data;
+      else if (tipo === 'recepcion') recepciones = data;
+      else { ordenes = data; await loadDetalles(); }
+      renderTablaActual();
+    }
+    const optsProveedores = () => '<option value="">— Seleccionar —</option>' +
+      proveedores.filter(p => p.activo !== false).map(p => `<option value="${p.idProveedor}">${p.razonSocial}</option>`).join('');
+
+    // ----------- Proveedor -------------------
+    function openModalProveedor(p = null) {
+      document.getElementById('modalProveedorTitle').textContent = p ? 'Editar proveedor' : 'Nuevo proveedor';
+      document.getElementById('proveedorId').value = p?.idProveedor || '';
+      document.getElementById('pvRazon').value = p?.razonSocial || '';
+      document.getElementById('pvRuc').value = p?.ruc || '';
+      document.getElementById('pvContacto').value = p?.contacto || '';
+      document.getElementById('pvTelefono').value = p?.telefono || '';
+      document.getElementById('pvCorreo').value = p?.correo || '';
+      document.getElementById('pvDireccion').value = p?.direccion || '';
+      openModal('modalProveedor');
+    }
+    function openEditProveedor(id) { const p = proveedores.find(x => x.idProveedor === id); if (p) openModalProveedor(p); }
+
+    document.getElementById('btnGuardarProveedor').addEventListener('click', async () => {
+      const id = document.getElementById('proveedorId').value;
+      const razonSocial = document.getElementById('pvRazon').value.trim();
+      const ruc = document.getElementById('pvRuc').value.trim();
+      if (!razonSocial || !/^\d{11}$/.test(ruc)) { showToast('Razón social y un RUC de 11 dígitos son obligatorios', 'error'); return; }
+      const val = i => document.getElementById(i).value.trim() || null;
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/proveedores${id ? '/' + id : ''}`, {
+          method: id ? 'PUT' : 'POST', headers,
+          body: JSON.stringify({ razonSocial, ruc, contacto: val('pvContacto'), telefono: val('pvTelefono'), correo: val('pvCorreo'), direccion: val('pvDireccion') })
+        });
+        if (!res.ok) throw new Error();
+        showToast(id ? 'Proveedor actualizado' : 'Proveedor creado');
+        closeModal('modalProveedor');
+        await reload('proveedor');
+      } catch { showToast('Error al guardar el proveedor (revisa el correo y que el RUC no esté repetido)', 'error'); }
+    });
+
+    // ------------- Contrato ------------
+    function openModalContrato(c = null) {
+      if (!proveedores.length) { showToast('Primero registra un proveedor', 'error'); return; }
+      document.getElementById('ctProveedor').innerHTML = optsProveedores();
+      document.getElementById('modalContratoTitle').textContent = c ? 'Editar contrato' : 'Nuevo contrato';
+      document.getElementById('contratoId').value = c?.idContratoProveedor || '';
+      document.getElementById('ctProveedor').value = c?.proveedor?.idProveedor || '';
+      document.getElementById('ctInicio').value = c?.fechaInicio || '';
+      document.getElementById('ctFin').value = c?.fechaFin || '';
+      document.getElementById('ctCondiciones').value = c?.condiciones || '';
+      openModal('modalContrato');
+    }
+    function openEditContrato(id) { const c = contratos.find(x => x.idContratoProveedor === id); if (c) openModalContrato(c); }
+
+    document.getElementById('btnGuardarContrato').addEventListener('click', async () => {
+      const id = document.getElementById('contratoId').value;
+      const idProveedor = document.getElementById('ctProveedor').value;
+      const inicio = document.getElementById('ctInicio').value;
+      const fin = document.getElementById('ctFin').value;
+      if (!idProveedor || !inicio) { showToast('Proveedor y fecha de inicio son obligatorios', 'error'); return; }
+      if (fin && fin < inicio) { showToast('La fecha de fin no puede ser anterior al inicio', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/contratos-proveedor${id ? '/' + id : ''}`, {
+          method: id ? 'PUT' : 'POST', headers,
+          body: JSON.stringify({ idProveedor: parseInt(idProveedor), fechaInicio: inicio, fechaFin: fin || null,
+                                 condiciones: document.getElementById('ctCondiciones').value.trim() || null })
+        });
+        if (!res.ok) throw new Error();
+        showToast(id ? 'Contrato actualizado' : 'Contrato creado');
+        closeModal('modalContrato');
+        await reload('contrato');
+      } catch { showToast('Error al guardar el contrato', 'error'); }
+    });
+
+    // -------------- Nueva orden (cabecera + detalles) -------------
+    function recalcOrden() {
+      let total = 0;
+      document.querySelectorAll('.item-row').forEach(row => {
+        const sub = (parseFloat(row.querySelector('.item-cantidad').value) || 0) * (parseFloat(row.querySelector('.item-precio').value) || 0);
+        row.querySelector('.item-subtotal').textContent = money(sub);
+        total += sub;
+      });
+      document.getElementById('totalOrden').textContent = money(total);
+    }
+
+    function addItemRow() {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <select class="form-input item-insumo">
+          <option value="">— Insumo —</option>
+          ${insumos.filter(i => i.activo !== false).map(i => `<option value="${i.idInsumo}">${i.nombre} (${i.unidadMedida})</option>`).join('')}
+        </select>
+        <input type="number" class="form-input item-cantidad" placeholder="Cant." min="0.001" step="0.001" style="max-width:90px;" />
+        <input type="number" class="form-input item-precio" placeholder="Precio" min="0.01" step="0.01" style="max-width:90px;" />
+        <span class="item-subtotal">S/ 0.00</span>
+        <button type="button" class="item-remove" title="Quitar">${ICON_X}</button>`;
+      row.querySelector('.item-cantidad').addEventListener('input', recalcOrden);
+      row.querySelector('.item-precio').addEventListener('input', recalcOrden);
+      row.querySelector('.item-remove').addEventListener('click', () => { row.remove(); recalcOrden(); });
+      document.getElementById('itemsList').appendChild(row);
+    }
+    document.getElementById('btnAddItem').addEventListener('click', addItemRow);
+
+    function openModalOrden() {
+      if (!proveedores.length) { showToast('Primero registra un proveedor', 'error'); return; }
+      if (!insumos.length) { showToast('No se pudieron cargar los insumos. Verifica que ms-produccion (8083) esté en ejecución', 'error'); return; }
+      document.getElementById('orProveedor').innerHTML = optsProveedores();
+      document.getElementById('orObs').value = '';
+      document.getElementById('itemsList').innerHTML = '';
+      document.getElementById('totalOrden').textContent = 'S/ 0.00';
+      addItemRow();
+      openModal('modalOrden');
+    }
+
+    document.getElementById('btnGuardarOrden').addEventListener('click', async () => {
+      const idProveedor = document.getElementById('orProveedor').value;
+      if (!idProveedor) { showToast('El proveedor es obligatorio', 'error'); return; }
+      const items = [...document.querySelectorAll('.item-row')].map(row => ({
+        idInsumo: parseInt(row.querySelector('.item-insumo').value),
+        cantidad: parseFloat(row.querySelector('.item-cantidad').value),
+        precioUnitario: parseFloat(row.querySelector('.item-precio').value),
+      })).filter(i => i.idInsumo && i.cantidad > 0 && i.precioUnitario > 0);
+      if (!items.length) { showToast('Agrega al menos un insumo con cantidad y precio', 'error'); return; }
+
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/ordenes-compra`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ idProveedor: parseInt(idProveedor), idEmpleado: 1,
+                                 observaciones: document.getElementById('orObs').value.trim() || null })
+        });
+        if (!res.ok) throw new Error();
+        const idOrdenCompra = (await res.json()).data.idOrdenCompra;
+
+        let fallidos = 0;
+        for (const it of items) {
+          const r = await fetch(`${GATEWAY}/api/v1/detalle-ordenes-compra`, {
+            method: 'POST', headers, body: JSON.stringify({ idOrdenCompra, ...it })
+          });
+          if (!r.ok) fallidos++;
+        }
+        showToast(fallidos ? `Orden creada, pero ${fallidos} insumo(s) no se pudieron agregar` : 'Orden de compra creada',
+                  fallidos ? 'error' : 'success');
+        closeModal('modalOrden');
+        await reload('orden');
+      } catch { showToast('Error al crear la orden', 'error'); }
+    });
+
+    // --------------- Ver detalle ---------------
+    function verDetalle(id) {
+      const lista = detalles[id] || [];
+      document.getElementById('detalleTitulo').textContent = `Orden #${id}`;
+      document.getElementById('detalleContenido').innerHTML = lista.length
+        ? `<table class="mini-table"><thead><tr><th>Insumo</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead><tbody>` +
+          lista.map(d => `<tr><td>${nombreInsumo(d.idInsumo)}</td><td>${parseFloat(d.cantidad)}</td><td>${money(d.precioUnitario)}</td><td><strong>${money(d.subtotal)}</strong></td></tr>`).join('') +
+          `</tbody></table><div class="total-line"><span>Total</span><strong>${money(lista.reduce((s, d) => s + parseFloat(d.subtotal || 0), 0))}</strong></div>`
+        : '<p style="color:#A09890;padding:20px 0;text-align:center;">Esta orden no tiene insumos registrados.</p>';
+      openModal('modalDetalle');
+    }
+
+    // ------------ Cambiar estado de la orden -----------
+    function openPatch(id, estadoActual) {
+      document.getElementById('patchId').value = id;
+      document.getElementById('patchEstado').value = estadoActual || 'borrador';
+      openModal('patchOverlay');
+    }
+    document.getElementById('patchCancelar').addEventListener('click', () => closeModal('patchOverlay'));
+    document.getElementById('patchGuardar').addEventListener('click', async () => {
+      const id = document.getElementById('patchId').value;
+      const estado = document.getElementById('patchEstado').value;
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/ordenes-compra/${id}/estado/${estado}`, { method: 'PATCH', headers });
+        if (!res.ok) throw new Error();
+        showToast('Estado actualizado');
+        closeModal('patchOverlay');
+        await reload('orden');
+      } catch { showToast('Error al actualizar el estado', 'error'); }
+    });
+
+    // ----------- Recepción --------------
+    function openModalRecepcion() {
+      const pendientes = ordenes.filter(o => o.estado === 'enviada' || o.estado === 'confirmada');
+      if (!pendientes.length) { showToast('No hay órdenes enviadas o confirmadas pendientes de recibir', 'error'); return; }
+      document.getElementById('recOrden').innerHTML = '<option value="">— Seleccionar —</option>' +
+        pendientes.map(o => `<option value="${o.idOrdenCompra}">#${o.idOrdenCompra} — ${o.proveedor?.razonSocial || ''} — ${money(totalOrden(o))}</option>`).join('');
+      document.getElementById('recConforme').value = 'true';
+      document.getElementById('recObs').value = '';
+      openModal('modalRecepcion');
+    }
+
+    document.getElementById('btnGuardarRecepcion').addEventListener('click', async () => {
+      const idOrdenCompra = document.getElementById('recOrden').value;
+      if (!idOrdenCompra) { showToast('La orden de compra es obligatoria', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/recepciones-mercaderia`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ idOrdenCompra: parseInt(idOrdenCompra), idEmpleado: 1,
+                                 conforme: document.getElementById('recConforme').value === 'true',
+                                 observaciones: document.getElementById('recObs').value.trim() || null })
+        });
+        if (!res.ok) throw new Error();
+        // El servicio solo guarda la recepción: la orden se marca como recibida aquí
+        const upd = await fetch(`${GATEWAY}/api/v1/ordenes-compra/${idOrdenCompra}/estado/recibida`, { method: 'PATCH', headers });
+        showToast(upd.ok ? 'Recepción registrada y orden marcada como recibida' : 'Recepción registrada, pero no se pudo actualizar la orden',
+                  upd.ok ? 'success' : 'error');
+        closeModal('modalRecepcion');
+        recepciones = await getList(rutas.recepcion);
+        await reload('orden');
+      } catch { showToast('Error al registrar la recepción', 'error'); }
+    });
+
+    // ----------- Eliminar ---------------
+    function openConfirm(id, type) {
+      deleteId = id; deleteType = type;
+      document.getElementById('confirmTitle').textContent = `Eliminar ${type === 'orden' ? 'orden de compra' : type === 'recepcion' ? 'recepción' : type}`;
+      openModal('confirmOverlay');
+    }
+    document.getElementById('confirmCancelar').addEventListener('click', () => { closeModal('confirmOverlay'); deleteId = null; deleteType = null; });
+    document.getElementById('confirmEliminar').addEventListener('click', async () => {
+      if (!deleteId) return;
+      const tipo = deleteType;
+      try {
+        const res = await fetch(`${GATEWAY}${rutas[tipo]}/${deleteId}`, { method: 'DELETE', headers });
+        if (!res.ok) throw new Error();
+        showToast('Eliminado correctamente');
+        closeModal('confirmOverlay');
+        deleteId = null; deleteType = null;
+        await reload(tipo);
+      } catch { showToast('No se pudo eliminar (puede tener registros asociados)', 'error'); }
+    });
+
+    loadAll();
+</script>
 </body>
 </html>

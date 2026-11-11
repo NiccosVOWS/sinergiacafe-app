@@ -1,10 +1,405 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Marketing — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; }
+        .tab-btn { padding:8px 20px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        textarea.form-input { resize:vertical; min-height:70px; font-family:'Inter',sans-serif; }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+        .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+        .summary-card { background:var(--blanco-hueso); border-radius:8px; padding:18px 24px; border:1px solid rgba(0,0,0,0.05); }
+        .summary-card .label { font-size:12px; color:#7A7068; margin-bottom:6px; }
+        .summary-card .value { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--grafito); }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="marketing">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Marketing</h1>
+            <p>Campañas publicitarias y promociones de Sinergia Café</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="btnNuevoLabel">Nueva campaña</span>
+        </button>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card"><div class="label">Campañas en curso</div><div class="value" id="sumCampanas">0</div></div>
+        <div class="summary-card"><div class="label">Promociones vigentes</div><div class="value" id="sumPromos">0</div></div>
+        <div class="summary-card"><div class="label">Presupuesto total de campañas</div><div class="value" id="sumPresupuesto">S/ 0.00</div></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabCampanas" onclick="switchTab('campanas')">Campañas</button>
+        <button class="tab-btn" id="tabPromociones" onclick="switchTab('promociones')">Promociones</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar campaña…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelCampanas" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Campaña</th><th>Canal</th><th>Vigencia</th><th>Presupuesto</th><th>Promociones</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="campanasBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelPromociones" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Promoción</th><th>Campaña</th><th>Descuento</th><th>Vigencia</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="promocionesBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal Campaña -->
+<div class="modal-overlay" id="modalCampana">
+    <div class="modal" style="max-width:540px;">
+        <h2 class="modal-title" id="modalCampanaTitle">Nueva campaña</h2>
+        <input type="hidden" id="campanaId" />
+        <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input type="text" class="form-input" id="cNombre" maxlength="120" placeholder="Ej: Campaña de invierno" />
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Canal</label>
+                <input type="text" class="form-input" id="cCanal" list="canales" maxlength="100" placeholder="redes sociales" />
+                <datalist id="canales"><option value="redes sociales"><option value="correo"><option value="presencial"><option value="web"></datalist>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Presupuesto (S/)</label>
+                <input type="number" class="form-input" id="cPresupuesto" min="0" step="0.01" placeholder="0.00" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Fecha de inicio *</label><input type="date" class="form-input" id="cInicio" /></div>
+            <div class="form-group"><label class="form-label">Fecha de fin *</label><input type="date" class="form-input" id="cFin" /></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-input" id="cDescripcion" maxlength="300" placeholder="Objetivo y alcance de la campaña"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalCampana')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarCampana">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Promoción -->
+<div class="modal-overlay" id="modalPromocion">
+    <div class="modal" style="max-width:540px;">
+        <h2 class="modal-title" id="modalPromocionTitle">Nueva promoción</h2>
+        <input type="hidden" id="promocionId" />
+        <div class="form-group">
+            <label class="form-label">Campaña *</label>
+            <select class="form-input" id="pCampana"></select>
+            <p class="hint" id="pCampanaHint"></p>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Descripción *</label>
+            <textarea class="form-input" id="pDescripcion" maxlength="300" placeholder="Ej: 15 % de descuento en combos de desayuno"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tipo de descuento *</label>
+                <select class="form-input" id="pTipo">
+                    <option value="porcentaje">Porcentaje (%)</option>
+                    <option value="monto_fijo">Monto fijo (S/)</option>
+                    <option value="producto_gratis">Producto gratis</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="pValorLabel">Valor (%) *</label>
+                <input type="number" class="form-input" id="pValor" min="0" step="0.01" placeholder="0.00" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label class="form-label">Fecha de inicio *</label><input type="date" class="form-input" id="pInicio" /></div>
+            <div class="form-group"><label class="form-label">Fecha de fin *</label><input type="date" class="form-input" id="pFin" /></div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalPromocion')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarPromocion">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm eliminar -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3 id="confirmTitle"></h3>
+        <p>¿Estás seguro? Esta acción no se puede deshacer.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-danger" id="confirmAceptar">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const ICON_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+
+    const RUTAS = { campana: '/api/v1/campanas-marketing', promocion: '/api/v1/promociones' };
+    let campanas = [], promociones = [], tabActual = 'campanas', confirmFn = null;
+
+    const money = n => `S/ ${parseFloat(n || 0).toFixed(2)}`;
+    const fmtDia = f => f ? f.split('-').reverse().join('/') : '—';     // LocalDate sin desfase de zona horaria
+    const hoyLocal = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const val = id => document.getElementById(id).value.trim();
+    const valOrNull = id => val(id) || null;
+    const corto = (s, n) => { s = s || '—'; return s.length > n ? s.slice(0, n) + '…' : s; };
+    const tipoNorm = t => (t || '').toLowerCase();
+
+    // Las fechas llegan como AAAA-MM-DD, así que se pueden comparar como texto
+    function faseFechas(ini, fin) { const h = hoyLocal(); return h < ini ? 'programada' : h > fin ? 'finalizada' : 'vigente'; }
+    function badgeCampana(c) {
+      const f = faseFechas(c.fechaInicio, c.fechaFin);
+      return { programada: '<span class="badge badge-pendiente">Programada</span>', vigente: '<span class="badge badge-activo">En curso</span>',
+               finalizada: '<span class="badge badge-inactivo">Finalizada</span>' }[f];
+    }
+    function badgePromo(p) {
+      if (p.activo === false) return '<span class="badge badge-inactivo">Inactiva</span>';
+      const f = faseFechas(p.fechaInicio, p.fechaFin);
+      return { programada: '<span class="badge badge-pendiente">Programada</span>', vigente: '<span class="badge badge-activo">Vigente</span>',
+               finalizada: '<span class="badge badge-cancelado">Vencida</span>' }[f];
+    }
+    function textoDescuento(p) {
+      const t = tipoNorm(p.tipoDescuento);
+      if (t === 'porcentaje') return `${parseFloat(p.valorDescuento)} %`;
+      if (t === 'monto_fijo') return `${money(p.valorDescuento)} de descuento`;
+      if (t === 'producto_gratis') return 'Producto gratis';
+      return p.tipoDescuento || '—';
+    }
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // ------------- Carga ---------------------
+    async function loadAll() {
+      try { [campanas, promociones] = await Promise.all([getList(RUTAS.campana), getList(RUTAS.promocion)]); }
+      catch { showToast('Error al cargar los datos de marketing', 'error'); }
+      document.getElementById('pCampana').innerHTML = '<option value="">— Seleccionar —</option>' +
+        campanas.map(c => `<option value="${c.idCampanaMarketing}">${c.nombre}</option>`).join('');
+      renderTablaActual();
+      calcularResumen();
+    }
+
+    function calcularResumen() {
+      document.getElementById('sumCampanas').textContent = campanas.filter(c => faseFechas(c.fechaInicio, c.fechaFin) === 'vigente').length;
+      document.getElementById('sumPromos').textContent = promociones.filter(p => p.activo !== false && faseFechas(p.fechaInicio, p.fechaFin) === 'vigente').length;
+      document.getElementById('sumPresupuesto').textContent = money(campanas.reduce((s, c) => s + parseFloat(c.presupuesto || 0), 0));
+    }
+
+    // ----------- Tabs, búsqueda y render ----------------
+    function switchTab(tab) {
+      tabActual = tab;
+      document.getElementById('panelCampanas').style.display = tab === 'campanas' ? '' : 'none';
+      document.getElementById('panelPromociones').style.display = tab === 'promociones' ? '' : 'none';
+      document.getElementById('tabCampanas').className = `tab-btn ${tab === 'campanas' ? 'active' : ''}`;
+      document.getElementById('tabPromociones').className = `tab-btn ${tab === 'promociones' ? 'active' : ''}`;
+      document.getElementById('btnNuevoLabel').textContent = tab === 'campanas' ? 'Nueva campaña' : 'Nueva promoción';
+      document.getElementById('searchInput').placeholder = tab === 'campanas' ? 'Buscar campaña…' : 'Buscar promoción…';
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const has = s => (s || '').toLowerCase().includes(q);
+      if (tabActual === 'campanas') renderCampanas(campanas.filter(c => has(c.nombre) || has(c.canal)));
+      else renderPromociones(promociones.filter(p => has(p.descripcion) || has(p.campanaMarketing?.nombre)));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+    document.getElementById('btnNuevo').addEventListener('click', () => tabActual === 'campanas' ? openModalCampana() : openModalPromocion());
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+    const acciones = (edit, tipo, id) => `<button class="action-btn" onclick="${edit}(${id})" title="Editar">${ICON_EDIT}</button>
+      <button class="action-btn delete" onclick="pedirEliminar('${tipo}',${id})" title="Eliminar">${ICON_DEL}</button>`;
+
+    function renderCampanas(data) {
+      setBody('campanasBody', 8, data, c => {
+        const n = promociones.filter(p => p.campanaMarketing?.idCampanaMarketing === c.idCampanaMarketing).length;
+        return `<tr>
+          <td class="td-id">#${c.idCampanaMarketing}</td>
+          <td><div class="td-bold">${c.nombre}</div><div class="td-muted" style="font-size:12px;">${corto(c.descripcion, 60)}</div></td>
+          <td>${c.canal || '—'}</td>
+          <td class="td-muted">${fmtDia(c.fechaInicio)} – ${fmtDia(c.fechaFin)}</td>
+          <td class="td-bold">${c.presupuesto != null ? money(c.presupuesto) : '—'}</td>
+          <td>${n}</td>
+          <td>${badgeCampana(c)}</td>
+          <td>${acciones('openEditCampana', 'campana', c.idCampanaMarketing)}</td></tr>`;
+      }, 'Sin campañas registradas');
+    }
+
+    function renderPromociones(data) {
+      setBody('promocionesBody', 7, data, p => `<tr>
+        <td class="td-id">#${p.idPromocion}</td>
+        <td class="td-bold">${corto(p.descripcion, 60)}</td>
+        <td>${p.campanaMarketing?.nombre || '—'}</td>
+        <td class="td-bold">${textoDescuento(p)}</td>
+        <td class="td-muted">${fmtDia(p.fechaInicio)} – ${fmtDia(p.fechaFin)}</td>
+        <td>${badgePromo(p)}</td>
+        <td>${acciones('openEditPromocion', 'promocion', p.idPromocion)}</td></tr>`, 'Sin promociones registradas');
+    }
+
+    // ----------- Modales, confirmación y recarga -------------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalCampana', 'modalPromocion'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    document.getElementById('confirmCancelar').addEventListener('click', () => { closeModal('confirmOverlay'); confirmFn = null; });
+    document.getElementById('confirmAceptar').addEventListener('click', async () => {
+      const fn = confirmFn; confirmFn = null;
+      closeModal('confirmOverlay');
+      if (fn) await fn();
+    });
+
+    async function reload(tipo) {
+      if (tipo === 'campana') campanas = await getList(RUTAS.campana); else promociones = await getList(RUTAS.promocion);
+      if (tipo === 'campana') {
+        document.getElementById('pCampana').innerHTML = '<option value="">— Seleccionar —</option>' +
+          campanas.map(c => `<option value="${c.idCampanaMarketing}">${c.nombre}</option>`).join('');
+      }
+      renderTablaActual();
+      calcularResumen();
+    }
+
+    function pedirEliminar(tipo, id) {
+      document.getElementById('confirmTitle').textContent = `Eliminar ${tipo === 'campana' ? 'campaña' : 'promoción'}`;
+      confirmFn = async () => {
+        try {
+          const res = await fetch(`${GATEWAY}${RUTAS[tipo]}/${id}`, { method: 'DELETE', headers });
+          if (!res.ok) throw new Error();
+          showToast('Eliminado correctamente');
+          await reload(tipo);
+        } catch {
+          showToast(tipo === 'campana' ? 'No se pudo eliminar: si la campaña tiene promociones, elimínalas primero' : 'No se pudo eliminar la promoción', 'error');
+        }
+      };
+      openModal('confirmOverlay');
+    }
+
+    async function guardar(tipo, id, body, mensaje, modal) {
+      try {
+        const res = await fetch(`${GATEWAY}${RUTAS[tipo]}${id ? '/' + id : ''}`, { method: id ? 'PUT' : 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error();
+        showToast(mensaje);
+        closeModal(modal);
+        await reload(tipo);
+      } catch { showToast('Error al guardar. Revisa los datos ingresados', 'error'); }
+    }
+
+    // ------------------ Campaña -------------
+    function openModalCampana(c = null) {
+      document.getElementById('modalCampanaTitle').textContent = c ? 'Editar campaña' : 'Nueva campaña';
+      document.getElementById('campanaId').value = c?.idCampanaMarketing || '';
+      document.getElementById('cNombre').value = c?.nombre || '';
+      document.getElementById('cCanal').value = c?.canal || '';
+      document.getElementById('cPresupuesto').value = c?.presupuesto ?? '';
+      document.getElementById('cInicio').value = c?.fechaInicio || '';
+      document.getElementById('cFin').value = c?.fechaFin || '';
+      document.getElementById('cDescripcion').value = c?.descripcion || '';
+      openModal('modalCampana');
+    }
+    function openEditCampana(id) { const c = campanas.find(x => x.idCampanaMarketing === id); if (c) openModalCampana(c); }
+
+    document.getElementById('btnGuardarCampana').addEventListener('click', () => {
+      if (!val('cNombre') || !val('cInicio') || !val('cFin')) { showToast('Nombre y fechas de inicio y fin son obligatorios', 'error'); return; }
+      if (val('cFin') < val('cInicio')) { showToast('La fecha de fin no puede ser anterior a la de inicio', 'error'); return; }
+      const id = val('campanaId');
+      guardar('campana', id, {
+        nombre: val('cNombre'), descripcion: valOrNull('cDescripcion'), canal: valOrNull('cCanal'),
+        fechaInicio: val('cInicio'), fechaFin: val('cFin'),
+        presupuesto: val('cPresupuesto') !== '' ? parseFloat(val('cPresupuesto')) : null,
+      }, id ? 'Campaña actualizada' : 'Campaña creada', 'modalCampana');
+    });
+
+    // ------------- Promoción -----------------
+    function ajustarCampoValor() {
+      const tipo = val('pTipo');
+      const campo = document.getElementById('pValor');
+      document.getElementById('pValorLabel').textContent =
+        tipo === 'porcentaje' ? 'Valor (%) *' : tipo === 'monto_fijo' ? 'Monto (S/) *' : 'Valor';
+      campo.disabled = tipo === 'producto_gratis';
+      if (tipo === 'producto_gratis') campo.value = '0';
+    }
+    document.getElementById('pTipo').addEventListener('change', ajustarCampoValor);
+
+    document.getElementById('pCampana').addEventListener('change', () => {
+      const c = campanas.find(x => String(x.idCampanaMarketing) === val('pCampana'));
+      document.getElementById('pCampanaHint').textContent = c ? `Vigencia de la campaña: ${fmtDia(c.fechaInicio)} – ${fmtDia(c.fechaFin)}` : '';
+      if (c && !val('promocionId')) {                       // en una promoción nueva, se proponen las fechas de la campaña
+        document.getElementById('pInicio').value = c.fechaInicio;
+        document.getElementById('pFin').value = c.fechaFin;
+      }
+    });
+
+    function openModalPromocion(p = null) {
+      if (!p && !campanas.length) { showToast('Primero crea una campaña en la pestaña Campañas', 'error'); return; }
+      document.getElementById('modalPromocionTitle').textContent = p ? 'Editar promoción' : 'Nueva promoción';
+      document.getElementById('promocionId').value = p?.idPromocion || '';
+      document.getElementById('pCampana').value = p?.campanaMarketing?.idCampanaMarketing || '';
+      document.getElementById('pDescripcion').value = p?.descripcion || '';
+      document.getElementById('pTipo').value = p ? tipoNorm(p.tipoDescuento) : 'porcentaje';
+      document.getElementById('pValor').value = p ? parseFloat(p.valorDescuento) : '';
+      document.getElementById('pInicio').value = p?.fechaInicio || '';
+      document.getElementById('pFin').value = p?.fechaFin || '';
+      document.getElementById('pCampana').dispatchEvent(new Event('change'));
+      ajustarCampoValor();
+      if (p) document.getElementById('pValor').value = parseFloat(p.valorDescuento);
+      openModal('modalPromocion');
+    }
+    function openEditPromocion(id) { const p = promociones.find(x => x.idPromocion === id); if (p) openModalPromocion(p); }
+
+    document.getElementById('btnGuardarPromocion').addEventListener('click', () => {
+      const tipo = val('pTipo'), valor = tipo === 'producto_gratis' ? 0 : parseFloat(val('pValor'));
+      if (!val('pCampana') || !val('pDescripcion') || !val('pInicio') || !val('pFin')) {
+        showToast('Campaña, descripción y fechas son obligatorias', 'error'); return;
+      }
+      if (val('pFin') < val('pInicio')) { showToast('La fecha de fin no puede ser anterior a la de inicio', 'error'); return; }
+      if (tipo === 'porcentaje' && !(valor > 0 && valor <= 100)) { showToast('El porcentaje debe estar entre 0 y 100', 'error'); return; }
+      if (tipo === 'monto_fijo' && !(valor > 0)) { showToast('El monto del descuento debe ser mayor a 0', 'error'); return; }
+      const id = val('promocionId');
+      guardar('promocion', id, {
+        idCampanaMarketing: parseInt(val('pCampana')), descripcion: val('pDescripcion'),
+        tipoDescuento: tipo, valorDescuento: valor, fechaInicio: val('pInicio'), fechaFin: val('pFin'),
+      }, id ? 'Promoción actualizada' : 'Promoción creada', 'modalPromocion');
+    });
+
+    loadAll();
+</script>
 </body>
 </html>

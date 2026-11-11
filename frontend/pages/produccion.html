@@ -1,10 +1,391 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Producción — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; }
+        .tab-btn { padding:8px 20px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        textarea.form-input { resize:vertical; min-height:72px; font-family:'Inter',sans-serif; }
+        .ing-list { display:flex; flex-direction:column; gap:8px; max-height:170px; overflow-y:auto; }
+        .ing-row { display:flex; gap:8px; align-items:center; }
+        .ing-row select { flex:1; }
+        .ing-remove { flex-shrink:0; padding:8px; background:none; border:1.5px solid #D9D3C7; border-radius:6px; cursor:pointer; color:#991B1B; }
+        .ing-remove:hover { background:#FEE2E2; }
+        .btn-add-row { margin-top:8px; padding:8px 14px; background:none; border:1.5px dashed #D9D3C7; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; color:#7A7068; cursor:pointer; width:100%; }
+        .btn-add-row:hover { border-color:var(--verde-medio); color:var(--verde-medio); }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+        .ing-actuales { font-size:13px; color:var(--grafito); background:#F5F0E8; border-radius:6px; padding:10px 12px; margin-bottom:10px; line-height:1.6; }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="produccion">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Producción</h1>
+            <p>Recetas e insumos de Sinergia Café</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="btnNuevoLabel">Nueva receta</span>
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabRecetas" onclick="switchTab('recetas')">Recetas</button>
+        <button class="tab-btn" id="tabInsumos" onclick="switchTab('insumos')">Insumos</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar receta…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelRecetas" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Producto</th><th>Tiempo (min)</th><th>Ingredientes</th><th>Instrucciones</th><th></th></tr></thead>
+            <tbody id="recetasBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelInsumos" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Unidad</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="insumosBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal Receta -->
+<div class="modal-overlay" id="modalReceta">
+    <div class="modal" style="max-width:560px;">
+        <h2 class="modal-title" id="modalRecetaTitle">Nueva receta</h2>
+        <input type="hidden" id="recetaId" />
+        <input type="hidden" id="recetaIdProducto" />
+        <div class="form-row">
+            <div class="form-group" id="rProductoGroup">
+                <label class="form-label">Producto *</label>
+                <select class="form-input" id="rProducto"></select>
+                <p class="hint">Solo aparecen productos sin receta.</p>
+            </div>
+            <div class="form-group" id="rProductoFijo" style="display:none;">
+                <label class="form-label">Producto</label>
+                <p id="rProductoNombre" style="font-size:14px;font-weight:500;padding-top:8px;"></p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tiempo de preparación (min) *</label>
+                <input type="number" class="form-input" id="rTiempo" placeholder="5" min="1" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Instrucciones *</label>
+            <textarea class="form-input" id="rInstrucciones" placeholder="Pasos de preparación…"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label" id="rIngLabel">Ingredientes *</label>
+            <div class="ing-actuales" id="rIngActuales" style="display:none;"></div>
+            <div class="ing-list" id="ingList"></div>
+            <button type="button" class="btn-add-row" id="btnAddIng">+ Agregar ingrediente</button>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalReceta')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarReceta">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Insumo -->
+<div class="modal-overlay" id="modalInsumo">
+    <div class="modal">
+        <h2 class="modal-title" id="modalInsumoTitle">Nuevo insumo</h2>
+        <input type="hidden" id="insumoId" />
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Nombre *</label>
+                <input type="text" class="form-input" id="iNombre" placeholder="Ej: Café molido" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Unidad de medida *</label>
+                <input type="text" class="form-input" id="iUnidad" list="unidades" maxlength="20" placeholder="kg, g, l, ml…" />
+                <datalist id="unidades"><option value="kg"><option value="g"><option value="l"><option value="ml"><option value="unidad"></datalist>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            <select class="form-input" id="iCategoria"></select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalInsumo')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarInsumo">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm eliminar -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3 id="confirmTitle">Eliminar</h3>
+        <p>¿Estás seguro? Esta acción no se puede deshacer.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-danger" id="confirmEliminar">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const ICON_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+    const ICON_X    = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+    let recetas = [], insumos = [], categorias = [], productos = [];
+    let tabActual = 'recetas', deleteId = null, deleteType = null;
+
+    const nombreProducto = id => productos.find(p => p.idProducto === id)?.nombre || `Producto #${id}`;
+    const textoIngredientes = r => (r.insumos || [])
+      .map(i => `${i.insumo?.nombre} (${parseFloat(i.cantidad)} ${i.insumo?.unidadMedida || ''})`.trim()).join(', ');
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // ------------- Carga ---------------
+    async function loadAll() {
+      try {
+        [recetas, insumos, categorias] = await Promise.all([
+          getList('/api/v1/recetas'), getList('/api/v1/insumos'), getList('/api/v1/categorias-insumo'),
+        ]);
+      } catch { showToast('Error al cargar los datos de producción', 'error'); }
+      try { productos = await getList('/api/v1/productos'); } catch { productos = []; }
+      document.getElementById('iCategoria').innerHTML = '<option value="">— Seleccionar —</option>' +
+        categorias.map(c => `<option value="${c.idCategoriaInsumo}">${c.nombre}</option>`).join('');
+      renderTablaActual();
+    }
+
+    // -------------- Tabs y búsqueda -------------
+    function switchTab(tab) {
+      tabActual = tab;
+      document.getElementById('panelRecetas').style.display = tab === 'recetas' ? '' : 'none';
+      document.getElementById('panelInsumos').style.display = tab === 'insumos' ? '' : 'none';
+      document.getElementById('tabRecetas').className = `tab-btn ${tab === 'recetas' ? 'active' : ''}`;
+      document.getElementById('tabInsumos').className = `tab-btn ${tab === 'insumos' ? 'active' : ''}`;
+      document.getElementById('btnNuevoLabel').textContent = tab === 'recetas' ? 'Nueva receta' : 'Nuevo insumo';
+      document.getElementById('searchInput').placeholder = tab === 'recetas' ? 'Buscar receta…' : 'Buscar insumo…';
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (tabActual === 'recetas') renderRecetas(recetas.filter(r => nombreProducto(r.idProducto).toLowerCase().includes(q)));
+      else renderInsumos(insumos.filter(i => i.nombre?.toLowerCase().includes(q)));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+    document.getElementById('btnNuevo').addEventListener('click', () =>
+      tabActual === 'recetas' ? openModalReceta() : openModalInsumo());
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+
+    // ------------ Render -----------------
+    function renderRecetas(data) {
+      setBody('recetasBody', 6, data, r => {
+        const instr = r.instrucciones || '—';
+        return `<tr>
+          <td class="td-id">#${r.idReceta}</td>
+          <td class="td-bold">${nombreProducto(r.idProducto)}</td>
+          <td>${r.tiempoPrepMin ?? '—'}</td>
+          <td class="td-muted">${textoIngredientes(r) || '—'}</td>
+          <td class="td-muted">${instr.length > 60 ? instr.slice(0, 60) + '…' : instr}</td>
+          <td>
+            <button class="action-btn" onclick="openEditReceta(${r.idReceta})" title="Editar">${ICON_EDIT}</button>
+            <button class="action-btn delete" onclick="openConfirm(${r.idReceta},'receta')" title="Eliminar">${ICON_DEL}</button>
+          </td></tr>`;
+      }, 'Sin recetas');
+    }
+
+    function renderInsumos(data) {
+      setBody('insumosBody', 6, data, i => `<tr>
+        <td class="td-id">#${i.idInsumo}</td>
+        <td class="td-bold">${i.nombre}</td>
+        <td>${i.categoriaInsumo?.nombre || '—'}</td>
+        <td>${i.unidadMedida || '—'}</td>
+        <td><span class="badge ${i.activo !== false ? 'badge-activo' : 'badge-inactivo'}">${i.activo !== false ? 'Activo' : 'Inactivo'}</span></td>
+        <td>
+          <button class="action-btn" onclick="openEditInsumo(${i.idInsumo})" title="Editar">${ICON_EDIT}</button>
+          <button class="action-btn delete" onclick="openConfirm(${i.idInsumo},'insumo')" title="Eliminar">${ICON_DEL}</button>
+        </td></tr>`, 'Sin insumos');
+    }
+
+    // ------------ Helpers de modal ----------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalReceta', 'modalInsumo'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    async function reload(tipo) {
+      if (tipo === 'receta') recetas = await getList('/api/v1/recetas');
+      else insumos = await getList('/api/v1/insumos');
+      renderTablaActual();
+    }
+
+    // -------------- Filas de ingredientes --------------------
+    function addIngRow() {
+      const row = document.createElement('div');
+      row.className = 'ing-row';
+      row.innerHTML = `
+        <select class="form-input ing-insumo">
+          <option value="">— Insumo —</option>
+          ${insumos.filter(i => i.activo !== false)
+            .map(i => `<option value="${i.idInsumo}">${i.nombre} (${i.unidadMedida})</option>`).join('')}
+        </select>
+        <input type="number" class="form-input ing-cantidad" placeholder="Cantidad" min="0.001" step="0.001" style="max-width:110px;" />
+        <button type="button" class="ing-remove" title="Quitar">${ICON_X}</button>`;
+      row.querySelector('.ing-remove').addEventListener('click', () => row.remove());
+      document.getElementById('ingList').appendChild(row);
+    }
+    document.getElementById('btnAddIng').addEventListener('click', addIngRow);
+
+    // -------------- Receta --------------------------
+    function openModalReceta(r = null) {
+      const editando = !!r;
+      if (!editando) {
+        const libres = productos.filter(p => !recetas.some(x => x.idProducto === p.idProducto));
+        if (!productos.length) {
+          showToast('No se pudieron cargar los productos. Verifica que ms-inventario (8085) esté en ejecución', 'error'); return;
+        }
+        if (!libres.length) { showToast('Todos los productos ya tienen una receta', 'error'); return; }
+        if (!insumos.length) { showToast('Primero registra insumos en la pestaña Insumos', 'error'); return; }
+        document.getElementById('rProducto').innerHTML = '<option value="">— Seleccionar —</option>' +
+          libres.map(p => `<option value="${p.idProducto}">${p.nombre}</option>`).join('');
+      }
+      document.getElementById('modalRecetaTitle').textContent = editando ? 'Editar receta' : 'Nueva receta';
+      document.getElementById('recetaId').value = r?.idReceta || '';
+      document.getElementById('recetaIdProducto').value = r?.idProducto || '';
+      document.getElementById('rProductoGroup').style.display = editando ? 'none' : '';
+      document.getElementById('rProductoFijo').style.display = editando ? '' : 'none';
+      document.getElementById('rProductoNombre').textContent = editando ? nombreProducto(r.idProducto) : '';
+      document.getElementById('rTiempo').value = r?.tiempoPrepMin ?? '';
+      document.getElementById('rInstrucciones').value = r?.instrucciones || '';
+      document.getElementById('rIngLabel').textContent = editando ? 'Agregar más ingredientes' : 'Ingredientes *';
+      const act = document.getElementById('rIngActuales');
+      act.style.display = editando ? '' : 'none';
+      act.innerHTML = editando ? `<strong>Actuales:</strong> ${textoIngredientes(r) || 'ninguno'}` : '';
+      document.getElementById('ingList').innerHTML = '';
+      if (!editando) addIngRow();
+      openModal('modalReceta');
+    }
+    function openEditReceta(id) { const r = recetas.find(x => x.idReceta === id); if (r) openModalReceta(r); }
+
+    document.getElementById('btnGuardarReceta').addEventListener('click', async () => {
+      const id = document.getElementById('recetaId').value;
+      const idProducto = id ? document.getElementById('recetaIdProducto').value : document.getElementById('rProducto').value;
+      const tiempo = document.getElementById('rTiempo').value;
+      const instrucciones = document.getElementById('rInstrucciones').value.trim();
+      if (!idProducto || !tiempo || !instrucciones) { showToast('Producto, tiempo e instrucciones son obligatorios', 'error'); return; }
+
+      const filas = [...document.querySelectorAll('.ing-row')].map(row => ({
+        idInsumo: parseInt(row.querySelector('.ing-insumo').value),
+        cantidad: parseFloat(row.querySelector('.ing-cantidad').value),
+      })).filter(f => f.idInsumo && f.cantidad > 0);
+      if (!id && !filas.length) { showToast('Agrega al menos un ingrediente', 'error'); return; }
+
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/recetas${id ? '/' + id : ''}`, {
+          method: id ? 'PUT' : 'POST', headers,
+          body: JSON.stringify({ idProducto: parseInt(idProducto), instrucciones, tiempoPrepMin: parseInt(tiempo) })
+        });
+        if (!res.ok) throw new Error();
+        const idReceta = id ? parseInt(id) : (await res.json()).data.idReceta;
+
+        let fallidos = 0;
+        for (const f of filas) {
+          const r = await fetch(`${GATEWAY}/api/v1/receta-insumos`, {
+            method: 'POST', headers, body: JSON.stringify({ idReceta, idInsumo: f.idInsumo, cantidad: f.cantidad })
+          });
+          if (!r.ok) fallidos++;
+        }
+        showToast(fallidos ? `Receta guardada, pero ${fallidos} ingrediente(s) no se pudieron agregar` : (id ? 'Receta actualizada' : 'Receta creada'),
+                  fallidos ? 'error' : 'success');
+        closeModal('modalReceta');
+        await reload('receta');
+      } catch { showToast('Error al guardar la receta', 'error'); }
+    });
+
+    // ------------- Insumo -------------------------
+    function openModalInsumo(i = null) {
+      document.getElementById('modalInsumoTitle').textContent = i ? 'Editar insumo' : 'Nuevo insumo';
+      document.getElementById('insumoId').value = i?.idInsumo || '';
+      document.getElementById('iNombre').value = i?.nombre || '';
+      document.getElementById('iUnidad').value = i?.unidadMedida || '';
+      document.getElementById('iCategoria').value = i?.categoriaInsumo?.idCategoriaInsumo || '';
+      openModal('modalInsumo');
+    }
+    function openEditInsumo(id) { const i = insumos.find(x => x.idInsumo === id); if (i) openModalInsumo(i); }
+
+    document.getElementById('btnGuardarInsumo').addEventListener('click', async () => {
+      const id = document.getElementById('insumoId').value;
+      const nombre = document.getElementById('iNombre').value.trim();
+      const unidad = document.getElementById('iUnidad').value.trim();
+      const idCat = document.getElementById('iCategoria').value;
+      if (!nombre || !unidad || !idCat) { showToast('Nombre, unidad y categoría son obligatorios', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/insumos${id ? '/' + id : ''}`, {
+          method: id ? 'PUT' : 'POST', headers,
+          body: JSON.stringify({ idCategoriaInsumo: parseInt(idCat), nombre, unidadMedida: unidad })
+        });
+        if (!res.ok) throw new Error();
+        showToast(id ? 'Insumo actualizado' : 'Insumo creado');
+        closeModal('modalInsumo');
+        await reload('insumo');
+      } catch { showToast('Error al guardar el insumo', 'error'); }
+    });
+
+    // ---------- Eliminar -------------------------
+    const endpointMap = { receta: '/api/v1/recetas', insumo: '/api/v1/insumos' };
+    function openConfirm(id, type) {
+      deleteId = id; deleteType = type;
+      document.getElementById('confirmTitle').textContent = `Eliminar ${type}`;
+      openModal('confirmOverlay');
+    }
+    document.getElementById('confirmCancelar').addEventListener('click', () => {
+      closeModal('confirmOverlay'); deleteId = null; deleteType = null;
+    });
+    document.getElementById('confirmEliminar').addEventListener('click', async () => {
+      if (!deleteId) return;
+      const tipo = deleteType;                       // se guarda antes de limpiar
+      try {
+        const res = await fetch(`${GATEWAY}${endpointMap[tipo]}/${deleteId}`, { method: 'DELETE', headers });
+        if (!res.ok) throw new Error();
+        showToast(`${tipo === 'receta' ? 'Receta' : 'Insumo'} eliminado`);
+        closeModal('confirmOverlay');
+        deleteId = null; deleteType = null;
+        await reload(tipo);
+      } catch { showToast('No se pudo eliminar (puede estar en uso)', 'error'); }
+    });
+
+    loadAll();
+</script>
 </body>
 </html>

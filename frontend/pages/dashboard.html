@@ -1,10 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Dashboard — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body>
-$END$
+<body data-page="dashboard">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header" style="display:block;">
+        <h1>Buenos días, <span id="headerUser">Mariana</span></h1>
+        <p id="fechaHoy"></p>
+    </div>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-label">Clientes registrados</div>
+            <div style="display:flex;align-items:center;">
+                <span class="metric-accent"></span>
+                <span class="metric-value" id="metricClientes">—</span>
+            </div>
+            <div class="metric-unit">total en el sistema</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Pedidos en el sistema</div>
+            <div style="display:flex;align-items:center;">
+                <span class="metric-accent"></span>
+                <span class="metric-value" id="metricPedidos">—</span>
+            </div>
+            <div class="metric-unit">registrados</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Productos disponibles</div>
+            <div style="display:flex;align-items:center;">
+                <span class="metric-accent"></span>
+                <span class="metric-value" id="metricProductos">—</span>
+            </div>
+            <div class="metric-unit">en carta</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Empleados activos</div>
+            <div style="display:flex;align-items:center;">
+                <span class="metric-accent"></span>
+                <span class="metric-value" id="metricEmpleados">—</span>
+            </div>
+            <div class="metric-unit">en planilla</div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <span class="section-title">Últimos pedidos</span>
+        <a href="pedidos.html" class="view-all">Ver todos</a>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th><th>Cliente</th><th>Fecha</th><th>Observaciones</th><th>Estado</th>
+            </tr>
+            </thead>
+            <tbody id="pedidosTableBody">
+            <tr><td colspan="5" style="text-align:center;padding:32px;color:#A09890;">Cargando…</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:40px;">
+        <div class="section-header">
+            <span class="section-title">Estado de microservicios</span>
+            <button onclick="checkServices()" style="font-size:12px;color:var(--verde-medio);font-weight:500;background:none;border:none;cursor:pointer;">Actualizar</button>
+        </div>
+        <div class="modules-grid" id="modulesGrid"></div>
+    </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+
+    const nombres = { mgutierrez: 'Mariana' };
+    const user = localStorage.getItem('sigesca_user') || 'mgutierrez';
+    document.getElementById('headerUser').textContent = nombres[user] || user;
+    document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-PE', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    const headers = getHeaders();
+
+    async function apiFetch(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return null; }
+      const json = await res.json();
+      return json.data || json;
+    }
+
+    async function loadMetrics() {
+      const endpoints = [
+        { id: 'metricClientes',  path: '/api/v1/clientes' },
+        { id: 'metricPedidos',   path: '/api/v1/pedidos' },
+        { id: 'metricProductos', path: '/api/v1/productos' },
+        { id: 'metricEmpleados', path: '/api/v1/empleados' },
+      ];
+      for (const { id, path } of endpoints) {
+        try {
+          const data = await apiFetch(path);
+          document.getElementById(id).textContent = Array.isArray(data) ? data.length : '—';
+        } catch {
+          document.getElementById(id).textContent = '—';
+        }
+      }
+    }
+
+    async function loadPedidos() {
+      const tbody = document.getElementById('pedidosTableBody');
+      try {
+        const [data, clientes] = await Promise.all([
+          apiFetch('/api/v1/pedidos'),
+          apiFetch('/api/v1/clientes'),
+        ]);
+        if (!Array.isArray(data) || data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:#A09890;">Sin pedidos</td></tr>`;
+          return;
+        }
+        const nombreCliente = id => {
+          const c = (clientes || []).find(x => x.idCliente === id);
+          return c ? `${c.nombres} ${c.apellidos}` : (id != null ? `Cliente #${id}` : '—');
+        };
+        const recent = data.slice(-8).reverse();
+        tbody.innerHTML = recent.map(p => {
+          const nombreEstado = p.estadoPedido?.nombre || '—';
+          const k = nombreEstado.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const cls = k.includes('entreg') || k.includes('complet') || k.includes('list') ? 'badge-entregado'
+                    : k.includes('prepar') || k.includes('proces') ? 'badge-preparacion'
+                    : k.includes('cancel') ? 'badge-cancelado' : 'badge-pendiente';
+          const fecha = p.fechaPedido ? new Date(p.fechaPedido).toLocaleDateString('es-PE') : '—';
+          return `<tr>
+            <td class="td-id">#${p.idPedido}</td>
+            <td class="td-bold">${nombreCliente(p.idCliente)}</td>
+            <td class="td-muted">${fecha}</td>
+            <td class="td-muted">${p.observaciones || '—'}</td>
+            <td><span class="badge ${cls}">${nombreEstado}</span></td>
+          </tr>`;
+        }).join('');
+      } catch {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:#A09890;">Error al cargar</td></tr>`;
+      }
+    }
+
+    const MODULES = [
+      { name: 'Clientes',       port: 8081, path: '/api/v1/clientes' },
+      { name: 'Pedidos',        port: 8082, path: '/api/v1/pedidos' },
+      { name: 'Producción',     port: 8083, path: '/api/v1/recetas' },
+      { name: 'Ventas',         port: 8084, path: '/api/v1/comprobantes' },
+      { name: 'Inventario',     port: 8085, path: '/api/v1/productos' },
+      { name: 'Abastecimiento', port: 8086, path: '/api/v1/proveedores' },
+      { name: 'Mantenimiento',  port: 8087, path: '/api/v1/equipos' },
+      { name: 'RRHH',           port: 8088, path: '/api/v1/empleados' },
+      { name: 'Administración', port: 8089, path: '/api/v1/gastos' },
+      { name: 'Finanzas',       port: 8090, path: '/api/v1/presupuestos' },
+      { name: 'Calidad',        port: 8091, path: '/api/v1/estandares-calidad' },
+      { name: 'Marketing',      port: 8092, path: '/api/v1/campanas-marketing' },
+    ];
+
+    async function checkServices() {
+      const grid = document.getElementById('modulesGrid');
+      grid.innerHTML = MODULES.map(m => `
+        <div class="module-status" id="ms-${m.port}">
+          <div class="status-dot" style="background:#D1C7BB;"></div>
+          <div>
+            <div class="module-name">${m.name}</div>
+            <div class="module-port">puerto ${m.port} · verificando…</div>
+          </div>
+        </div>`).join('');
+
+      await Promise.all(MODULES.map(async (m) => {
+        const card = document.getElementById(`ms-${m.port}`);
+        const dot = card.querySelector('.status-dot');
+        const label = card.querySelector('.module-port');
+        let ok = false;
+        try {
+          const res = await fetch(`${GATEWAY}${m.path}`, { headers });
+          ok = res.ok;
+        } catch { ok = false; }
+        dot.style.background = ok ? '#10B981' : '#EF4444';
+        label.textContent = `puerto ${m.port} · ${ok ? 'activo' : 'sin respuesta'}`;
+      }));
+    }
+
+    loadMetrics();
+    loadPedidos();
+    checkServices();
+</script>
 </body>
 </html>

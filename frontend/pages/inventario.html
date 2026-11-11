@@ -1,10 +1,463 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Inventario — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; }
+        .tab-btn { padding:8px 20px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        .stock-bar-bg { background:#EDE8DF; border-radius:4px; height:6px; width:120px; }
+        .stock-bar { background:var(--verde-medio); border-radius:4px; height:6px; transition:width 0.3s; }
+        .stock-bar.low { background:var(--terracota); }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="inventario">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Inventario</h1>
+            <p>Control de stock y productos de Sinergia Café</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="btnNuevoLabel">Nuevo producto</span>
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabProductos" onclick="switchTab('productos')">Productos</button>
+        <button class="tab-btn" id="tabStock" onclick="switchTab('stock')">Stock</button>
+        <button class="tab-btn" id="tabMovimientos" onclick="switchTab('movimientos')">Movimientos</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelProductos" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Disponible</th><th></th></tr></thead>
+            <tbody id="productosBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelStock" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Insumo</th><th>Cantidad actual</th><th>Cantidad mínima</th><th>Nivel</th><th>Última actualización</th><th></th></tr></thead>
+            <tbody id="stockBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelMovimientos" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Insumo</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th><th>Fecha</th></tr></thead>
+            <tbody id="movimientosBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal Producto -->
+<div class="modal-overlay" id="modalProducto">
+    <div class="modal">
+        <h2 class="modal-title" id="modalProductoTitle">Nuevo producto</h2>
+        <input type="hidden" id="productoId" />
+        <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input type="text" class="form-input" id="pNombre" placeholder="Ej: Espresso" />
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Categoría *</label>
+                <select class="form-input" id="pCategoria"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Precio (S/) *</label>
+                <input type="number" class="form-input" id="pPrecio" placeholder="0.00" min="0.01" step="0.01" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                <input type="text" class="form-input" id="pDescripcion" placeholder="Descripción breve" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Disponible</label>
+                <select class="form-input" id="pDisponible">
+                    <option value="true">Sí</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalProducto')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarProducto">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Stock -->
+<div class="modal-overlay" id="modalStock">
+    <div class="modal">
+        <h2 class="modal-title" id="modalStockTitle">Nuevo stock</h2>
+        <input type="hidden" id="stockId" />
+        <input type="hidden" id="stockIdInsumo" />
+        <div class="form-group" id="sInsumoGroup">
+            <label class="form-label">Insumo *</label>
+            <select class="form-input" id="sInsumo"></select>
+            <p class="hint">Los insumos se gestionan en Producción.</p>
+        </div>
+        <p id="sInsumoFijo" style="display:none;font-size:14px;margin-bottom:16px;"></p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Cantidad actual *</label>
+                <input type="number" class="form-input" id="sCantidadActual" placeholder="0.000" min="0" step="0.001" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cantidad mínima *</label>
+                <input type="number" class="form-input" id="sCantidadMinima" placeholder="0.000" min="0" step="0.001" />
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalStock')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarStock">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Movimiento -->
+<div class="modal-overlay" id="modalMovimiento">
+    <div class="modal">
+        <h2 class="modal-title">Registrar movimiento</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Insumo en stock *</label>
+                <select class="form-input" id="mStock"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tipo *</label>
+                <select class="form-input" id="mTipo">
+                    <option value="entrada">Entrada</option>
+                    <option value="salida">Salida</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Cantidad *</label>
+            <input type="number" class="form-input" id="mCantidad" placeholder="0.000" min="0.001" step="0.001" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Motivo *</label>
+            <input type="text" class="form-input" id="mMotivo" placeholder="Ej: Compra de insumos" />
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalMovimiento')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarMovimiento">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm eliminar producto -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3>Eliminar producto</h3>
+        <p>¿Estás seguro? Esta acción no se puede deshacer.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-danger" id="confirmEliminar">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    const ICON_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+
+    let productos = [], categorias = [], stocks = [], movimientos = [], insumos = [];
+    let tabActual = 'productos', deleteId = null;
+    const TABS = ['productos', 'stock', 'movimientos'];
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const money = n => `S/ ${parseFloat(n || 0).toFixed(2)}`;
+    const fmtFecha = f => f ? new Date(f).toLocaleDateString('es-PE') : '—';
+    const nombreInsumo = id => insumos.find(i => i.idInsumo === id)?.nombre || `Insumo #${id}`;
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // ------------ Carga -----------------------
+    async function loadAll() {
+      try {
+        [productos, categorias, stocks, movimientos] = await Promise.all([
+          getList('/api/v1/productos'), getList('/api/v1/categorias-producto'),
+          getList('/api/v1/stock'), getList('/api/v1/movimientos-stock'),
+        ]);
+      } catch { showToast('Error al cargar los datos de inventario', 'error'); }
+      try { insumos = await getList('/api/v1/insumos'); } catch { insumos = []; }
+      populateSelects();
+      renderTablaActual();
+    }
+
+    function fill(id, items, value, label, placeholder) {
+      const sel = document.getElementById(id), prev = sel.value;
+      sel.innerHTML = `<option value="">${placeholder}</option>` +
+        items.map(i => `<option value="${value(i)}">${label(i)}</option>`).join('');
+      sel.value = prev;
+    }
+    function populateSelects() {
+      fill('pCategoria', categorias, c => c.idCategoriaProducto, c => c.nombre, '— Seleccionar —');
+      fill('sInsumo', insumos, i => i.idInsumo, i => i.nombre, '— Seleccionar —');
+      fill('mStock', stocks, s => s.idStock,
+           s => `${nombreInsumo(s.idInsumo)} (actual: ${parseFloat(s.cantidadActual).toFixed(3)})`, '— Seleccionar —');
+    }
+
+    // ------------------ Tabs y búsqueda -----------------
+    function switchTab(tab) {
+      tabActual = tab;
+      TABS.forEach(t => {
+        document.getElementById(`panel${cap(t)}`).style.display = t === tab ? '' : 'none';
+        document.getElementById(`tab${cap(t)}`).className = `tab-btn ${t === tab ? 'active' : ''}`;
+      });
+      document.getElementById('btnNuevoLabel').textContent =
+        { productos: 'Nuevo producto', stock: 'Nuevo stock', movimientos: 'Registrar movimiento' }[tab];
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (tabActual === 'productos') renderProductos(productos.filter(p => p.nombre?.toLowerCase().includes(q)));
+      else if (tabActual === 'stock') renderStock(stocks.filter(s => nombreInsumo(s.idInsumo).toLowerCase().includes(q)));
+      else renderMovimientos(movimientos.filter(m =>
+        nombreInsumo(stocks.find(s => s.idStock === m.idStock)?.idInsumo).toLowerCase().includes(q) ||
+        (m.motivo || '').toLowerCase().includes(q)));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+
+    document.getElementById('btnNuevo').addEventListener('click', () => {
+      if (tabActual === 'productos') openModalProducto();
+      else if (tabActual === 'stock') openModalStock();
+      else openModalMovimiento();
+    });
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+
+    // ----------------- Render ----------------------
+    function renderProductos(data) {
+      setBody('productosBody', 6, data, p => `<tr>
+        <td class="td-id">#${p.idProducto}</td>
+        <td class="td-bold">${p.nombre}</td>
+        <td>${p.categoriaProducto?.nombre || '—'}</td>
+        <td class="td-bold">${money(p.precio)}</td>
+        <td><span class="badge ${p.disponible !== false ? 'badge-activo' : 'badge-inactivo'}">${p.disponible !== false ? 'Sí' : 'No'}</span></td>
+        <td>
+          <button class="action-btn" onclick="openEditProducto(${p.idProducto})" title="Editar">${ICON_EDIT}</button>
+          <button class="action-btn delete" onclick="openConfirm(${p.idProducto})" title="Eliminar">${ICON_DEL}</button>
+        </td></tr>`, 'Sin productos');
+    }
+
+    function renderStock(data) {
+      setBody('stockBody', 7, data, s => {
+        const actual = parseFloat(s.cantidadActual || 0), minima = parseFloat(s.cantidadMinima || 0);
+        const pct = minima > 0 ? Math.min((actual / (minima * 2)) * 100, 100) : 100;
+        const low = actual <= minima;
+        return `<tr>
+          <td class="td-id">#${s.idStock}</td>
+          <td class="td-bold">${nombreInsumo(s.idInsumo)}</td>
+          <td class="td-bold">${actual.toFixed(3)}</td>
+          <td class="td-muted">${minima.toFixed(3)}</td>
+          <td>
+            <div class="stock-bar-bg"><div class="stock-bar ${low ? 'low' : ''}" style="width:${pct}%"></div></div>
+            ${low ? '<span style="font-size:11px;color:var(--terracota);display:block;margin-top:2px;">Stock bajo</span>' : ''}
+          </td>
+          <td class="td-muted">${fmtFecha(s.ultimaActualizacion)}</td>
+          <td><button class="action-btn" onclick="openEditStock(${s.idStock})" title="Editar">${ICON_EDIT}</button></td>
+        </tr>`;
+      }, 'Sin stock registrado');
+    }
+
+    function renderMovimientos(data) {
+      setBody('movimientosBody', 6, data, m => {
+        const entrada = m.tipoMovimiento === 'entrada';
+        const idInsumo = stocks.find(s => s.idStock === m.idStock)?.idInsumo;
+        return `<tr>
+          <td class="td-id">#${m.idMovimientoStock}</td>
+          <td class="td-bold">${idInsumo != null ? nombreInsumo(idInsumo) : `Stock #${m.idStock}`}</td>
+          <td><span class="badge ${entrada ? 'badge-activo' : 'badge-cancelado'}">${entrada ? 'Entrada' : 'Salida'}</span></td>
+          <td class="td-bold">${parseFloat(m.cantidad || 0).toFixed(3)}</td>
+          <td class="td-muted">${m.motivo || '—'}</td>
+          <td class="td-muted">${fmtFecha(m.fechaMovimiento)}</td>
+        </tr>`;
+      }, 'Sin movimientos');
+    }
+
+    // ------------------- Helpers de modal --------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalProducto', 'modalStock', 'modalMovimiento'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    async function reload(...cuales) {
+      const mapa = { productos: '/api/v1/productos', stock: '/api/v1/stock', movimientos: '/api/v1/movimientos-stock' };
+      for (const c of cuales) {
+        const data = await getList(mapa[c]);
+        if (c === 'productos') productos = data; else if (c === 'stock') stocks = data; else movimientos = data;
+      }
+      populateSelects();
+      renderTablaActual();
+    }
+
+    // --------------- Producto ---------------------
+    function openModalProducto(p = null) {
+      document.getElementById('modalProductoTitle').textContent = p ? 'Editar producto' : 'Nuevo producto';
+      document.getElementById('productoId').value = p?.idProducto || '';
+      document.getElementById('pNombre').value = p?.nombre || '';
+      document.getElementById('pCategoria').value = p?.categoriaProducto?.idCategoriaProducto || '';
+      document.getElementById('pPrecio').value = p?.precio ?? '';
+      document.getElementById('pDescripcion').value = p?.descripcion || '';
+      document.getElementById('pDisponible').value = p?.disponible === false ? 'false' : 'true';
+      openModal('modalProducto');
+    }
+    function openEditProducto(id) { const p = productos.find(x => x.idProducto === id); if (p) openModalProducto(p); }
+
+    document.getElementById('btnGuardarProducto').addEventListener('click', async () => {
+      const id = document.getElementById('productoId').value;
+      const nombre = document.getElementById('pNombre').value.trim();
+      const idCat = document.getElementById('pCategoria').value;
+      const precio = document.getElementById('pPrecio').value;
+      if (!nombre || !idCat || !precio) { showToast('Nombre, categoría y precio son obligatorios', 'error'); return; }
+      const body = {
+        idCategoriaProducto: parseInt(idCat), nombre,
+        descripcion: document.getElementById('pDescripcion').value.trim() || null,
+        precio: parseFloat(precio),
+        disponible: document.getElementById('pDisponible').value === 'true',
+      };
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/productos${id ? '/' + id : ''}`,
+          { method: id ? 'PUT' : 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error();
+        showToast(id ? 'Producto actualizado' : 'Producto creado');
+        closeModal('modalProducto');
+        await reload('productos');
+      } catch { showToast('Error al guardar el producto', 'error'); }
+    });
+
+    // -------------- Stock --------------
+    function openModalStock(s = null) {
+      if (!s && !insumos.length) {
+        showToast('No se pudieron cargar los insumos. Verifica que ms-produccion (8083) esté en ejecución', 'error');
+        return;
+      }
+      document.getElementById('modalStockTitle').textContent = s ? 'Editar stock' : 'Nuevo stock';
+      document.getElementById('stockId').value = s?.idStock || '';
+      document.getElementById('stockIdInsumo').value = s?.idInsumo || '';
+      document.getElementById('sInsumoGroup').style.display = s ? 'none' : '';
+      const fijo = document.getElementById('sInsumoFijo');
+      fijo.style.display = s ? '' : 'none';
+      fijo.innerHTML = s ? `Insumo: <strong>${nombreInsumo(s.idInsumo)}</strong>` : '';
+      document.getElementById('sInsumo').value = '';
+      document.getElementById('sCantidadActual').value = s?.cantidadActual ?? '';
+      document.getElementById('sCantidadMinima').value = s?.cantidadMinima ?? '';
+      openModal('modalStock');
+    }
+    function openEditStock(id) { const s = stocks.find(x => x.idStock === id); if (s) openModalStock(s); }
+
+    document.getElementById('btnGuardarStock').addEventListener('click', async () => {
+      const id = document.getElementById('stockId').value;
+      const idInsumo = id ? document.getElementById('stockIdInsumo').value : document.getElementById('sInsumo').value;
+      const actual = document.getElementById('sCantidadActual').value;
+      const minima = document.getElementById('sCantidadMinima').value;
+      if (!idInsumo || actual === '' || minima === '') { showToast('Insumo y cantidades son obligatorios', 'error'); return; }
+      const body = { idInsumo: parseInt(idInsumo), cantidadActual: parseFloat(actual), cantidadMinima: parseFloat(minima) };
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/stock${id ? '/' + id : ''}`,
+          { method: id ? 'PUT' : 'POST', headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error();
+        showToast(id ? 'Stock actualizado' : 'Stock creado');
+        closeModal('modalStock');
+        await reload('stock');
+      } catch { showToast('Error al guardar el stock', 'error'); }
+    });
+
+    // ----------------- Movimiento (registra y actualiza el stock) ------------------
+    function openModalMovimiento() {
+      if (!stocks.length) { showToast('Primero registra un stock en la pestaña Stock', 'error'); return; }
+      document.getElementById('mStock').value = '';
+      document.getElementById('mTipo').value = 'entrada';
+      document.getElementById('mCantidad').value = '';
+      document.getElementById('mMotivo').value = '';
+      openModal('modalMovimiento');
+    }
+
+    document.getElementById('btnGuardarMovimiento').addEventListener('click', async () => {
+      const idStock = document.getElementById('mStock').value;
+      const cantidad = parseFloat(document.getElementById('mCantidad').value);
+      const motivo = document.getElementById('mMotivo').value.trim();
+      const tipo = document.getElementById('mTipo').value;
+      if (!idStock || !(cantidad > 0) || !motivo) { showToast('Insumo, cantidad y motivo son obligatorios', 'error'); return; }
+
+      const s = stocks.find(x => String(x.idStock) === idStock);
+      const nuevo = parseFloat(s.cantidadActual) + (tipo === 'entrada' ? cantidad : -cantidad);
+      if (nuevo < 0) { showToast('La salida supera el stock disponible', 'error'); return; }
+
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/movimientos-stock`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ idStock: parseInt(idStock), idEmpleado: 1, tipoMovimiento: tipo, cantidad, motivo })
+        });
+        if (!res.ok) throw new Error();
+
+        // El servicio solo guarda el movimiento: el stock se actualiza aquí
+        const upd = await fetch(`${GATEWAY}/api/v1/stock/${idStock}`, {
+          method: 'PUT', headers,
+          body: JSON.stringify({ idInsumo: s.idInsumo, cantidadActual: nuevo, cantidadMinima: parseFloat(s.cantidadMinima) })
+        });
+        showToast(upd.ok ? 'Movimiento registrado y stock actualizado' : 'Movimiento registrado, pero no se pudo actualizar el stock',
+                  upd.ok ? 'success' : 'error');
+        closeModal('modalMovimiento');
+        await reload('stock', 'movimientos');
+      } catch { showToast('Error al registrar el movimiento', 'error'); }
+    });
+
+    // --------------- Eliminar producto -----------------
+    function openConfirm(id) { deleteId = id; openModal('confirmOverlay'); }
+    document.getElementById('confirmCancelar').addEventListener('click', () => { closeModal('confirmOverlay'); deleteId = null; });
+    document.getElementById('confirmEliminar').addEventListener('click', async () => {
+      if (!deleteId) return;
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/productos/${deleteId}`, { method: 'DELETE', headers });
+        if (!res.ok) throw new Error();
+        showToast('Producto eliminado');
+        closeModal('confirmOverlay');
+        deleteId = null;
+        await reload('productos');
+      } catch { showToast('Error al eliminar (puede estar usado en un pedido)', 'error'); }
+    });
+
+    loadAll();
+</script>
 </body>
 </html>

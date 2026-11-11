@@ -1,10 +1,520 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Ventas — SIGESCA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+        .tabs { display:flex; gap:4px; margin-bottom:24px; background:var(--blanco-hueso); border-radius:8px; padding:4px; border:1px solid rgba(0,0,0,0.05); width:fit-content; flex-wrap:wrap; }
+        .tab-btn { padding:8px 18px; border:none; border-radius:6px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; background:transparent; color:#7A7068; transition:background 0.15s,color 0.15s; }
+        .tab-btn.active { background:var(--verde-profundo); color:#F5F0E8; }
+        textarea.form-input { resize:vertical; min-height:60px; font-family:'Inter',sans-serif; }
+        .hint { font-size:12px; color:#7A7068; margin-top:6px; }
+        .calc-box { background:#F5F0E8; border-radius:8px; padding:14px 16px; margin-top:4px; }
+        .calc-row { display:flex; justify-content:space-between; font-size:13px; color:#7A7068; padding:3px 0; }
+        .calc-row.total { border-top:1px solid #E5DFD6; margin-top:6px; padding-top:10px; color:var(--grafito); font-weight:600; }
+        .calc-row.total span:last-child { font-family:'Playfair Display',serif; font-size:20px; }
+    </style>
 </head>
-<body>
-$END$
+<body data-page="ventas">
+<aside class="sidebar" id="sidebar-root"></aside>
+
+<main class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Ventas</h1>
+            <p>Comprobantes, cajas y cierres de caja de Sinergia Café</p>
+        </div>
+        <button class="btn-primary" id="btnNuevo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="btnNuevoLabel">Emitir comprobante</span>
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabComprobantes" onclick="switchTab('comprobantes')">Comprobantes</button>
+        <button class="tab-btn" id="tabCajas" onclick="switchTab('cajas')">Cajas</button>
+        <button class="tab-btn" id="tabCierres" onclick="switchTab('cierres')">Cierres de caja</button>
+        <button class="tab-btn" id="tabMetodos" onclick="switchTab('metodos')">Métodos de pago</button>
+    </div>
+
+    <div class="filters">
+        <div class="search-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar…" />
+        </div>
+        <span class="count-label" id="countLabel"></span>
+    </div>
+
+    <div id="panelComprobantes" class="table-container">
+        <table>
+            <thead><tr><th>ID</th><th>Comprobante</th><th>Tipo</th><th>Pedido</th><th>Método de pago</th><th>Fecha</th><th>Subtotal</th><th>IGV</th><th>Total</th></tr></thead>
+            <tbody id="comprobantesBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelCajas" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Empleado</th><th>Apertura</th><th>Monto inicial</th><th>Cierre</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="cajasBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelCierres" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Caja</th><th>Método de pago</th><th>Monto registrado</th><th>Diferencia</th><th>Observaciones</th></tr></thead>
+            <tbody id="cierresBody"></tbody>
+        </table>
+    </div>
+
+    <div id="panelMetodos" class="table-container" style="display:none;">
+        <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th></tr></thead>
+            <tbody id="metodosBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal emitir comprobante -->
+<div class="modal-overlay" id="modalComprobante">
+    <div class="modal" style="max-width:540px;">
+        <h2 class="modal-title">Emitir comprobante</h2>
+        <div class="form-group">
+            <label class="form-label">Pedido *</label>
+            <select class="form-input" id="cPedido"></select>
+            <p class="hint">Solo aparecen pedidos con productos que aún no tienen comprobante.</p>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Tipo de comprobante *</label>
+                <select class="form-input" id="cTipo"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Método de pago *</label>
+                <select class="form-input" id="cMetodo"></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Serie *</label>
+                <input type="text" class="form-input" id="cSerie" placeholder="B001" maxlength="4" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Número *</label>
+                <input type="text" class="form-input" id="cNumero" placeholder="00000001" maxlength="8" />
+            </div>
+        </div>
+        <div class="calc-box">
+            <div class="calc-row"><span>Subtotal</span><span id="cSubtotal">S/ 0.00</span></div>
+            <div class="calc-row"><span>IGV (18 %)</span><span id="cIgv">S/ 0.00</span></div>
+            <div class="calc-row total"><span>Total</span><span id="cTotal">S/ 0.00</span></div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalComprobante')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarComprobante">Emitir</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal abrir caja -->
+<div class="modal-overlay" id="modalCaja">
+    <div class="modal">
+        <h2 class="modal-title">Abrir caja</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">ID del empleado *</label>
+                <input type="number" class="form-input" id="kEmpleado" min="1" value="1" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Monto inicial (S/) *</label>
+                <input type="number" class="form-input" id="kMontoInicial" min="0.01" step="0.01" placeholder="0.00" />
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalCaja')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarCaja">Abrir caja</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal registrar cierre -->
+<div class="modal-overlay" id="modalCierre">
+    <div class="modal">
+        <h2 class="modal-title">Registrar cierre de caja</h2>
+        <input type="hidden" id="cierreIdCaja" />
+        <p id="cierreCajaInfo" style="font-size:14px;margin-bottom:16px;"></p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Método de pago *</label>
+                <select class="form-input" id="cierreMetodo"></select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Monto registrado (S/) *</label>
+                <input type="number" class="form-input" id="cierreMonto" min="0" step="0.01" placeholder="0.00" />
+            </div>
+        </div>
+        <div class="calc-box">
+            <div class="calc-row"><span>Esperado (estimado)</span><span id="cierreEsperado">S/ 0.00</span></div>
+            <div class="calc-row total"><span>Diferencia</span><span id="cierreDiferencia">S/ 0.00</span></div>
+        </div>
+        <p class="hint">El esperado suma los comprobantes de ese método desde la apertura de la caja (más el monto inicial si es efectivo).</p>
+        <div class="form-group" style="margin-top:14px;">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-input" id="cierreObs" placeholder="Opcional"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeModal('modalCierre')">Cancelar</button>
+            <button class="btn-primary" id="btnGuardarCierre">Registrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmación genérica -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h3 id="confirmTitle"></h3>
+        <p id="confirmText"></p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn-secondary" id="confirmCancelar">Cancelar</button>
+            <button class="btn-primary" id="confirmAceptar">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../components/sidebar.js"></script>
+<script>
+    const GATEWAY = 'http://localhost:8080';
+    const headers = getHeaders();
+    const IGV = 1.18;
+
+    let comprobantes = [], cajas = [], cierres = [], metodos = [], tipos = [], clientes = [], facturables = [];
+    let tabActual = 'comprobantes', confirmFn = null, calc = { subtotal: 0, igv: 0, total: 0 };
+    const TABS = ['comprobantes', 'cajas', 'cierres', 'metodos'];
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const money = n => `S/ ${parseFloat(n || 0).toFixed(2)}`;
+    const round2 = n => Math.round(n * 100) / 100;
+    const fmtFecha = f => f ? new Date(f).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+    const estaAbierta = c => String(c.estado).toLowerCase().includes('abiert');
+
+    async function getList(path) {
+      const res = await fetch(`${GATEWAY}${path}`, { headers });
+      if (res.status === 401) { window.location.href = '../index.html'; return []; }
+      return (await res.json()).data || [];
+    }
+
+    // ----------- Carga ---------------
+    async function loadCierres() {
+      const listas = await Promise.all(cajas.map(c =>
+        getList(`/api/v1/cierres-caja/caja/${c.idCaja}`).catch(() => [])));
+      cierres = listas.flat();
+    }
+
+    async function loadAll() {
+      try {
+        [comprobantes, cajas, metodos, tipos] = await Promise.all([
+          getList('/api/v1/comprobantes'), getList('/api/v1/cajas'),
+          getList('/api/v1/metodos-pago'), getList('/api/v1/tipos-comprobante'),
+        ]);
+        await loadCierres();
+      } catch { showToast('Error al cargar los datos de ventas', 'error'); }
+      const opts = lista => '<option value="">— Seleccionar —</option>' + lista.map(x => x.html).join('');
+      const activos = metodos.filter(m => m.activo !== false)
+        .map(m => ({ html: `<option value="${m.idMetodoPago}">${m.nombre}</option>` }));
+      document.getElementById('cMetodo').innerHTML = opts(activos);
+      document.getElementById('cierreMetodo').innerHTML = opts(activos);
+      document.getElementById('cTipo').innerHTML = opts(tipos.map(t => ({ html: `<option value="${t.idTipoComprobante}">${t.nombre}</option>` })));
+      renderTablaActual();
+    }
+
+    // ------------- Tabs y búsqueda ----------------
+    function switchTab(tab) {
+      tabActual = tab;
+      TABS.forEach(t => {
+        document.getElementById(`panel${cap(t)}`).style.display = t === tab ? '' : 'none';
+        document.getElementById(`tab${cap(t)}`).className = `tab-btn ${t === tab ? 'active' : ''}`;
+      });
+      const btn = document.getElementById('btnNuevo');
+      btn.style.display = (tab === 'comprobantes' || tab === 'cajas') ? '' : 'none';
+      document.getElementById('btnNuevoLabel').textContent = tab === 'cajas' ? 'Abrir caja' : 'Emitir comprobante';
+      document.getElementById('searchInput').value = '';
+      renderTablaActual();
+    }
+
+    function renderTablaActual() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (tabActual === 'comprobantes') renderComprobantes(comprobantes.filter(c =>
+        `${c.serie}-${c.numero}`.toLowerCase().includes(q) || (c.tipoComprobante?.nombre || '').toLowerCase().includes(q)));
+      else if (tabActual === 'cajas') renderCajas(cajas);
+      else if (tabActual === 'cierres') renderCierres(cierres);
+      else renderMetodos(metodos.filter(m => m.nombre?.toLowerCase().includes(q)));
+    }
+    document.getElementById('searchInput').addEventListener('input', renderTablaActual);
+    document.getElementById('btnNuevo').addEventListener('click', () =>
+      tabActual === 'cajas' ? openModalCaja() : openModalComprobante());
+
+    function setBody(id, cols, data, rowFn, vacio) {
+      document.getElementById('countLabel').textContent = `${data.length} registro${data.length !== 1 ? 's' : ''}`;
+      document.getElementById(id).innerHTML = data.length
+        ? data.map(rowFn).join('')
+        : `<tr><td colspan="${cols}" style="text-align:center;padding:40px;color:#A09890;">${vacio}</td></tr>`;
+    }
+
+    // ----------- Render -------------
+    function renderComprobantes(data) {
+      setBody('comprobantesBody', 9, data, c => `<tr>
+        <td class="td-id">#${c.idComprobante}</td>
+        <td class="td-bold">${c.serie}-${c.numero}</td>
+        <td>${c.tipoComprobante?.nombre || '—'}</td>
+        <td>#${c.idPedido}</td>
+        <td>${c.metodoPago?.nombre || '—'}</td>
+        <td class="td-muted">${fmtFecha(c.fechaEmision)}</td>
+        <td class="td-muted">${money(c.subtotal)}</td>
+        <td class="td-muted">${money(c.igv)}</td>
+        <td class="td-bold">${money(c.total)}</td></tr>`, 'Sin comprobantes emitidos');
+    }
+
+    function renderCajas(data) {
+      setBody('cajasBody', 7, data, c => {
+        const abierta = estaAbierta(c);
+        return `<tr>
+          <td class="td-id">#${c.idCaja}</td>
+          <td>Empleado #${c.idEmpleado}</td>
+          <td class="td-muted">${fmtFecha(c.fechaApertura)}</td>
+          <td class="td-bold">${money(c.montoInicial)}</td>
+          <td class="td-muted">${fmtFecha(c.fechaCierre)}</td>
+          <td><span class="badge ${abierta ? 'badge-activo' : 'badge-inactivo'}">${abierta ? 'Abierta' : 'Cerrada'}</span></td>
+          <td>
+            <button class="action-btn" onclick="openModalCierre(${c.idCaja})" title="Registrar cierre">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </button>
+            ${abierta ? `<button class="action-btn delete" onclick="cerrarCaja(${c.idCaja})" title="Cerrar caja">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </button>` : ''}
+          </td></tr>`;
+      }, 'Sin cajas');
+    }
+
+    function renderCierres(data) {
+      setBody('cierresBody', 6, data, c => {
+        const dif = parseFloat(c.diferencia || 0);
+        return `<tr>
+          <td class="td-id">#${c.idCierreCaja}</td>
+          <td>Caja #${c.caja?.idCaja ?? '—'}</td>
+          <td>${c.metodoPago?.nombre || '—'}</td>
+          <td class="td-bold">${money(c.montoRegistrado)}</td>
+          <td class="td-bold" style="color:${dif < 0 ? '#991B1B' : dif > 0 ? '#065F46' : 'inherit'};">${money(dif)}</td>
+          <td class="td-muted">${c.observaciones || '—'}</td></tr>`;
+      }, 'Sin cierres registrados');
+    }
+
+    function renderMetodos(data) {
+      setBody('metodosBody', 4, data, m => `<tr>
+        <td class="td-id">#${m.idMetodoPago}</td>
+        <td class="td-bold">${m.nombre}</td>
+        <td class="td-muted">${m.descripcion || '—'}</td>
+        <td><span class="badge ${m.activo !== false ? 'badge-activo' : 'badge-inactivo'}">${m.activo !== false ? 'Activo' : 'Inactivo'}</span></td></tr>`,
+        'Sin métodos de pago');
+    }
+
+    // --------- Modales y confirmación ---------------
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    ['modalComprobante', 'modalCaja', 'modalCierre'].forEach(id =>
+      document.getElementById(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); }));
+
+    function ask(titulo, texto, fn) {
+      document.getElementById('confirmTitle').textContent = titulo;
+      document.getElementById('confirmText').textContent = texto;
+      confirmFn = fn;
+      openModal('confirmOverlay');
+    }
+    document.getElementById('confirmCancelar').addEventListener('click', () => { closeModal('confirmOverlay'); confirmFn = null; });
+    document.getElementById('confirmAceptar').addEventListener('click', async () => {
+      const fn = confirmFn; confirmFn = null;
+      closeModal('confirmOverlay');
+      if (fn) await fn();
+    });
+
+    // ----------- Emitir comprobante --------------
+    const nombreCliente = id => {
+      const c = clientes.find(x => x.idCliente === id);
+      return c ? `${c.nombres} ${c.apellidos}` : (id != null ? `Cliente #${id}` : 'Sin cliente');
+    };
+
+    async function openModalComprobante() {
+      let pedidos;
+      try { pedidos = await getList('/api/v1/pedidos'); }
+      catch { showToast('No se pudieron cargar los pedidos. Verifica que ms-pedidos (8082) esté en ejecución', 'error'); return; }
+      try { clientes = await getList('/api/v1/clientes'); } catch { /* se muestra #id */ }
+
+      const yaFacturados = new Set(comprobantes.map(c => c.idPedido));
+      const libres = pedidos.filter(p => !yaFacturados.has(p.idPedido));
+      await Promise.all(libres.map(async p => {
+        try {
+          const det = await getList(`/api/v1/detalle-pedidos/pedido/${p.idPedido}`);
+          p._total = det.reduce((s, d) => s + parseFloat(d.subtotal || 0), 0);
+        } catch { p._total = 0; }
+      }));
+      facturables = libres.filter(p => p._total > 0);
+      if (!facturables.length) { showToast('No hay pedidos con productos pendientes de facturar', 'error'); return; }
+
+      document.getElementById('cPedido').innerHTML = '<option value="">— Seleccionar —</option>' +
+        facturables.map(p => `<option value="${p.idPedido}">#${p.idPedido} — ${nombreCliente(p.idCliente)} — ${money(p._total)}</option>`).join('');
+      ['cTipo', 'cMetodo'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('cSerie').value = '';
+      document.getElementById('cNumero').value = '';
+      recalcComprobante();
+      openModal('modalComprobante');
+    }
+
+    function recalcComprobante() {
+      const p = facturables.find(x => String(x.idPedido) === document.getElementById('cPedido').value);
+      const total = p ? round2(p._total) : 0;
+      const subtotal = round2(total / IGV);
+      calc = { subtotal, igv: round2(total - subtotal), total };
+      document.getElementById('cSubtotal').textContent = money(calc.subtotal);
+      document.getElementById('cIgv').textContent = money(calc.igv);
+      document.getElementById('cTotal').textContent = money(calc.total);
+    }
+
+    function sugerirNumero() {
+      const serie = document.getElementById('cSerie').value.trim().toUpperCase();
+      if (!serie) return;
+      const max = comprobantes.filter(c => c.serie === serie).reduce((m, c) => Math.max(m, parseInt(c.numero) || 0), 0);
+      document.getElementById('cNumero').value = String(max + 1).padStart(8, '0');
+    }
+    function sugerirSerie() {
+      const t = tipos.find(x => String(x.idTipoComprobante) === document.getElementById('cTipo').value);
+      if (!t) return;
+      const n = t.nombre.toLowerCase();
+      document.getElementById('cSerie').value = n.includes('factura') ? 'F001' : n.includes('boleta') ? 'B001' : 'T001';
+      sugerirNumero();
+    }
+    document.getElementById('cPedido').addEventListener('change', recalcComprobante);
+    document.getElementById('cTipo').addEventListener('change', sugerirSerie);
+    document.getElementById('cSerie').addEventListener('change', sugerirNumero);
+
+    document.getElementById('btnGuardarComprobante').addEventListener('click', async () => {
+      const idPedido = document.getElementById('cPedido').value;
+      const idTipo = document.getElementById('cTipo').value;
+      const idMetodo = document.getElementById('cMetodo').value;
+      const serie = document.getElementById('cSerie').value.trim().toUpperCase();
+      const numero = document.getElementById('cNumero').value.trim();
+      if (!idPedido || !idTipo || !idMetodo || !serie || !numero) { showToast('Completa pedido, tipo, método, serie y número', 'error'); return; }
+      if (!(calc.total > 0)) { showToast('El pedido seleccionado no tiene un total válido', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/comprobantes`, {
+          method: 'POST', headers,
+          body: JSON.stringify({
+            idPedido: parseInt(idPedido), idTipoComprobante: parseInt(idTipo), idMetodoPago: parseInt(idMetodo),
+            serie, numero, subtotal: calc.subtotal, igv: calc.igv, total: calc.total
+          })
+        });
+        if (!res.ok) throw new Error();
+        showToast('Comprobante emitido');
+        closeModal('modalComprobante');
+        comprobantes = await getList('/api/v1/comprobantes');
+        renderTablaActual();
+      } catch { showToast('Error al emitir el comprobante', 'error'); }
+    });
+
+    // ----------- Abrir y cerrar caja ------------
+    function openModalCaja() {
+      document.getElementById('kEmpleado').value = '1';
+      document.getElementById('kMontoInicial').value = '';
+      openModal('modalCaja');
+    }
+    document.getElementById('btnGuardarCaja').addEventListener('click', async () => {
+      const idEmpleado = document.getElementById('kEmpleado').value;
+      const monto = document.getElementById('kMontoInicial').value;
+      if (!idEmpleado || !(parseFloat(monto) > 0)) { showToast('Empleado y un monto inicial mayor a 0 son obligatorios', 'error'); return; }
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/cajas/abrir`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ idEmpleado: parseInt(idEmpleado), montoInicial: parseFloat(monto) })
+        });
+        if (!res.ok) throw new Error();
+        showToast('Caja abierta');
+        closeModal('modalCaja');
+        cajas = await getList('/api/v1/cajas');
+        renderTablaActual();
+      } catch { showToast('Error al abrir la caja', 'error'); }
+    });
+
+    function cerrarCaja(id) {
+      ask('Cerrar caja', `¿Cerrar la caja #${id}? Registra antes los cierres por método de pago.`, async () => {
+        try {
+          const res = await fetch(`${GATEWAY}/api/v1/cajas/${id}/cerrar`, { method: 'PATCH', headers });
+          if (!res.ok) throw new Error();
+          showToast('Caja cerrada');
+          cajas = await getList('/api/v1/cajas');
+          renderTablaActual();
+        } catch { showToast('No se pudo cerrar la caja', 'error'); }
+      });
+    }
+
+    // ---------- Registrar cierre de caja -----------------
+    function esperadoCierre() {
+      const caja = cajas.find(c => String(c.idCaja) === document.getElementById('cierreIdCaja').value);
+      const idMetodo = document.getElementById('cierreMetodo').value;
+      if (!caja || !idMetodo) return 0;
+      const desde = new Date(caja.fechaApertura), hasta = caja.fechaCierre ? new Date(caja.fechaCierre) : new Date();
+      const ventas = comprobantes
+        .filter(c => String(c.metodoPago?.idMetodoPago) === idMetodo &&
+                     new Date(c.fechaEmision) >= desde && new Date(c.fechaEmision) <= hasta)
+        .reduce((s, c) => s + parseFloat(c.total || 0), 0);
+      const nombre = (metodos.find(m => String(m.idMetodoPago) === idMetodo)?.nombre || '').toLowerCase();
+      return round2(ventas + (nombre.includes('efectivo') ? parseFloat(caja.montoInicial || 0) : 0));
+    }
+
+    function recalcCierre() {
+      const esperado = esperadoCierre();
+      const registrado = parseFloat(document.getElementById('cierreMonto').value) || 0;
+      document.getElementById('cierreEsperado').textContent = money(esperado);
+      document.getElementById('cierreDiferencia').textContent = money(round2(registrado - esperado));
+    }
+    document.getElementById('cierreMetodo').addEventListener('change', recalcCierre);
+    document.getElementById('cierreMonto').addEventListener('input', recalcCierre);
+
+    function openModalCierre(idCaja) {
+      document.getElementById('cierreIdCaja').value = idCaja;
+      document.getElementById('cierreCajaInfo').innerHTML = `Caja <strong>#${idCaja}</strong>`;
+      document.getElementById('cierreMetodo').value = '';
+      document.getElementById('cierreMonto').value = '';
+      document.getElementById('cierreObs').value = '';
+      recalcCierre();
+      openModal('modalCierre');
+    }
+
+    document.getElementById('btnGuardarCierre').addEventListener('click', async () => {
+      const idCaja = document.getElementById('cierreIdCaja').value;
+      const idMetodo = document.getElementById('cierreMetodo').value;
+      const monto = document.getElementById('cierreMonto').value;
+      if (!idMetodo || monto === '') { showToast('Método de pago y monto registrado son obligatorios', 'error'); return; }
+      const diferencia = round2(parseFloat(monto) - esperadoCierre());
+      try {
+        const res = await fetch(`${GATEWAY}/api/v1/cierres-caja`, {
+          method: 'POST', headers,
+          body: JSON.stringify({
+            idCaja: parseInt(idCaja), idMetodoPago: parseInt(idMetodo),
+            montoRegistrado: parseFloat(monto), diferencia,
+            observaciones: document.getElementById('cierreObs').value.trim() || null
+          })
+        });
+        if (!res.ok) throw new Error();
+        showToast('Cierre registrado');
+        closeModal('modalCierre');
+        await loadCierres();
+        renderTablaActual();
+      } catch { showToast('Error al registrar el cierre', 'error'); }
+    });
+
+    loadAll();
+</script>
 </body>
 </html>
